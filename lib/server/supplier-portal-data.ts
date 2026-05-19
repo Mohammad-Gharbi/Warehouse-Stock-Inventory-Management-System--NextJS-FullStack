@@ -6,6 +6,7 @@
 
 import { getCache, setCache, cacheKeys } from "@/lib/cache";
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 import { getSuppliersForAdminIncludingDemo } from "@/prisma/supplier";
 import type {
   SupplierPortalStats,
@@ -46,7 +47,7 @@ export async function getSupplierPortalForAdmin(
   // Get products for those suppliers
   const products = supplierIds.length
     ? await prisma.product.findMany({
-        where: { supplierId: { in: supplierIds } },
+        where: mergeProductListWhere({ supplierId: { in: supplierIds } }),
         select: {
           id: true,
           name: true,

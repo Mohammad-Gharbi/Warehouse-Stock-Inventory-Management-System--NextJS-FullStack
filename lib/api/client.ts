@@ -288,10 +288,13 @@ class ApiClient {
      * Delete product
      * Note: App Router API uses query parameter ?id=...
      */
-    delete: async (id: string): Promise<ApiResponse<void>> => {
-      const response = await this.client.delete<void>(
-        `${API_ENDPOINTS.products.base}?id=${id}`,
-      );
+    delete: async (
+      id: string,
+    ): Promise<ApiResponse<{ success: boolean; mode?: "soft" | "hard" }>> => {
+      const response = await this.client.delete<{
+        success: boolean;
+        mode?: "soft" | "hard";
+      }>(`${API_ENDPOINTS.products.base}?id=${id}`);
       return {
         data: response.data,
         status: response.status,

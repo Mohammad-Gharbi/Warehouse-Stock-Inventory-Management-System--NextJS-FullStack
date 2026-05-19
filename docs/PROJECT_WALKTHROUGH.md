@@ -38,7 +38,18 @@ flowchart LR
 - **Writes:** mutations → API → on success → `invalidateAllRelatedQueries` so lists/detail/dashboards refresh without full page reload
 - **Prefetch / persistence:** configured in `lib/react-query/` (provider, keys, persister if enabled)
 
-## 4. Sentry monitoring (implemented)
+## 4. Product delete (implemented)
+
+| Case | API | UI |
+|------|-----|-----|
+| Shipped/pending order | 409 + message | Toast shows error |
+| Delivered/cancelled only | 200 `{ mode: "soft" }` | Archived toast; hidden from lists |
+| Never ordered | 200 `{ mode: "hard" }` | Removed from DB |
+
+- Filter: `lib/products/product-query.ts` → `deletedAt: null` on catalog queries
+- Tests: `npm run test` (delete-policy, prisma-errors, imagekit-errors)
+
+## 5. Sentry monitoring (implemented)
 
 | Layer    | File                                                          | Role                                                          |
 | -------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
@@ -63,7 +74,7 @@ flowchart LR
 
 **Wizard artifacts:** `.env.sentry-build-plugin` (gitignored) for local source map upload; `sentry.client.config.ts` is compatibility stub only.
 
-## 5. Other optional integrations
+## 6. Other optional integrations
 
 | Service | Lib / entry                            | Env (optional)                  |
 | ------- | -------------------------------------- | ------------------------------- |
@@ -75,27 +86,34 @@ flowchart LR
 
 Details: `docs/Redis_Sentry_PostHog_INTEGRATION_GUIDE.md`
 
-## 6. Quality gates (pre-commit audit)
+## 7. Quality gates (audit 2026-05-19)
 
-| Check                   | Status                                                  |
-| ----------------------- | ------------------------------------------------------- |
-| `npm run lint`          | Pass                                                    |
-| `npm run build`         | Pass                                                    |
-| Automated tests         | None                                                    |
-| Sentry wiring           | OK **only if** untracked files are committed (see below) |
-| TanStack / auth / API   | Unchanged by Sentry work                                |
-| Prod risk               | Low; no DSN → Sentry inactive                           |
+| Check | Status |
+|-------|--------|
+| `npm run lint` | pass |
+| `npm run build` | pass |
+| `npm run test` | 10 passed |
+| Product delete plan | done |
+| Sentry | on main |
+| TanStack delete | `mode` toast + `invalidateAllRelatedQueries` |
+| Python | N/A |
 
-**Must commit:** `instrumentation-client.ts`, `lib/monitoring/sentry-config.ts`, `app/global-error.tsx`, plus modified Sentry/next/instrumentation files. Vercel DSN env already sufficient.
+**DB:** `prisma db push` done locally (`Product_deletedAt_idx`). Prod DB: same if not yet.
 
-## 7. When changing code
+**Commit-ready:** yes — push to GitHub → Vercel redeploy. Stage all modified + untracked (`lib/products/`, tests, vitest.config.ts) + `CLAUDE.md` if changed.
+
+**Gaps (OK):** id-only lookups without `deletedAt`; archived SKU unique; Sentry `setUserContext` optional.
+
+**Manual QA:** 409 active order; hard no orders; soft history-only.
+
+## 8. When changing code
 
 - **New API route:** use `successResponse` / `errorResponse`; 5xx auto-report if using helpers
 - **New mutation hook:** call `invalidateAllRelatedQueries` on success (or document why not)
 - **Sentry:** keep `SENTRY_TUNNEL_PATH` in sync in `sentry-config.ts` and `next.config.ts`
 - **Env:** update `.env.example` + this file + `CLAUDE.md` if adding variables
 
-## 8. Related docs
+## 9. Related docs
 
 - `CLAUDE.md` — condensed agent rules
 - `README.md` — user-facing setup and API list

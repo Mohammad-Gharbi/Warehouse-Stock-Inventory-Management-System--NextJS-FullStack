@@ -8,6 +8,7 @@
 
 import { getCache, setCache, cacheKeys } from "@/lib/cache";
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 import { getDemoSupplierUserId } from "@/prisma/supplier";
 import type {
   DashboardStats,
@@ -112,7 +113,10 @@ export async function getDashboardForAdmin(userId: string): Promise<DashboardSta
   const whereUser = userScope(userId);
 
   const userProductIds = (
-    await prisma.product.findMany({ where: whereUser, select: { id: true } })
+    await prisma.product.findMany({
+      where: mergeProductListWhere(whereUser),
+      select: { id: true },
+    })
   ).map((p) => p.id);
   const reviewWhere =
     userProductIds.length > 0
@@ -218,7 +222,10 @@ export async function getDashboardForAdmin(userId: string): Promise<DashboardSta
       orderBy: { createdAt: "asc" },
     }),
     prisma.product.findMany({
-      where: { ...whereUser, createdAt: { gte: since } },
+      where: mergeProductListWhere({
+        ...whereUser,
+        createdAt: { gte: since },
+      }),
       select: { createdAt: true },
       orderBy: { createdAt: "asc" },
     }),
@@ -320,7 +327,7 @@ export async function getDashboardForAdmin(userId: string): Promise<DashboardSta
     prisma.user.count(),
     prisma.user.groupBy({ by: ["role"], _count: { id: true } }),
     prisma.product.findMany({
-      where: whereUser,
+      where: mergeProductListWhere(whereUser),
       select: { status: true, price: true, quantity: true },
     }),
     prisma.supplier.count({ where: { ...whereSuppliers, status: true } }),

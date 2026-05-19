@@ -3,6 +3,7 @@
  */
 
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 import type { SupplierPortalDashboard } from "@/types";
 
 /**
@@ -23,7 +24,7 @@ export async function getSupplierDashboard(
 
   // Get products from this supplier
   const products = await prisma.product.findMany({
-    where: { supplierId: supplier.id },
+    where: mergeProductListWhere({ supplierId: supplier.id }),
     select: {
       id: true,
       name: true,

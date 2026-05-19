@@ -3,6 +3,7 @@
  * getProductById enforces userId so only the owner can access; used by API and server data.
  */
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 
 /**
  * Create a new product with audit fields
@@ -28,7 +29,7 @@ export const createProduct = async (data: {
 
 export const getProductsByUser = async (userId: string) => {
   return prisma.product.findMany({
-    where: { userId },
+    where: mergeProductListWhere({ userId }),
   });
 };
 
@@ -42,10 +43,10 @@ export const getProductsByUser = async (userId: string) => {
  */
 export const getProductById = async (productId: string, userId: string) => {
   return prisma.product.findFirst({
-    where: {
+    where: mergeProductListWhere({
       id: productId,
       userId, // Ensure user can only access their own products
-    },
+    }),
     include: {
       // Include order items to show which orders contain this product
       orderItems: {

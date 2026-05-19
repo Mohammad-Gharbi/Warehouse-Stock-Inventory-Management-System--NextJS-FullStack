@@ -8,6 +8,7 @@ import { getSessionFromRequest } from "@/utils/auth";
 import { logger } from "@/lib/logger";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 
 export async function GET(request: NextRequest) {
   try {
@@ -23,6 +24,7 @@ export async function GET(request: NextRequest) {
     }
 
     const productOwnerIds = await prisma.product.findMany({
+      where: mergeProductListWhere({}),
       select: { userId: true },
       distinct: ["userId"],
     });

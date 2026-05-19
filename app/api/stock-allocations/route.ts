@@ -13,6 +13,7 @@ import {
   getWarehouseStockSummary,
 } from "@/prisma/stock-allocation";
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 import { getCache, setCache, cacheKeys } from "@/lib/cache";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
 import { createStockAllocationSchema } from "@/lib/validations";
@@ -173,7 +174,10 @@ export async function POST(request: NextRequest) {
 
     // Verify product belongs to user
     const product = await prisma.product.findFirst({
-      where: { id: data.productId, userId: session.id },
+      where: mergeProductListWhere({
+        id: data.productId,
+        userId: session.id,
+      }),
     });
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });

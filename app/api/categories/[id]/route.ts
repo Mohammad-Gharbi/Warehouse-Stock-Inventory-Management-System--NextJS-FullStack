@@ -10,6 +10,7 @@ import { getCategoryById } from "@/prisma/category";
 import { getCache, setCache, invalidateCache, cacheKeys } from "@/lib/cache";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 
 /**
  * GET /api/categories/:id
@@ -62,10 +63,10 @@ export async function GET(
 
     // Fetch all products in this category
     const products = await prisma.product.findMany({
-      where: {
+      where: mergeProductListWhere({
         categoryId: category.id,
         ...(isClient ? {} : { userId }), // Client: all products in category; admin: only user's products
-      },
+      }),
       include: {
         orderItems: {
           include: {

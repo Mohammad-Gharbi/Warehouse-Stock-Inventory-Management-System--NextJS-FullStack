@@ -3,6 +3,7 @@
  */
 
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 import type {
   CreateStockAllocationInput,
   UpdateStockAllocationInput,
@@ -15,7 +16,7 @@ import type {
 export async function getStockAllocations(userId: string) {
   // Get all products for this user
   const products = await prisma.product.findMany({
-    where: { userId },
+    where: mergeProductListWhere({ userId }),
     select: { id: true },
   });
   const productIds = products.map((p) => p.id);
@@ -282,7 +283,7 @@ export async function cancelStockTransfer(id: string) {
 export async function getWarehouseStockSummary(userId: string) {
   // Get all products for this user
   const products = await prisma.product.findMany({
-    where: { userId },
+    where: mergeProductListWhere({ userId }),
     select: { id: true, price: true },
   });
   const productIds = products.map((p) => p.id);

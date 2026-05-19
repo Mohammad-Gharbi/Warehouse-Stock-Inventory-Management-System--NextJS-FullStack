@@ -8,6 +8,7 @@ import { getSessionFromRequest } from "@/utils/auth";
 import { logger } from "@/lib/logger";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 
 /**
  * GET /api/portal/client/browse-products
@@ -56,11 +57,11 @@ export async function GET(request: NextRequest) {
 
     const [products, allOwnerProducts, ownerUser] = await Promise.all([
       prisma.product.findMany({
-        where: productWhere,
+        where: mergeProductListWhere(productWhere),
         orderBy: { createdAt: "desc" },
       }),
       prisma.product.findMany({
-        where: { userId: ownerId },
+        where: mergeProductListWhere({ userId: ownerId }),
         select: { categoryId: true, supplierId: true },
       }),
       prisma.user.findUnique({

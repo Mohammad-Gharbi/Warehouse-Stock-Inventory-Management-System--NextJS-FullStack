@@ -32,6 +32,9 @@ export interface Product {
   imageUrl?: string; // ImageKit URL for product image
   imageFileId?: string; // ImageKit file ID for cleanup when updating/deleting
   expirationDate?: Date | null; // Product expiration date (optional, for perishable items)
+  /** Set when product is archived (soft-deleted) due to order history */
+  deletedAt?: Date | null;
+  deletedBy?: string | null;
   /** Product owner display name (populated when fetching by supplier) */
   productOwnerName?: string | null;
   /** Extended by API for detail page */

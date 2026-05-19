@@ -138,7 +138,11 @@ model Product {
   imageUrl         String? // ImageKit URL for product image
   imageFileId      String? // ImageKit file ID for cleanup when updating/deleting
   expirationDate   DateTime?   @db.Date // Product expiration date (optional, for perishable items)
+  deletedAt        DateTime?   @db.Date // Soft-delete: set when product has order history and is "deleted"
+  deletedBy        String?     @db.ObjectId // User who soft-deleted the product
   orderItems       OrderItem[] // Orders containing this product (one-to-many relationship)
+
+  @@index([deletedAt])
 }
 
 model Session {

@@ -4,6 +4,7 @@
  */
 
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 import type {
   ProductSalesHistory,
   ProductDemandForecast,
@@ -232,7 +233,7 @@ export async function generateForecastingSummary(
 ): Promise<ForecastingSummary> {
   // Get all products for user
   const products = await prisma.product.findMany({
-    where: { userId },
+    where: mergeProductListWhere({ userId }),
     select: {
       id: true,
       name: true,

@@ -133,8 +133,9 @@ export function useDeleteProduct() {
           queryKeys.products.detail(id)
         )?.name ?? "Product");
 
-      await apiClient.products.delete(id);
-      return { id, name: productName };
+      const response = await apiClient.products.delete(id);
+      const mode = response.data?.mode === "soft" ? "soft" : "hard";
+      return { id, name: productName, mode };
     },
     onSuccess: (deletedData) => {
       invalidateAllRelatedQueries(queryClient);
@@ -143,7 +144,10 @@ export function useDeleteProduct() {
       });
       toast({
         title: "Success",
-        description: `Product "${deletedData.name}" deleted successfully`,
+        description:
+          deletedData.mode === "soft"
+            ? `Product "${deletedData.name}" archived (hidden from catalog; order history preserved).`
+            : `Product "${deletedData.name}" deleted successfully`,
       });
     },
     onError: (error) => {

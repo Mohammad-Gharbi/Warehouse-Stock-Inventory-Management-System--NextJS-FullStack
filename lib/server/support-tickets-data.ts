@@ -9,6 +9,7 @@ import {
   getSupportTicketsByAssignedTo,
 } from "@/prisma/support-ticket";
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 import type { SupportTicket } from "@/types";
 
 export type ProductOwnerOption = { id: string; name: string; email: string };
@@ -128,6 +129,7 @@ export async function getProductOwnersForSupport(): Promise<
   ProductOwnerOption[]
 > {
   const productOwnerIds = await prisma.product.findMany({
+    where: mergeProductListWhere({}),
     select: { userId: true },
     distinct: ["userId"],
   });

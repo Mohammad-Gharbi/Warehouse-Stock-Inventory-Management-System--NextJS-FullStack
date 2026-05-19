@@ -11,7 +11,15 @@ import {
   generateAndUploadQRCode,
   deleteQRCodeFromImageKit,
   deleteProductImageFromImageKit,
+  cleanupProductMediaFromImageKit,
 } from "@/lib/imagekit";
+import { isImageKitNotFoundError } from "@/lib/imagekit-errors";
+import { isPrismaRelationViolation } from "@/lib/api/prisma-errors";
+import {
+  getDeleteStrategy,
+  isActiveOrderStatus,
+} from "@/lib/products/delete-policy";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 import { prisma } from "@/prisma/client";
 import { getSupplierByUserId } from "@/prisma/supplier";
 import { checkAndSendStockAlerts } from "@/lib/email/notifications";
@@ -79,7 +87,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch products (by userId for admin, by supplierId for supplier)
     const products = await prisma.product.findMany({
-      where: productWhere,
+      where: mergeProductListWhere(productWhere),
       orderBy: { createdAt: "desc" },
     });
 
@@ -377,7 +385,7 @@ export async function PUT(request: NextRequest) {
 
     // Verify product belongs to user
     const existingProduct = await prisma.product.findFirst({
-      where: { id, userId },
+      where: mergeProductListWhere({ id, userId }),
     });
 
     if (!existingProduct) {
@@ -406,7 +414,9 @@ export async function PUT(request: NextRequest) {
     if (imageUrl === "" && oldImageFileId) {
       // Delete old image from ImageKit (async, don't block)
       deleteProductImageFromImageKit(oldImageFileId).catch((error) => {
-        logger.error("Failed to delete old product image:", error);
+        if (!isImageKitNotFoundError(error)) {
+          logger.warn("Failed to delete old product image:", error);
+        }
       });
     }
 
@@ -501,11 +511,12 @@ export async function PUT(request: NextRequest) {
                 `Deleted old QR code file from ImageKit: ${oldFileId}`,
               );
             } catch (deleteError) {
-              // Log error but don't fail - old file cleanup is not critical
-              logger.error(
-                `Failed to delete old QR code from ImageKit: ${oldFileId}`,
-                deleteError,
-              );
+              if (!isImageKitNotFoundError(deleteError)) {
+                logger.warn(
+                  `Failed to delete old QR code from ImageKit: ${oldFileId}`,
+                  deleteError,
+                );
+              }
             }
           }
         })
@@ -590,7 +601,7 @@ export async function PUT(request: NextRequest) {
 
 /**
  * DELETE /api/products
- * Delete a product
+ * Hard-delete when no order history; soft-delete (archive) when only completed orders exist.
  */
 export async function DELETE(request: NextRequest) {
   try {
@@ -616,20 +627,17 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Verify product belongs to user
     const existingProduct = await prisma.product.findFirst({
-      where: { id, userId },
+      where: mergeProductListWhere({ id, userId }),
     });
 
     if (!existingProduct) {
       return NextResponse.json(
-        { error: "Product not found or unauthorized" },
+        { error: "Product not found, already archived, or unauthorized" },
         { status: 404 },
       );
     }
 
-    // Check for related orders before deletion
-    // Products can only be deleted if all related orders are delivered or cancelled
     const orderItems = await prisma.orderItem.findMany({
       where: { productId: id },
       include: {
@@ -650,139 +658,133 @@ export async function DELETE(request: NextRequest) {
       },
     });
 
-    if (orderItems.length > 0) {
-      // Group orders by status
+    const strategy = getDeleteStrategy(orderItems);
+
+    if (strategy === "block") {
       const activeOrders = orderItems
-        .filter((item) => {
-          const orderStatus = item.order.status;
-          // Orders that are not delivered or cancelled are considered "active"
-          return orderStatus !== "delivered" && orderStatus !== "cancelled";
-        })
+        .filter((item) => isActiveOrderStatus(item.order.status))
         .map((item) => item.order);
 
-      // Get unique active orders (avoid duplicates)
       const uniqueActiveOrders = Array.from(
         new Map(activeOrders.map((order) => [order.id, order])).values(),
       );
 
-      // Only prevent deletion if there are active orders
-      // Products can be deleted if all related orders are delivered or cancelled
-      if (uniqueActiveOrders.length > 0) {
-        // There are active orders - prevent deletion and show detailed error
-        // Check for invoices on active orders
-        const ordersWithInvoices = uniqueActiveOrders.filter(
-          (order) => order.invoice,
-        );
+      const ordersWithInvoices = uniqueActiveOrders.filter(
+        (order) => order.invoice,
+      );
 
-        // Build detailed error message
-        let errorMessage = `Cannot delete product "${existingProduct.name}" because `;
-        const reasons: string[] = [];
-        const statusCounts: Record<string, number> = {};
-        uniqueActiveOrders.forEach((order) => {
-          statusCounts[order.status] = (statusCounts[order.status] || 0) + 1;
-        });
+      let errorMessage = `Cannot delete product "${existingProduct.name}" because `;
+      const reasons: string[] = [];
+      const statusCounts: Record<string, number> = {};
+      uniqueActiveOrders.forEach((order) => {
+        statusCounts[order.status] = (statusCounts[order.status] || 0) + 1;
+      });
 
-        const statusMessages = Object.entries(statusCounts).map(
-          ([status, count]) =>
-            `${count} ${status} order${count > 1 ? "s" : ""}`,
-        );
+      const statusMessages = Object.entries(statusCounts).map(
+        ([status, count]) =>
+          `${count} ${status} order${count > 1 ? "s" : ""}`,
+      );
+      reasons.push(
+        `it has ${uniqueActiveOrders.length} active order${uniqueActiveOrders.length > 1 ? "s" : ""} (${statusMessages.join(", ")})`,
+      );
+
+      if (ordersWithInvoices.length > 0) {
         reasons.push(
-          `it has ${uniqueActiveOrders.length} active order${uniqueActiveOrders.length > 1 ? "s" : ""} (${statusMessages.join(", ")})`,
-        );
-
-        if (ordersWithInvoices.length > 0) {
-          reasons.push(
-            `${ordersWithInvoices.length} invoice${ordersWithInvoices.length > 1 ? "s" : ""} ${ordersWithInvoices.length > 1 ? "are" : "is"} associated with ${ordersWithInvoices.length > 1 ? "these orders" : "this order"}`,
-          );
-        }
-
-        // Count delivered/cancelled orders (for informational purposes)
-        const completedOrders = orderItems.filter(
-          (item) =>
-            item.order.status === "delivered" ||
-            item.order.status === "cancelled",
-        );
-        if (completedOrders.length > 0) {
-          const uniqueCompletedOrders = Array.from(
-            new Map(
-              completedOrders.map((item) => [item.order.id, item.order]),
-            ).values(),
-          );
-          reasons.push(
-            `Additionally, there ${uniqueCompletedOrders.length > 1 ? "are" : "is"} ${uniqueCompletedOrders.length} completed order${uniqueCompletedOrders.length > 1 ? "s" : ""} (delivered/cancelled) in the system history`,
-          );
-        }
-
-        errorMessage += reasons.join(". ") + ".";
-
-        // Add actionable message
-        errorMessage += ` Please wait until all active orders are delivered or cancelled before deleting this product.`;
-
-        return NextResponse.json(
-          {
-            error: errorMessage,
-            details: {
-              activeOrdersCount: uniqueActiveOrders.length,
-              invoicesCount: ordersWithInvoices.length,
-              totalOrdersCount: Array.from(
-                new Map(
-                  orderItems.map((item) => [item.order.id, item.order]),
-                ).values(),
-              ).length,
-              activeOrderStatuses: Object.fromEntries(
-                Object.entries(
-                  uniqueActiveOrders.reduce(
-                    (acc, order) => {
-                      acc[order.status] = (acc[order.status] || 0) + 1;
-                      return acc;
-                    },
-                    {} as Record<string, number>,
-                  ),
-                ),
-              ),
-            },
-          },
-          { status: 409 }, // 409 Conflict - resource cannot be deleted due to constraints
+          `${ordersWithInvoices.length} invoice${ordersWithInvoices.length > 1 ? "s" : ""} ${ordersWithInvoices.length > 1 ? "are" : "is"} associated with ${ordersWithInvoices.length > 1 ? "these orders" : "this order"}`,
         );
       }
-      // If all orders are delivered or cancelled, allow deletion - continue below
+
+      const completedOrders = orderItems.filter(
+        (item) => !isActiveOrderStatus(item.order.status),
+      );
+      if (completedOrders.length > 0) {
+        const uniqueCompletedOrders = Array.from(
+          new Map(
+            completedOrders.map((item) => [item.order.id, item.order]),
+          ).values(),
+        );
+        reasons.push(
+          `Additionally, there ${uniqueCompletedOrders.length > 1 ? "are" : "is"} ${uniqueCompletedOrders.length} completed order${uniqueCompletedOrders.length > 1 ? "s" : ""} (delivered/cancelled) in the system history`,
+        );
+      }
+
+      errorMessage += `${reasons.join(". ")}. Please wait until all active orders are delivered or cancelled before deleting this product.`;
+
+      return NextResponse.json(
+        {
+          error: errorMessage,
+          details: {
+            activeOrdersCount: uniqueActiveOrders.length,
+            invoicesCount: ordersWithInvoices.length,
+            totalOrdersCount: Array.from(
+              new Map(
+                orderItems.map((item) => [item.order.id, item.order]),
+              ).values(),
+            ).length,
+            activeOrderStatuses: Object.fromEntries(
+              Object.entries(
+                uniqueActiveOrders.reduce(
+                  (acc, order) => {
+                    acc[order.status] = (acc[order.status] || 0) + 1;
+                    return acc;
+                  },
+                  {} as Record<string, number>,
+                ),
+              ),
+            ),
+          },
+        },
+        { status: 409 },
+      );
     }
 
-    // Delete QR code from ImageKit if it exists (async, don't block deletion)
-    if (existingProduct.qrCodeFileId) {
-      deleteQRCodeFromImageKit(existingProduct.qrCodeFileId)
-        .then(() => {
-          logger.debug(
-            `Deleted QR code from ImageKit for product: ${existingProduct.id}`,
-          );
-        })
-        .catch((error) => {
-          // Log error but don't fail product deletion - cleanup is not critical
-          logger.error(
-            `Failed to delete QR code from ImageKit for product ${existingProduct.id}:`,
-            error,
-          );
-        });
+    if (strategy === "soft") {
+      await prisma.product.update({
+        where: { id },
+        data: {
+          deletedAt: new Date(),
+          deletedBy: session.id,
+          updatedAt: new Date(),
+          updatedBy: session.id,
+        },
+      });
+
+      createAuditLog({
+        userId: session.id,
+        action: "delete",
+        entityType: "product",
+        entityId: id,
+        details: {
+          productName: existingProduct.name,
+          mode: "soft",
+        },
+      }).catch(() => {});
+
+      const { invalidateOnProductChange } = await import("@/lib/cache");
+      await invalidateOnProductChange().catch((error) => {
+        logger.error(
+          "Failed to invalidate cache after product archive:",
+          error,
+        );
+      });
+
+      return NextResponse.json({ success: true, mode: "soft" as const });
     }
 
-    // Delete product image from ImageKit if it exists (async, don't block deletion)
-    if (existingProduct.imageFileId) {
-      deleteProductImageFromImageKit(existingProduct.imageFileId)
-        .then(() => {
-          logger.debug(
-            `Deleted product image from ImageKit for product: ${existingProduct.id}`,
-          );
-        })
-        .catch((error) => {
-          // Log error but don't fail product deletion - cleanup is not critical
-          logger.error(
-            `Failed to delete product image from ImageKit for product ${existingProduct.id}:`,
-            error,
-          );
-        });
+    // Hard delete: no order history — remove ImageKit assets then DB row
+    try {
+      await cleanupProductMediaFromImageKit(existingProduct);
+    } catch (error) {
+      if (!isImageKitNotFoundError(error)) {
+        logger.warn(
+          `ImageKit cleanup before hard delete failed for product ${id}:`,
+          error,
+        );
+      }
     }
 
-    // Delete product from database
+    await prisma.stockAllocation.deleteMany({ where: { productId: id } });
+
     await prisma.product.delete({
       where: { id },
     });
@@ -792,37 +794,28 @@ export async function DELETE(request: NextRequest) {
       action: "delete",
       entityType: "product",
       entityId: id,
-      details: { productName: existingProduct.name },
+      details: { productName: existingProduct.name, mode: "hard" },
     }).catch(() => {});
 
-    // Global invalidation: products affect categories, suppliers, dashboard
     const { invalidateOnProductChange } = await import("@/lib/cache");
     await invalidateOnProductChange().catch((error) => {
       logger.error("Failed to invalidate cache after product deletion:", error);
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, mode: "hard" as const });
   } catch (error) {
     logger.error("Error deleting product:", error);
 
-    // Check if this is a Prisma foreign key constraint error
-    // This can happen if related orders/invoices exist and weren't caught by our check
-    if (
-      error instanceof Error &&
-      (error.message.includes("Foreign key constraint") ||
-        error.message.includes("delete operation") ||
-        error.message.includes("referenced"))
-    ) {
+    if (isPrismaRelationViolation(error)) {
       return NextResponse.json(
         {
           error:
-            "Cannot delete product because it is referenced by existing orders or invoices. Please ensure all related orders are delivered or cancelled before deleting this product.",
+            "Product cannot be removed because it is linked to order history. Products with past orders are archived instead of permanently deleted.",
         },
         { status: 409 },
       );
     }
 
-    // For any other error, return generic error message
     return NextResponse.json(
       { error: "Failed to delete product. Please try again later." },
       { status: 500 },

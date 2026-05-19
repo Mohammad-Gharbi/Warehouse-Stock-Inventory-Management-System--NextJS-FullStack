@@ -5,6 +5,7 @@
  */
 
 import { getCache, setCache, cacheKeys } from "@/lib/cache";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 import { prisma } from "@/prisma/client";
 
 /** Product shape returned by products API GET (dates as ISO strings) */
@@ -72,7 +73,7 @@ export async function getProductsForUser(userId: string): Promise<ProductForHome
   }
 
   const products = await prisma.product.findMany({
-    where: { userId },
+    where: mergeProductListWhere({ userId }),
     orderBy: { createdAt: "desc" },
   });
 
@@ -134,7 +135,7 @@ export async function getProductsBySupplierId(
   }
 
   const products = await prisma.product.findMany({
-    where: { supplierId },
+    where: mergeProductListWhere({ supplierId }),
     orderBy: { createdAt: "desc" },
   });
 

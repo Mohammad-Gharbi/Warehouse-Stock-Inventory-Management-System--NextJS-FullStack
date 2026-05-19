@@ -4,6 +4,7 @@
  */
 
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 import { getSuppliersForAdminIncludingDemo } from "@/prisma/supplier";
 import type { AdminCounts } from "@/types";
 
@@ -21,10 +22,10 @@ export async function getAdminCounts(userId: string): Promise<AdminCounts> {
       getClientOrderIdsForProductOwner(userId),
       prisma.supportTicket.count({ where: { assignedToId: userId } }),
       prisma.product.findMany({
-        where: { userId },
+        where: mergeProductListWhere({ userId }),
         select: { id: true },
       }).then((rows) => rows.map((p) => p.id)),
-      prisma.product.count({ where: { userId } }),
+      prisma.product.count({ where: mergeProductListWhere({ userId }) }),
       prisma.warehouse.count({ where: { userId } }),
       getSuppliersForAdminIncludingDemo(userId),
       prisma.user.count({ where: { role: "client" } }),

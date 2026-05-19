@@ -10,6 +10,7 @@ import { getSupplierById, getDemoSupplierUserId } from "@/prisma/supplier";
 import { getCache, setCache, invalidateCache, cacheKeys } from "@/lib/cache";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 
 /**
  * GET /api/suppliers/:id
@@ -74,10 +75,10 @@ export async function GET(
 
     // Fetch all products from this supplier
     const products = await prisma.product.findMany({
-      where: {
+      where: mergeProductListWhere({
         supplierId: supplier.id,
         ...(isClient || isDemoSupplier ? {} : { userId }), // Client/demo: all products; admin: only user's products
-      },
+      }),
       include: {
         orderItems: {
           include: {

@@ -5,6 +5,7 @@
  */
 
 import ImageKit, { toFile } from "@imagekit/nodejs";
+import { isImageKitNotFoundError } from "@/lib/imagekit-errors";
 
 /**
  * Get ImageKit instance (lazy initialization)
@@ -80,10 +81,13 @@ export async function deleteQRCodeFromImageKit(fileId: string): Promise<void> {
     const imagekit = getImageKitInstance();
     await imagekit.files.delete(fileId);
   } catch (error) {
+    if (isImageKitNotFoundError(error)) {
+      return;
+    }
     throw new Error(
       `Failed to delete QR code from ImageKit: ${
         error instanceof Error ? error.message : "Unknown error"
-      }`
+      }`,
     );
   }
 }
@@ -198,16 +202,35 @@ export async function uploadProductImageToImageKit(
  * @returns Promise<void>
  */
 export async function deleteProductImageFromImageKit(
-  fileId: string
+  fileId: string,
 ): Promise<void> {
   try {
     const imagekit = getImageKitInstance();
     await imagekit.files.delete(fileId);
   } catch (error) {
+    if (isImageKitNotFoundError(error)) {
+      return;
+    }
     throw new Error(
       `Failed to delete product image from ImageKit: ${
         error instanceof Error ? error.message : "Unknown error"
-      }`
+      }`,
     );
+  }
+}
+
+/**
+ * Best-effort ImageKit cleanup before hard-deleting a product row.
+ * 404 (already deleted) is ignored; other errors are thrown to the caller.
+ */
+export async function cleanupProductMediaFromImageKit(product: {
+  qrCodeFileId?: string | null;
+  imageFileId?: string | null;
+}): Promise<void> {
+  if (product.qrCodeFileId) {
+    await deleteQRCodeFromImageKit(product.qrCodeFileId);
+  }
+  if (product.imageFileId) {
+    await deleteProductImageFromImageKit(product.imageFileId);
   }
 }

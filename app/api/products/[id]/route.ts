@@ -11,6 +11,7 @@ import { getSupplierByUserId } from "@/prisma/supplier";
 import { getCache, setCache, invalidateCache, cacheKeys } from "@/lib/cache";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 
 /**
  * GET /api/products/:id
@@ -75,7 +76,7 @@ export async function GET(
     };
     if (isAdmin) {
       product = await prisma.product.findFirst({
-        where: { id },
+        where: mergeProductListWhere({ id }),
         include: productInclude,
       });
     } else if (isSupplier) {
@@ -84,12 +85,12 @@ export async function GET(
         return NextResponse.json({ error: "Product not found" }, { status: 404 });
       }
       product = await prisma.product.findFirst({
-        where: { id, supplierId: supplier.id },
+        where: mergeProductListWhere({ id, supplierId: supplier.id }),
         include: productInclude,
       });
     } else if (isClient) {
       product = await prisma.product.findFirst({
-        where: { id },
+        where: mergeProductListWhere({ id }),
         include: productInclude,
       });
     } else {

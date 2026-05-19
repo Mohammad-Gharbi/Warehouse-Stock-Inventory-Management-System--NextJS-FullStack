@@ -4,6 +4,7 @@
  */
 
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 import type { Prisma } from "@prisma/client";
 import type {
   CreateProductReviewInput,
@@ -60,7 +61,7 @@ export async function getProductReviewsForProductOwner(
   limit = 100,
 ) {
   const products = await prisma.product.findMany({
-    where: { userId: productOwnerId },
+    where: mergeProductListWhere({ userId: productOwnerId }),
     select: { id: true },
   });
   const productIds = products.map((p) => p.id);

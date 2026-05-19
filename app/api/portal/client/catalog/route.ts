@@ -9,6 +9,7 @@ import { logger } from "@/lib/logger";
 import { getCache, setCache } from "@/lib/cache";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
 import { prisma } from "@/prisma/client";
+import { mergeProductListWhere } from "@/lib/products/product-query";
 import type { ClientCatalogOverview } from "@/types";
 
 const CATALOG_LIMIT_SUPPLIERS = 30;
@@ -54,6 +55,7 @@ export async function GET(request: NextRequest) {
         select: { id: true, name: true, status: true, userId: true },
       }),
       prisma.product.findMany({
+        where: mergeProductListWhere({}),
         orderBy: { createdAt: "desc" },
         take: CATALOG_LIMIT_PRODUCTS,
         select: {
