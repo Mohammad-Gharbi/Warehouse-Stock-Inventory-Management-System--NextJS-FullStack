@@ -28,8 +28,12 @@ import { useBackWithRefresh } from "@/hooks/use-back-with-refresh";
 import { queryKeys, invalidateAllRelatedQueries } from "@/lib/react-query";
 import { useAuth } from "@/contexts";
 import Navbar from "@/components/layouts/Navbar";
-import { PageContentWrapper } from "@/components/shared";
-import { formatDistanceToNow } from "date-fns";
+import {
+  ClientDate,
+  ClientDateTime,
+  ClientRelativeTime,
+  PageContentWrapper,
+} from "@/components/shared";
 import type { OrderStatus, PaymentStatus } from "@/types";
 import type { Order } from "@/types";
 import { cn } from "@/lib/utils";
@@ -473,7 +477,7 @@ export default function OrderDetailPage() {
                 Order {order.orderNumber}
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Created {formatDistanceToNow(createdAt, { addSuffix: true })}
+                <ClientRelativeTime date={createdAt} prefix="Created " />
               </p>
             </div>
           </div>
@@ -624,8 +628,7 @@ export default function OrderDetailPage() {
                     Created:
                   </span>
                   <span className="font-medium text-gray-900 dark:text-white">
-                    {createdAt.toLocaleDateString()}{" "}
-                    {createdAt.toLocaleTimeString()}
+                    <ClientDateTime date={createdAt} />
                   </span>
                 </div>
                 {updatedAt && (
@@ -635,8 +638,7 @@ export default function OrderDetailPage() {
                       Updated:
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {updatedAt.toLocaleDateString()}{" "}
-                      {updatedAt.toLocaleTimeString()}
+                      <ClientDateTime date={updatedAt} />
                     </span>
                   </div>
                 )}
@@ -647,8 +649,7 @@ export default function OrderDetailPage() {
                       Shipped:
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {shippedAt.toLocaleDateString()}{" "}
-                      {shippedAt.toLocaleTimeString()}
+                      <ClientDateTime date={shippedAt} />
                     </span>
                   </div>
                 )}
@@ -659,8 +660,7 @@ export default function OrderDetailPage() {
                       Delivered:
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {deliveredAt.toLocaleDateString()}{" "}
-                      {deliveredAt.toLocaleTimeString()}
+                      <ClientDateTime date={deliveredAt} />
                     </span>
                   </div>
                 )}
@@ -671,7 +671,7 @@ export default function OrderDetailPage() {
                       Estimated Delivery:
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {estimatedDelivery.toLocaleDateString()}
+                      <ClientDate date={estimatedDelivery} />
                     </span>
                   </div>
                 )}

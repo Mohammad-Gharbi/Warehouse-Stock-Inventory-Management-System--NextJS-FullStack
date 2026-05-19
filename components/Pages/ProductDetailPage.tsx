@@ -40,8 +40,12 @@ import { useBackWithRefresh } from "@/hooks/use-back-with-refresh";
 import { useAuth } from "@/contexts";
 import { useProductStore } from "@/stores";
 import Navbar from "@/components/layouts/Navbar";
-import { PageContentWrapper } from "@/components/shared";
-import { formatDistanceToNow } from "date-fns";
+import {
+  ClientDate,
+  ClientDateTime,
+  ClientRelativeTime,
+  PageContentWrapper,
+} from "@/components/shared";
 import type { Product, ProductStatus } from "@/types";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -426,7 +430,7 @@ export default function ProductDetailPage({
               </h1>
               <p className="text-sm text-gray-600 dark:text-white/60 mt-1">
                 SKU: {product.sku} • Created{" "}
-                {formatDistanceToNow(createdAt, { addSuffix: true })}
+                <ClientRelativeTime date={createdAt} />
               </p>
             </div>
           </div>
@@ -621,8 +625,7 @@ export default function ProductDetailPage({
                       Created:
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {createdAt.toLocaleDateString()}{" "}
-                      {createdAt.toLocaleTimeString()}
+                      <ClientDateTime date={createdAt} />
                     </span>
                   </div>
 
@@ -633,8 +636,7 @@ export default function ProductDetailPage({
                         Updated:
                       </span>
                       <span className="font-medium text-gray-900 dark:text-white">
-                        {updatedAt.toLocaleDateString()}{" "}
-                        {updatedAt.toLocaleTimeString()}
+                        <ClientDateTime date={updatedAt} />
                       </span>
                     </div>
                   )}
@@ -646,7 +648,7 @@ export default function ProductDetailPage({
                         Expiration Date:
                       </span>
                       <span className="font-medium text-gray-900 dark:text-white">
-                        {expirationDate.toLocaleDateString()}
+                        <ClientDate date={expirationDate} />
                       </span>
                     </div>
                   )}
@@ -794,7 +796,7 @@ export default function ProductDetailPage({
                         <p className="text-sm text-gray-600 dark:text-white/60 mt-1">
                           Quantity: {order.quantity} × ${order.price.toFixed(2)}{" "}
                           • Date:{" "}
-                          {new Date(order.orderDate).toLocaleDateString()}
+                          <ClientDate date={order.orderDate} />
                         </p>
                       </div>
                       <div className="text-left sm:text-right">

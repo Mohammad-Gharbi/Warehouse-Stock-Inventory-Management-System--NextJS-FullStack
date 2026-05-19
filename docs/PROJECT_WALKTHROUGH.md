@@ -93,18 +93,18 @@ Details: `docs/Redis_Sentry_PostHog_INTEGRATION_GUIDE.md`
 | `npm run lint` | pass |
 | `npm run build` | pass |
 | `npm run test` | 10 passed |
-| Product delete plan | done |
+| Product delete | on main (883e74f+) |
 | Sentry | on main |
-| TanStack delete | `mode` toast + `invalidateAllRelatedQueries` |
+| Hydration dates | `ClientDateDisplay` on detail pages + notifications |
+| Vercel headers | `lib/vercel/production-headers.ts`; static cache only in `next.config.ts` |
+| TanStack CRUD | `invalidateAllRelatedQueries` in mutation hooks |
 | Python | N/A |
 
-**DB:** `prisma db push` done locally (`Product_deletedAt_idx`). Prod DB: same if not yet.
+**Uncommitted:** hydration fix + `lib/vercel/production-headers.ts` + `vercel.json` dedupe.
 
-**Commit-ready:** yes — push to GitHub → Vercel redeploy. Stage all modified + untracked (`lib/products/`, tests, vitest.config.ts) + `CLAUDE.md` if changed.
+**Gaps (OK):** export filters use `toLocaleDateString` (client export only); product QR/review id lookups; archived SKU unique; Sentry `setUserContext` optional.
 
-**Gaps (OK):** id-only lookups without `deletedAt`; archived SKU unique; Sentry `setUserContext` optional.
-
-**Manual QA:** 409 active order; hard no orders; soft history-only.
+**Manual QA:** order detail no hydration error; product delete 409/hard/soft.
 
 ## 8. When changing code
 

@@ -36,8 +36,12 @@ import {
 import { useBackWithRefresh } from "@/hooks/use-back-with-refresh";
 import { useAuth } from "@/contexts";
 import Navbar from "@/components/layouts/Navbar";
-import { PageContentWrapper } from "@/components/shared";
-import { formatDistanceToNow } from "date-fns";
+import {
+  ClientDate,
+  ClientDateTime,
+  ClientRelativeTime,
+  PageContentWrapper,
+} from "@/components/shared";
 import SupplierDialog from "@/components/supplier/SupplierDialog";
 import { AlertDialogWrapper } from "@/components/dialogs";
 import type { Supplier } from "@/types";
@@ -361,7 +365,7 @@ export default function SupplierDetailPage({
                 {supplier.name}
               </h1>
               <p className="text-sm text-gray-600 dark:text-white/60 mt-1">
-                Created {formatDistanceToNow(createdAt, { addSuffix: true })}
+                <ClientRelativeTime date={createdAt} prefix="Created " />
               </p>
             </div>
           </div>
@@ -447,8 +451,7 @@ export default function SupplierDetailPage({
                       Created:
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {createdAt.toLocaleDateString()}{" "}
-                      {createdAt.toLocaleTimeString()}
+                      <ClientDateTime date={createdAt} />
                     </span>
                   </div>
 
@@ -459,8 +462,7 @@ export default function SupplierDetailPage({
                         Updated:
                       </span>
                       <span className="font-medium text-gray-900 dark:text-white">
-                        {updatedAt.toLocaleDateString()}{" "}
-                        {updatedAt.toLocaleTimeString()}
+                        <ClientDateTime date={updatedAt} />
                       </span>
                     </div>
                   )}
@@ -679,7 +681,7 @@ export default function SupplierDetailPage({
                         <p className="text-sm text-gray-600 dark:text-white/60">
                           Quantity: {order.quantity} × ${order.price.toFixed(2)}{" "}
                           • Date:{" "}
-                          {new Date(order.orderDate).toLocaleDateString()}
+                          <ClientDate date={order.orderDate} />
                         </p>
                       </div>
                       <div className="text-left sm:text-right">

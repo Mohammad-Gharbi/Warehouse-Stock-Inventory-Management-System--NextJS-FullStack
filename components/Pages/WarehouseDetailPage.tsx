@@ -32,8 +32,11 @@ import {
 import { useBackWithRefresh } from "@/hooks/use-back-with-refresh";
 import { useAuth } from "@/contexts";
 import Navbar from "@/components/layouts/Navbar";
-import { PageContentWrapper } from "@/components/shared";
-import { formatDistanceToNow, format } from "date-fns";
+import {
+  ClientDateTime,
+  ClientRelativeTime,
+  PageContentWrapper,
+} from "@/components/shared";
 import WarehouseDialog from "@/components/warehouses/WarehouseDialog";
 import { AlertDialogWrapper } from "@/components/dialogs";
 import type { Warehouse as WarehouseType } from "@/types";
@@ -397,7 +400,7 @@ export default function WarehouseDetailPage({
                 {warehouse.name}
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Created {formatDistanceToNow(createdAt, { addSuffix: true })}
+                <ClientRelativeTime date={createdAt} prefix="Created " />
               </p>
             </div>
           </div>
@@ -571,7 +574,7 @@ export default function WarehouseDetailPage({
                     Created:
                   </span>
                   <span className="font-medium text-gray-900 dark:text-white">
-                    {format(createdAt, "MMM d, yyyy 'at' h:mm a")}
+                    <ClientDateTime date={createdAt} />
                   </span>
                 </div>
 
@@ -582,7 +585,7 @@ export default function WarehouseDetailPage({
                       Updated:
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {formatDistanceToNow(updatedAt, { addSuffix: true })}
+                      <ClientRelativeTime date={updatedAt} />
                     </span>
                   </div>
                 )}

@@ -18,6 +18,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatStableDate } from "@/lib/date/format-stable";
 
 interface Order {
   status: string;
@@ -146,9 +147,9 @@ export default function OrderTrackingInfo({
         </div>
         <p className="text-sm text-gray-600 dark:text-white/70 mt-1.5">
           {order.status === "delivered" && order.deliveredAt
-            ? `Delivered on ${new Date(order.deliveredAt).toLocaleDateString()}`
+            ? `Delivered on ${formatStableDate(order.deliveredAt)}`
             : order.shippedAt
-              ? `Shipped on ${new Date(order.shippedAt).toLocaleDateString()}`
+              ? `Shipped on ${formatStableDate(order.shippedAt)}`
               : "Your package is on its way"}
         </p>
       </div>

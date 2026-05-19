@@ -1,14 +1,7 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 import { SENTRY_TUNNEL_PATH } from "./lib/monitoring/sentry-config";
-
-const securityHeaders = [
-  { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "X-Frame-Options", value: "DENY" },
-  { key: "X-XSS-Protection", value: "1; mode=block" },
-  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Permissions-Policy", value: "camera=(), geolocation=()" },
-];
+import { buildNextProductionHeaderRules } from "./lib/vercel/production-headers";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -41,19 +34,9 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["@/components", "@/lib"],
   },
 
+  // Security + /_next/static immutable cache — see lib/vercel/production-headers.ts
   async headers() {
-    return [
-      {
-        source: "/(.*)",
-        headers: securityHeaders,
-      },
-      {
-        source: "/_next/static/(.*)",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
-        ],
-      },
-    ];
+    return buildNextProductionHeaderRules();
   },
 };
 

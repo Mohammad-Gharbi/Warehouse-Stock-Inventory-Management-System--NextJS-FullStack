@@ -33,8 +33,11 @@ import { useBackWithRefresh } from "@/hooks/use-back-with-refresh";
 import { queryKeys, invalidateAllRelatedQueries } from "@/lib/react-query";
 import { useAuth } from "@/contexts";
 import Navbar from "@/components/layouts/Navbar";
-import { PageContentWrapper } from "@/components/shared";
-import { formatDistanceToNow } from "date-fns";
+import {
+  ClientDateTime,
+  ClientRelativeTime,
+  PageContentWrapper,
+} from "@/components/shared";
 import type { InvoiceStatus } from "@/types";
 import type { Invoice } from "@/types";
 import { cn } from "@/lib/utils";
@@ -491,7 +494,7 @@ export default function InvoiceDetailPage({
                 Invoice {invoice.invoiceNumber}
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Created {formatDistanceToNow(createdAt, { addSuffix: true })}
+                <ClientRelativeTime date={createdAt} prefix="Created " />
               </p>
             </div>
           </div>
@@ -580,8 +583,7 @@ export default function InvoiceDetailPage({
                   Issued:
                 </span>
                 <span className="font-medium text-gray-900 dark:text-white">
-                  {issuedAt.toLocaleDateString()}{" "}
-                  {issuedAt.toLocaleTimeString()}
+                  <ClientDateTime date={issuedAt} />
                 </span>
               </div>
               <div
@@ -611,7 +613,7 @@ export default function InvoiceDetailPage({
                       : "text-gray-900 dark:text-white",
                   )}
                 >
-                  {dueDate.toLocaleDateString()} {dueDate.toLocaleTimeString()}
+                  <ClientDateTime date={dueDate} />
                   {isOverdue && " (Overdue)"}
                 </span>
               </div>
@@ -622,7 +624,7 @@ export default function InvoiceDetailPage({
                     Sent:
                   </span>
                   <span className="font-medium text-gray-900 dark:text-white">
-                    {sentAt.toLocaleDateString()} {sentAt.toLocaleTimeString()}
+                    <ClientDateTime date={sentAt} />
                   </span>
                 </div>
               )}
@@ -633,7 +635,7 @@ export default function InvoiceDetailPage({
                     Paid:
                   </span>
                   <span className="font-medium text-emerald-600 dark:text-emerald-400">
-                    {paidAt.toLocaleDateString()} {paidAt.toLocaleTimeString()}
+                    <ClientDateTime date={paidAt} />
                   </span>
                 </div>
               )}
@@ -644,8 +646,7 @@ export default function InvoiceDetailPage({
                     Cancelled:
                   </span>
                   <span className="font-medium text-gray-900 dark:text-white">
-                    {cancelledAt.toLocaleDateString()}{" "}
-                    {cancelledAt.toLocaleTimeString()}
+                    <ClientDateTime date={cancelledAt} />
                   </span>
                 </div>
               )}

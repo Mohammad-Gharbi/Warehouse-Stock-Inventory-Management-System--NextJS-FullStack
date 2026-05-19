@@ -13,3 +13,13 @@ export { CopyCodeButton } from "./CopyCodeButton";
 export type { CopyCodeButtonProps } from "./CopyCodeButton";
 export { PageContentWrapper } from "./PageContentWrapper";
 export type { PageContentWrapperProps } from "./PageContentWrapper";
+export {
+  ClientRelativeTime,
+  ClientDateTime,
+  ClientDate,
+} from "./ClientDateDisplay";
+export type {
+  ClientRelativeTimeProps,
+  ClientDateTimeProps,
+  ClientDateProps,
+} from "./ClientDateDisplay";

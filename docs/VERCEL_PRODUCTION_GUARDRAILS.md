@@ -2,7 +2,7 @@
 
 ## Why This Exists — Real-World Incident
 
-This project (FreeScribe) **exceeded Vercel free tier limits in production** within a single billing cycle due to bot/crawler traffic and unconstrained resource exposure. Observed overages:
+This project **exceeded Vercel free tier limits in production** within a single billing cycle due to bot/crawler traffic and unconstrained resource exposure. Observed overages:
 
 | Metric                               | Used     | Free Limit | Notes                                                    |
 | ------------------------------------ | -------- | ---------- | -------------------------------------------------------- |
@@ -207,7 +207,7 @@ What to watch:
 
 ## 5) Project-Type Presets
 
-### Static / CSR-only apps (e.g. this project - FreeScribe)
+### Static / CSR-only apps
 
 - Bot Protection: ON
 - AI Bots: ON

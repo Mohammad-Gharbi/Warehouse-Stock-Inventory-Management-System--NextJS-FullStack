@@ -7,7 +7,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
+import { ClientRelativeTime } from "@/components/shared/ClientDateDisplay";
 import {
   Check,
   CheckCheck,
@@ -180,11 +180,6 @@ export function NotificationDropdown({
             {notifications.map((notification) => {
               const Icon = getNotificationIcon(notification.type);
               const iconColor = getNotificationColor(notification.type);
-              const createdAt = new Date(notification.createdAt);
-              const timeAgo = formatDistanceToNow(createdAt, {
-                addSuffix: true,
-              });
-
               return (
                 <div
                   key={notification.id}
@@ -243,7 +238,10 @@ export function NotificationDropdown({
                         </>
                       )}
                       <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                        {timeAgo}
+                        <ClientRelativeTime
+                          date={notification.createdAt}
+                          className="text-xs text-gray-500 dark:text-gray-400"
+                        />
                       </p>
                     </div>
 

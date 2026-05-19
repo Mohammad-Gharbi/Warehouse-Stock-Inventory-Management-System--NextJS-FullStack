@@ -38,9 +38,12 @@ import {
   Truck,
 } from "lucide-react";
 import { useOrder, useUpdateOrder, useDeleteOrder } from "@/hooks/queries";
-import { PageContentWrapper } from "@/components/shared";
+import {
+  ClientDateTime,
+  ClientRelativeTime,
+  PageContentWrapper,
+} from "@/components/shared";
 import { useToast } from "@/hooks/use-toast";
-import { format, formatDistanceToNow } from "date-fns";
 import type { OrderStatus, PaymentStatus } from "@/types";
 import { cn } from "@/lib/utils";
 import { OrderTrackingInfo, ShippingManagement } from "@/components/shipping";
@@ -438,7 +441,7 @@ export default function AdminOrderDetailContent({
               Order {order.orderNumber}
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              Created {formatDistanceToNow(createdAt, { addSuffix: true })}
+              <ClientRelativeTime date={createdAt} prefix="Created " />
             </p>
           </div>
         </div>
@@ -609,8 +612,7 @@ export default function AdminOrderDetailContent({
                   Created:
                 </span>
                 <span className="font-medium text-gray-900 dark:text-white">
-                  {createdAt.toLocaleDateString()}{" "}
-                  {createdAt.toLocaleTimeString()}
+                  <ClientDateTime date={createdAt} />
                 </span>
               </div>
               {updatedAt && (
@@ -620,8 +622,7 @@ export default function AdminOrderDetailContent({
                     Updated:
                   </span>
                   <span className="font-medium text-gray-900 dark:text-white">
-                    {updatedAt.toLocaleDateString()}{" "}
-                    {updatedAt.toLocaleTimeString()}
+                    <ClientDateTime date={updatedAt} />
                   </span>
                 </div>
               )}
