@@ -5,7 +5,11 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, getErrorMessage } from "@/lib/api";
-import { queryKeys, invalidateAllRelatedQueries } from "@/lib/react-query";
+import {
+  queryKeys,
+  invalidateAllRelatedQueries,
+  cancelOrRemoveDetailQuery,
+} from "@/lib/react-query";
 import { useToast } from "@/hooks/use-toast";
 import type {
   SupportTicket,
@@ -161,9 +165,10 @@ export function useDeleteSupportTicket() {
       return response.data;
     },
     onSuccess: (_data, id) => {
-      const detailKey = queryKeys.supportTickets.detail(id);
-      void queryClient.cancelQueries({ queryKey: detailKey });
-      queryClient.removeQueries({ queryKey: detailKey });
+      cancelOrRemoveDetailQuery(
+        queryClient,
+        queryKeys.supportTickets.detail(id),
+      );
       invalidateAllRelatedQueries(queryClient);
       toast({
         title: "Ticket deleted",

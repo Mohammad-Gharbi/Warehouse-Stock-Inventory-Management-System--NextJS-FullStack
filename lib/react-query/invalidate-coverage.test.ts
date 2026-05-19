@@ -352,9 +352,17 @@ describe("delete mutations cancel/remove detail before broad invalidation", () =
   for (const file of deleteHookFiles) {
     it(`${file}`, () => {
       const content = readRepoFile(join("hooks/queries", file));
-      expect(content).toContain("removeQueries");
-      expect(content).toContain("cancelQueries");
+      expect(content).toContain("cancelOrRemoveDetailQuery");
       expect(content).toMatch(/invalidateAllRelatedQueries/);
     });
   }
+});
+
+describe("cancelOrRemoveDetailQuery helper", () => {
+  it("documents observer-safe detail cleanup", () => {
+    const content = readRepoFile("lib/react-query/cancel-or-remove-detail.ts");
+    expect(content).toContain("getObserversCount");
+    expect(content).toContain("cancelQueries");
+    expect(content).toContain("removeQueries");
+  });
 });

@@ -5,7 +5,11 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, getErrorMessage } from "@/lib/api";
-import { queryKeys, invalidateAllRelatedQueries } from "@/lib/react-query";
+import {
+  queryKeys,
+  invalidateAllRelatedQueries,
+  cancelOrRemoveDetailQuery,
+} from "@/lib/react-query";
 import { useToast } from "@/hooks/use-toast";
 import type {
   Invoice,
@@ -195,9 +199,10 @@ export function useDeleteInvoice() {
       await apiClient.invoices.delete(invoiceId);
     },
     onSuccess: (_, invoiceId) => {
-      const detailKey = queryKeys.invoices.detail(invoiceId);
-      void queryClient.cancelQueries({ queryKey: detailKey });
-      queryClient.removeQueries({ queryKey: detailKey });
+      cancelOrRemoveDetailQuery(
+        queryClient,
+        queryKeys.invoices.detail(invoiceId),
+      );
       invalidateAllRelatedQueries(queryClient);
 
       toast({

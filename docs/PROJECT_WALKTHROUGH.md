@@ -35,8 +35,9 @@ flowchart LR
 ```
 
 - **Reads:** query hooks → `lib/api` client → API routes → Prisma
-- **Writes:** mutations → API → on success → `invalidateAllRelatedQueries` so lists/detail/dashboards refresh without full page reload
-- **Prefetch / persistence:** configured in `lib/react-query/` (provider, keys, persister if enabled)
+- **Writes:** mutations → API → Redis invalidation on server → client `invalidateAllRelatedQueries` on success
+- **Deletes:** `cancelOrRemoveDetailQuery` then broad invalidation (no refetch 404 while detail page mounted)
+- **Prefetch / persistence:** `lib/react-query/provider.tsx`, keys in `config.ts`
 
 ## 4. Product delete (implemented)
 
@@ -86,34 +87,45 @@ flowchart LR
 
 Details: `docs/Redis_Sentry_PostHog_INTEGRATION_GUIDE.md`
 
-## 7. Quality gates (audit 2026-05-19)
+## 7. TanStack invalidation (2026-05-19)
+
+| Piece | File |
+|-------|------|
+| Query keys | `lib/react-query/config.ts` |
+| Broad invalidation | `lib/react-query/invalidate-all.ts` — `lists()` for catalog entities; `.all` for invoices, reviews, tickets, history, portal, etc. |
+| Safe delete cleanup | `lib/react-query/cancel-or-remove-detail.ts` — used by all 9 delete hooks |
+| Static audit | `lib/react-query/invalidate-coverage.test.ts` — run `npm run test:invalidate` |
+| Server Redis | `lib/cache/cache-utils.ts` → `invalidateAllServerCaches` / domain helpers on API writes |
+
+**Rules:** new mutation hook → `invalidateAllRelatedQueries` on success (or document exception). New API write → server cache invalidation. New delete hook → `cancelOrRemoveDetailQuery` + broad invalidation.
+
+## 8. Quality gates (audit 2026-05-19)
 
 | Check | Status |
 |-------|--------|
 | `npm run lint` | pass |
 | `npm run build` | pass |
-| `npm run test` | 10 passed |
-| Product delete | on main (883e74f+) |
-| Sentry | on main |
-| Hydration dates | `ClientDateDisplay` on detail pages + notifications |
-| Vercel headers | `lib/vercel/production-headers.ts`; static cache only in `next.config.ts` |
-| TanStack CRUD | `invalidateAllRelatedQueries` in mutation hooks |
+| `npm run test` | 206 passed |
+| `npm run test:invalidate` | ~191 passed |
+| Product delete | soft/hard/409 + no post-delete GET 404 on detail |
+| Sentry | `/api/monitoring` tunnel |
+| Hydration | `ClientDateDisplay`, `format-stable.ts` |
+| Vercel headers | `lib/vercel/production-headers.ts` |
 | Python | N/A |
 
-**Commit next:** product catalog fix (`isSet: false` + cache `v2` keys) — fixes empty product tables on prod.
+**Gaps (OK):** Sentry user context optional; archived SKU unique; export-only `toLocaleDateString`.
 
-**Gaps (OK):** export filters use `toLocaleDateString` (client export only); product QR/review id lookups; archived SKU unique; Sentry `setUserContext` optional.
+**Manual QA:** soft-delete from product detail (1 DELETE, no GET 404); cross-page list refresh without reload.
 
-**Manual QA:** order detail no hydration error; product delete 409/hard/soft.
+## 9. When changing code
 
-## 8. When changing code
+- **New API route:** `successResponse` / `errorResponse`; server cache invalidation on writes
+- **New mutation hook:** `invalidateAllRelatedQueries`; delete → `cancelOrRemoveDetailQuery` first
+- **New API write route:** add to `API_WRITE_ROUTE_INVALIDATION_SPEC` in invalidate-coverage test (or exempt list)
+- **Sentry:** `SENTRY_TUNNEL_PATH` in sync (`sentry-config.ts`, `next.config.ts`)
+- **Env:** update `.env.example` + `CLAUDE.md` + this file
 
-- **New API route:** use `successResponse` / `errorResponse`; 5xx auto-report if using helpers
-- **New mutation hook:** call `invalidateAllRelatedQueries` on success (or document why not)
-- **Sentry:** keep `SENTRY_TUNNEL_PATH` in sync in `sentry-config.ts` and `next.config.ts`
-- **Env:** update `.env.example` + this file + `CLAUDE.md` if adding variables
-
-## 9. Related docs
+## 10. Related docs
 
 - `CLAUDE.md` — condensed agent rules
 - `README.md` — user-facing setup and API list

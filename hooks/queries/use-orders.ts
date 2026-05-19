@@ -5,7 +5,11 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, getErrorMessage } from "@/lib/api";
-import { queryKeys, invalidateAllRelatedQueries } from "@/lib/react-query";
+import {
+  queryKeys,
+  invalidateAllRelatedQueries,
+  cancelOrRemoveDetailQuery,
+} from "@/lib/react-query";
 import { useToast } from "@/hooks/use-toast";
 import type { Order, CreateOrderInput, UpdateOrderInput } from "@/types";
 
@@ -143,9 +147,7 @@ export function useDeleteOrder() {
       return response.data;
     },
     onSuccess: (data: Order) => {
-      const detailKey = queryKeys.orders.detail(data.id);
-      void queryClient.cancelQueries({ queryKey: detailKey });
-      queryClient.removeQueries({ queryKey: detailKey });
+      cancelOrRemoveDetailQuery(queryClient, queryKeys.orders.detail(data.id));
       invalidateAllRelatedQueries(queryClient);
 
       // Show success toast

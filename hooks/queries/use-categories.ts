@@ -5,7 +5,11 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, getErrorMessage } from "@/lib/api";
-import { queryKeys, invalidateAllRelatedQueries } from "@/lib/react-query";
+import {
+  queryKeys,
+  invalidateAllRelatedQueries,
+  cancelOrRemoveDetailQuery,
+} from "@/lib/react-query";
 import { useToast } from "@/hooks/use-toast";
 import type {
   Category,
@@ -131,9 +135,10 @@ export function useDeleteCategory() {
       return { id, name: categoryName };
     },
     onSuccess: (deletedData) => {
-      const detailKey = queryKeys.categories.detail(deletedData.id);
-      void queryClient.cancelQueries({ queryKey: detailKey });
-      queryClient.removeQueries({ queryKey: detailKey });
+      cancelOrRemoveDetailQuery(
+        queryClient,
+        queryKeys.categories.detail(deletedData.id),
+      );
       invalidateAllRelatedQueries(queryClient);
       toast({
         title: "Success",

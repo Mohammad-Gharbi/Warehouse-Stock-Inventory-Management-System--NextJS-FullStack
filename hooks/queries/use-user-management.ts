@@ -4,7 +4,11 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, getErrorMessage } from "@/lib/api";
-import { queryKeys, invalidateAllRelatedQueries } from "@/lib/react-query";
+import {
+  queryKeys,
+  invalidateAllRelatedQueries,
+  cancelOrRemoveDetailQuery,
+} from "@/lib/react-query";
 import { useToast } from "@/hooks/use-toast";
 import type {
   UserForAdmin,
@@ -105,9 +109,10 @@ export function useDeleteUser() {
       return response.data;
     },
     onSuccess: (data: UserForAdmin) => {
-      const detailKey = queryKeys.userManagement.detail(data.id);
-      void queryClient.cancelQueries({ queryKey: detailKey });
-      queryClient.removeQueries({ queryKey: detailKey });
+      cancelOrRemoveDetailQuery(
+        queryClient,
+        queryKeys.userManagement.detail(data.id),
+      );
       invalidateAllRelatedQueries(queryClient);
       toast({
         title: "User deleted",

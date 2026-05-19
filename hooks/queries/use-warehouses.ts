@@ -5,7 +5,11 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, getErrorMessage } from "@/lib/api";
-import { queryKeys, invalidateAllRelatedQueries } from "@/lib/react-query";
+import {
+  queryKeys,
+  invalidateAllRelatedQueries,
+  cancelOrRemoveDetailQuery,
+} from "@/lib/react-query";
 import { useToast } from "@/hooks/use-toast";
 import type {
   Warehouse,
@@ -124,9 +128,10 @@ export function useDeleteWarehouse() {
       return { id, name: warehouseName };
     },
     onSuccess: (deletedData) => {
-      const detailKey = queryKeys.warehouses.detail(deletedData.id);
-      void queryClient.cancelQueries({ queryKey: detailKey });
-      queryClient.removeQueries({ queryKey: detailKey });
+      cancelOrRemoveDetailQuery(
+        queryClient,
+        queryKeys.warehouses.detail(deletedData.id),
+      );
       invalidateAllRelatedQueries(queryClient);
       toast({
         title: "Success",

@@ -6,7 +6,11 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, getErrorMessage, isAxiosError } from "@/lib/api";
-import { queryKeys, invalidateAllRelatedQueries } from "@/lib/react-query";
+import {
+  queryKeys,
+  invalidateAllRelatedQueries,
+  cancelOrRemoveDetailQuery,
+} from "@/lib/react-query";
 import { useToast } from "@/hooks/use-toast";
 import type {
   Product,
@@ -40,7 +44,7 @@ export function useProduct(productId: string) {
       return response.data;
     },
     enabled: !!productId,
-    // Archived/removed products return 404 — do not retry (avoids console noise)
+    // Archived/deleted product: no retry on 404 (cancelOrRemoveDetailQuery avoids refetch when possible)
     retry: (failureCount, error) => {
       if (isAxiosError(error) && error.response?.status === 404) return false;
       return failureCount < 2;
@@ -143,9 +147,8 @@ export function useDeleteProduct() {
     },
     onSuccess: (deletedData) => {
       const detailKey = queryKeys.products.detail(deletedData.id);
-      // Cancel/remove before broad invalidation — archived/hard-deleted detail must not refetch (404)
-      void queryClient.cancelQueries({ queryKey: detailKey });
-      queryClient.removeQueries({ queryKey: detailKey });
+      // Skip removeQueries while detail page mounted — avoids GET 404 after soft-delete
+      cancelOrRemoveDetailQuery(queryClient, detailKey);
       invalidateAllRelatedQueries(queryClient);
       toast({
         title: "Success",
