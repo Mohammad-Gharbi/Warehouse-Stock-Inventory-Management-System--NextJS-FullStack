@@ -40,9 +40,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { clearBodyScrollLock } from "@/lib/utils";
+import { clearBodyScrollLock, cn } from "@/lib/utils";
+import {
+  DialogTableScrollArea,
+  DIALOG_EDGE_SCROLL_BODY,
+  DIALOG_EDGE_SCROLL_HEADER,
+  DIALOG_EDGE_SCROLL_INNER,
+  DIALOG_EDGE_SCROLL_SHELL,
+  DIALOG_FORM_FIELD_SKY,
+  DIALOG_TABLE_FRAME_SKY,
+  DIALOG_TABLE_SECTION,
+} from "@/components/shared";
 import { Category } from "@/types";
 import { createCategoryColumns } from "./CategoryTableColumns";
+
+const CATEGORY_DIALOG_CONTENT_CLASS = `${DIALOG_EDGE_SCROLL_SHELL} poppins border-sky-400/30 dark:border-sky-400/30 shadow-[0_30px_80px_rgba(2,132,199,0.35)] dark:shadow-[0_30px_80px_rgba(2,132,199,0.25)]`;
 
 interface AddCategoryDialogProps {
   children?: React.ReactNode;
@@ -283,8 +295,8 @@ export default function AddCategoryDialog({
           <Button className="h-10 font-semibold">+Add Category</Button>
         )}
       </DialogTrigger>
-      <DialogContent className="p-4 sm:p-7 sm:px-8 poppins max-h-[90vh] overflow-y-auto border-sky-400/30 dark:border-sky-400/30 shadow-[0_30px_80px_rgba(2,132,199,0.35)] dark:shadow-[0_30px_80px_rgba(2,132,199,0.25)]">
-        <DialogHeader>
+      <DialogContent className={CATEGORY_DIALOG_CONTENT_CLASS}>
+        <DialogHeader className={DIALOG_EDGE_SCROLL_HEADER}>
           <DialogTitle className="text-[22px] text-white">
             {editingCategory ? "Edit Category" : "Add Category"}
           </DialogTitle>
@@ -294,6 +306,8 @@ export default function AddCategoryDialog({
               : "Enter the name of the new category"}
           </DialogDescription>
         </DialogHeader>
+        <div className={DIALOG_EDGE_SCROLL_BODY}>
+          <div className={DIALOG_EDGE_SCROLL_INNER}>
         {/* Edit Category Form (shown when editing) */}
         {editingCategory ? (
           <div className="mt-4">
@@ -305,7 +319,7 @@ export default function AddCategoryDialog({
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
                 placeholder="Category Name"
-                className="mt-2 w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-[0_10px_30px_rgba(2,132,199,0.15)]"
+                className={cn("mt-2 w-full", DIALOG_FORM_FIELD_SKY)}
               />
             </div>
             <div className="pb-4">
@@ -318,7 +332,7 @@ export default function AddCategoryDialog({
                 placeholder="Enter category description..."
                 rows={3}
                 maxLength={500}
-                className="mt-2 w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-[0_10px_30px_rgba(2,132,199,0.15)]"
+                className={cn("mt-2 w-full", DIALOG_FORM_FIELD_SKY)}
               />
             </div>
             <div className="pb-4">
@@ -331,24 +345,24 @@ export default function AddCategoryDialog({
                 placeholder="Enter category notes..."
                 rows={3}
                 maxLength={1000}
-                className="mt-2 w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-[0_10px_30px_rgba(2,132,199,0.15)]"
+                className={cn("mt-2 w-full", DIALOG_FORM_FIELD_SKY)}
               />
             </div>
-            <div className="pb-4 flex items-center gap-2">
+            <div className="pb-4 flex items-start gap-2 min-w-0">
               <Checkbox
                 id="edit-category-status"
                 checked={newCategoryStatus}
                 onCheckedChange={(checked) => setNewCategoryStatus(checked === true)}
-                className="border-sky-400/30 data-[state=checked]:bg-sky-500/70"
+                className="mt-0.5 shrink-0 border-sky-400/30 data-[state=checked]:bg-sky-500/70"
               />
               <Label
                 htmlFor="edit-category-status"
-                className="text-sm font-medium text-white/80 cursor-pointer"
+                className="min-w-0 flex-1 text-sm font-medium leading-snug text-white/80 cursor-pointer"
               >
                 Active (Inactive categories will not appear while creating products)
               </Label>
             </div>
-            <DialogFooter className="mt-9 mb-4 flex flex-col sm:flex-row items-center gap-4">
+            <DialogFooter className="mt-9 mb-4 flex w-full min-w-0 flex-col sm:flex-row items-center gap-4">
               <Button
                 onClick={handleCancelEdit}
                 variant="secondary"
@@ -372,7 +386,7 @@ export default function AddCategoryDialog({
                 value={categoryName}
                 onChange={(e) => setCategoryName(e.target.value)}
                 placeholder="New Category"
-                className="mt-4 w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-[0_10px_30px_rgba(2,132,199,0.15)]"
+                className={cn("mt-4 w-full", DIALOG_FORM_FIELD_SKY)}
               />
             </div>
             <div className="pb-4">
@@ -385,7 +399,7 @@ export default function AddCategoryDialog({
                 placeholder="Enter category description..."
                 rows={3}
                 maxLength={500}
-                className="mt-2 w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-[0_10px_30px_rgba(2,132,199,0.15)]"
+                className={cn("mt-2 w-full", DIALOG_FORM_FIELD_SKY)}
               />
             </div>
             <div className="pb-4">
@@ -398,24 +412,24 @@ export default function AddCategoryDialog({
                 placeholder="Enter category notes..."
                 rows={3}
                 maxLength={1000}
-                className="mt-2 w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-[0_10px_30px_rgba(2,132,199,0.15)]"
+                className={cn("mt-2 w-full", DIALOG_FORM_FIELD_SKY)}
               />
             </div>
-            <div className="pb-4 flex items-center gap-2">
+            <div className="pb-4 flex items-start gap-2 min-w-0">
               <Checkbox
                 id="category-status"
                 checked={categoryStatus}
                 onCheckedChange={(checked) => setCategoryStatus(checked === true)}
-                className="border-sky-400/30 data-[state=checked]:bg-sky-500/70"
+                className="mt-0.5 shrink-0 border-sky-400/30 data-[state=checked]:bg-sky-500/70"
               />
               <Label
                 htmlFor="category-status"
-                className="text-sm font-medium text-white/80 cursor-pointer"
+                className="min-w-0 flex-1 text-sm font-medium leading-snug text-white/80 cursor-pointer"
               >
                 Active (Inactive categories will not appear while creating products)
               </Label>
             </div>
-            <DialogFooter className="mt-9 mb-4 flex flex-col sm:flex-row items-center gap-4">
+            <DialogFooter className="mt-9 mb-4 flex w-full min-w-0 flex-col sm:flex-row items-center gap-4">
               <DialogClose asChild>
                 <Button
                   variant={"secondary"}
@@ -435,8 +449,8 @@ export default function AddCategoryDialog({
           </>
         )}
 
-        {/* Categories Table */}
-        <div className="mt-6">
+        {/* Categories Table — x-scroll contained here, not on the dialog shell */}
+        <div className={DIALOG_TABLE_SECTION}>
           <h3 className="text-lg font-semibold mb-4 text-white/90 dark:text-white">
             Categories{" "}
             {categories && categories.length > 0 && (
@@ -445,7 +459,7 @@ export default function AddCategoryDialog({
               </span>
             )}
           </h3>
-          <div className="rounded-md border border-white/10 shadow-[0_30px_80px_rgba(2,132,199,0.35)] dark:shadow-[0_30px_80px_rgba(2,132,199,0.25)] bg-gradient-to-br from-white/20 via-white/15 to-white/10 dark:from-white/5 dark:via-white/5 dark:to-white/5 backdrop-blur-sm">
+          <DialogTableScrollArea frameClassName={DIALOG_TABLE_FRAME_SKY}>
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -519,6 +533,8 @@ export default function AddCategoryDialog({
                 )}
               </TableBody>
             </Table>
+          </DialogTableScrollArea>
+        </div>
           </div>
         </div>
       </DialogContent>

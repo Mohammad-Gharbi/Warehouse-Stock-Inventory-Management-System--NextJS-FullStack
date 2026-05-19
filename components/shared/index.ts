@@ -11,6 +11,23 @@ export { HelpTooltip } from "./HelpTooltip";
 export type { HelpTooltipProps } from "./HelpTooltip";
 export { CopyCodeButton } from "./CopyCodeButton";
 export type { CopyCodeButtonProps } from "./CopyCodeButton";
+export {
+  DIALOG_FORM_FIELD_EMERALD,
+  DIALOG_FORM_FIELD_ROSE,
+  DIALOG_FORM_FIELD_SKY,
+  DIALOG_FORM_FIELD_VIOLET,
+} from "./dialog-form-field";
+export {
+  DIALOG_EDGE_SCROLL_BODY,
+  DIALOG_EDGE_SCROLL_HEADER,
+  DIALOG_EDGE_SCROLL_INNER,
+  DIALOG_EDGE_SCROLL_SHELL,
+  DIALOG_TABLE_FRAME_EMERALD,
+  DIALOG_TABLE_FRAME_SKY,
+  DIALOG_TABLE_SECTION,
+} from "./dialog-edge-scroll";
+export { DialogTableScrollArea } from "./DialogTableScrollArea";
+export type { DialogTableScrollAreaProps } from "./DialogTableScrollArea";
 export { PageContentWrapper } from "./PageContentWrapper";
 export type { PageContentWrapperProps } from "./PageContentWrapper";
 export {

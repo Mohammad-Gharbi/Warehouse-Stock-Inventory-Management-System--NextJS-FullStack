@@ -36,12 +36,25 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { clearBodyScrollLock } from "@/lib/utils";
+import { clearBodyScrollLock, cn } from "@/lib/utils";
+import {
+  DialogTableScrollArea,
+  DIALOG_EDGE_SCROLL_BODY,
+  DIALOG_EDGE_SCROLL_HEADER,
+  DIALOG_EDGE_SCROLL_INNER,
+  DIALOG_EDGE_SCROLL_SHELL,
+  DIALOG_FORM_FIELD_EMERALD,
+  DIALOG_TABLE_FRAME_EMERALD,
+  DIALOG_TABLE_SECTION,
+} from "@/components/shared";
 import { Supplier } from "@/types";
 import { createSupplierColumns } from "./SupplierTableColumns";
+
+const SUPPLIER_DIALOG_CONTENT_CLASS = `${DIALOG_EDGE_SCROLL_SHELL} poppins border-emerald-400/30 dark:border-emerald-400/30 shadow-[0_30px_80px_rgba(16,185,129,0.35)] dark:shadow-[0_30px_80px_rgba(16,185,129,0.25)]`;
 
 interface AddSupplierDialogProps {
   children?: React.ReactNode;
@@ -283,8 +296,8 @@ export default function AddSupplierDialog({
           <Button className="h-10 font-semibold">+Add Supplier</Button>
         )}
       </DialogTrigger>
-      <DialogContent className="p-4 sm:p-7 sm:px-8 poppins max-h-[90vh] overflow-y-auto border-emerald-400/30 dark:border-emerald-400/30 shadow-[0_30px_80px_rgba(16,185,129,0.35)] dark:shadow-[0_30px_80px_rgba(16,185,129,0.25)]">
-        <DialogHeader>
+      <DialogContent className={SUPPLIER_DIALOG_CONTENT_CLASS}>
+        <DialogHeader className={DIALOG_EDGE_SCROLL_HEADER}>
           <DialogTitle className="text-[22px] text-white">
             {editingSupplier ? "Edit Supplier" : "Add Supplier"}
           </DialogTitle>
@@ -294,6 +307,8 @@ export default function AddSupplierDialog({
               : "Enter the name of the new supplier"}
           </DialogDescription>
         </DialogHeader>
+        <div className={DIALOG_EDGE_SCROLL_BODY}>
+          <div className={DIALOG_EDGE_SCROLL_INNER}>
         {/* Conditional rendering for Add/Edit forms */}
         {editingSupplier ? (
           <div className="mt-4">
@@ -305,7 +320,7 @@ export default function AddSupplierDialog({
                 value={newSupplierName}
                 onChange={(e) => setNewSupplierName(e.target.value)}
                 placeholder="Supplier Name"
-                className="mt-2 w-full bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-emerald-400/30 dark:border-white/20 text-white placeholder:text-white/40 focus-visible:border-emerald-400 focus-visible:ring-emerald-500/50 shadow-[0_10px_30px_rgba(16,185,129,0.15)]"
+                className={cn("mt-2 w-full", DIALOG_FORM_FIELD_EMERALD)}
               />
             </div>
             <div className="pb-4">
@@ -318,7 +333,7 @@ export default function AddSupplierDialog({
                 placeholder="Enter supplier description..."
                 rows={3}
                 maxLength={500}
-                className="mt-2 w-full bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-emerald-400/30 dark:border-white/20 text-white placeholder:text-white/40 focus-visible:border-emerald-400 focus-visible:ring-emerald-500/50 shadow-[0_10px_30px_rgba(16,185,129,0.15)]"
+                className={cn("mt-2 w-full", DIALOG_FORM_FIELD_EMERALD)}
               />
             </div>
             <div className="pb-4">
@@ -331,24 +346,24 @@ export default function AddSupplierDialog({
                 placeholder="Enter supplier notes..."
                 rows={3}
                 maxLength={1000}
-                className="mt-2 w-full bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-emerald-400/30 dark:border-white/20 text-white placeholder:text-white/40 focus-visible:border-emerald-400 focus-visible:ring-emerald-500/50 shadow-[0_10px_30px_rgba(16,185,129,0.15)]"
+                className={cn("mt-2 w-full", DIALOG_FORM_FIELD_EMERALD)}
               />
             </div>
-            <div className="pb-4 flex items-center gap-2">
+            <div className="pb-4 flex items-start gap-2 min-w-0">
               <Checkbox
                 id="edit-supplier-status"
                 checked={newSupplierStatus}
                 onCheckedChange={(checked) => setNewSupplierStatus(checked === true)}
-                className="border-emerald-400/30 data-[state=checked]:bg-emerald-500/70"
+                className="mt-0.5 shrink-0 border-emerald-400/30 data-[state=checked]:bg-emerald-500/70"
               />
               <Label
                 htmlFor="edit-supplier-status"
-                className="text-sm font-medium text-white/80 dark:text-white/80 cursor-pointer"
+                className="min-w-0 flex-1 text-sm font-medium leading-snug text-white/80 dark:text-white/80 cursor-pointer"
               >
                 Active (Inactive suppliers will not appear while creating products)
               </Label>
             </div>
-            <DialogFooter className="mt-9 mb-4 flex flex-col sm:flex-row items-center gap-4">
+            <DialogFooter className="mt-9 mb-4 flex w-full min-w-0 flex-col sm:flex-row items-center gap-4">
               <Button
                 onClick={handleCancelEdit}
                 variant="secondary"
@@ -372,7 +387,7 @@ export default function AddSupplierDialog({
                 value={supplierName}
                 onChange={(e) => setSupplierName(e.target.value)}
                 placeholder="New Supplier"
-                className="mt-4 w-full bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-emerald-400/30 dark:border-white/20 text-white placeholder:text-white/40 focus-visible:border-emerald-400 focus-visible:ring-emerald-500/50 shadow-[0_10px_30px_rgba(16,185,129,0.15)]"
+                className={cn("mt-4 w-full", DIALOG_FORM_FIELD_EMERALD)}
               />
             </div>
             <div className="pb-4">
@@ -385,7 +400,7 @@ export default function AddSupplierDialog({
                 placeholder="Enter supplier description..."
                 rows={3}
                 maxLength={500}
-                className="mt-2 w-full bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-emerald-400/30 dark:border-white/20 text-white placeholder:text-white/40 focus-visible:border-emerald-400 focus-visible:ring-emerald-500/50 shadow-[0_10px_30px_rgba(16,185,129,0.15)]"
+                className={cn("mt-2 w-full", DIALOG_FORM_FIELD_EMERALD)}
               />
             </div>
             <div className="pb-4">
@@ -398,24 +413,24 @@ export default function AddSupplierDialog({
                 placeholder="Enter supplier notes..."
                 rows={3}
                 maxLength={1000}
-                className="mt-2 w-full bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-emerald-400/30 dark:border-white/20 text-white placeholder:text-white/40 focus-visible:border-emerald-400 focus-visible:ring-emerald-500/50 shadow-[0_10px_30px_rgba(16,185,129,0.15)]"
+                className={cn("mt-2 w-full", DIALOG_FORM_FIELD_EMERALD)}
               />
             </div>
-            <div className="pb-4 flex items-center gap-2">
+            <div className="pb-4 flex items-start gap-2 min-w-0">
               <Checkbox
                 id="supplier-status"
                 checked={supplierStatus}
                 onCheckedChange={(checked) => setSupplierStatus(checked === true)}
-                className="border-emerald-400/30 data-[state=checked]:bg-emerald-500/70"
+                className="mt-0.5 shrink-0 border-emerald-400/30 data-[state=checked]:bg-emerald-500/70"
               />
               <Label
                 htmlFor="supplier-status"
-                className="text-sm font-medium text-white/80 dark:text-white/80 cursor-pointer"
+                className="min-w-0 flex-1 text-sm font-medium leading-snug text-white/80 dark:text-white/80 cursor-pointer"
               >
                 Active (Inactive suppliers will not appear while creating products)
               </Label>
             </div>
-            <DialogFooter className="mt-9 mb-4 flex flex-col sm:flex-row items-center gap-4">
+            <DialogFooter className="mt-9 mb-4 flex w-full min-w-0 flex-col sm:flex-row items-center gap-4">
               <DialogClose asChild>
                 <Button
                   variant={"secondary"}
@@ -435,8 +450,8 @@ export default function AddSupplierDialog({
           </>
         )}
 
-        {/* Suppliers Table */}
-        <div className="mt-6">
+        {/* Suppliers Table — x-scroll contained here, not on the dialog shell */}
+        <div className={DIALOG_TABLE_SECTION}>
           <h3 className="text-lg font-semibold mb-4 text-white/90 dark:text-white">
             Suppliers{" "}
             {suppliers && suppliers.length > 0 && (
@@ -445,7 +460,7 @@ export default function AddSupplierDialog({
               </span>
             )}
           </h3>
-          <div className="rounded-md border border-white/10 shadow-[0_30px_80px_rgba(16,185,129,0.35)] dark:shadow-[0_30px_80px_rgba(16,185,129,0.25)] bg-gradient-to-br from-white/20 via-white/15 to-white/10 dark:from-white/5 dark:via-white/5 dark:to-white/5 backdrop-blur-sm">
+          <DialogTableScrollArea frameClassName={DIALOG_TABLE_FRAME_EMERALD}>
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -454,7 +469,7 @@ export default function AddSupplierDialog({
                     className="bg-white/40 dark:bg-white/10"
                   >
                     {headerGroup.headers.map((header) => (
-                      <TableCell
+                      <TableHead
                         key={header.id}
                         style={{
                           width: `${header.column.columnDef.size || 100}%`,
@@ -466,7 +481,7 @@ export default function AddSupplierDialog({
                               header.column.columnDef.header,
                               header.getContext()
                             )}
-                      </TableCell>
+                      </TableHead>
                     ))}
                   </TableRow>
                 ))}
@@ -519,6 +534,8 @@ export default function AddSupplierDialog({
                 )}
               </TableBody>
             </Table>
+          </DialogTableScrollArea>
+        </div>
           </div>
         </div>
       </DialogContent>

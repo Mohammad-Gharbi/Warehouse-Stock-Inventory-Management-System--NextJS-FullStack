@@ -4,7 +4,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, getErrorMessage } from "@/lib/api";
-import { invalidateAfterStockChange } from "@/lib/react-query";
+import { invalidateAfterStockChange, queryKeys } from "@/lib/react-query";
 import { useToast } from "@/hooks/use-toast";
 import type {
   StockAllocation,
