@@ -9,6 +9,7 @@ export { QueryProvider } from "./provider";
 export {
   invalidateAllRelatedQueries,
   invalidateAfterOrderGraphChange,
+  invalidateAfterStockChange,
 } from "./invalidate-all";
 export { cancelOrRemoveDetailQuery } from "./cancel-or-remove-detail";
 

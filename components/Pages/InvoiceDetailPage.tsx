@@ -30,7 +30,10 @@ import { Separator } from "@/components/ui/separator";
 import { useQueryClient } from "@tanstack/react-query";
 import { useInvoice, useDeleteInvoice, useSendInvoice } from "@/hooks/queries";
 import { useBackWithRefresh } from "@/hooks/use-back-with-refresh";
-import { queryKeys, invalidateAllRelatedQueries } from "@/lib/react-query";
+import {
+  queryKeys,
+  invalidateAfterOrderGraphChange,
+} from "@/lib/react-query";
 import { useAuth } from "@/contexts";
 import Navbar from "@/components/layouts/Navbar";
 import {
@@ -245,7 +248,7 @@ export default function InvoiceDetailPage({
   const invoiceId = params?.id as string;
   const onBack = backHref
     ? () => {
-        invalidateAllRelatedQueries(queryClient);
+        invalidateAfterOrderGraphChange(queryClient);
         navigateTo(backHref);
       }
     : handleBack;
@@ -270,12 +273,12 @@ export default function InvoiceDetailPage({
       return;
 
     const detailKey = queryKeys.invoices.detail(invoiceId);
-    invalidateAllRelatedQueries(queryClient);
+    invalidateAfterOrderGraphChange(queryClient);
     queryClient.refetchQueries({ queryKey: detailKey });
 
     // Poll: webhook may not have run yet
     const runInvalidations = () => {
-      invalidateAllRelatedQueries(queryClient);
+      invalidateAfterOrderGraphChange(queryClient);
       queryClient.refetchQueries({ queryKey: detailKey });
     };
     const delays = [500, 1500, 3000, 5000, 8000];

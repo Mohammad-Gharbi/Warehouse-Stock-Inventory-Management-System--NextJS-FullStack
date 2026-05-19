@@ -65,3 +65,11 @@ export function invalidateAfterOrderGraphChange(
   queryClient.invalidateQueries({ queryKey: queryKeys.suppliers.all });
   queryClient.invalidateQueries({ queryKey: queryKeys.orders.all });
 }
+
+/**
+ * Stock allocation changes product quantity shown on product detail/list.
+ */
+export function invalidateAfterStockChange(queryClient: QueryClient): void {
+  invalidateAllRelatedQueries(queryClient);
+  queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
+}

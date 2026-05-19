@@ -4,7 +4,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, getErrorMessage } from "@/lib/api";
-import { queryKeys, invalidateAllRelatedQueries } from "@/lib/react-query";
+import { invalidateAfterStockChange } from "@/lib/react-query";
 import { useToast } from "@/hooks/use-toast";
 import type {
   StockAllocation,
@@ -66,7 +66,7 @@ export function useCreateStockAllocation() {
       return response.data;
     },
     onSuccess: (data: StockAllocation) => {
-      invalidateAllRelatedQueries(queryClient);
+      invalidateAfterStockChange(queryClient);
       toast({
         title: "Stock allocation saved",
         description: `Stock allocated to ${data.warehouse?.name ?? "warehouse"}.`,

@@ -150,7 +150,8 @@ function hasMutationInvalidation(fileName: string, content: string): boolean {
   }
   return (
     content.includes("invalidateAllRelatedQueries") ||
-    content.includes("invalidateAfterOrderGraphChange")
+    content.includes("invalidateAfterOrderGraphChange") ||
+    content.includes("invalidateAfterStockChange")
   );
 }
 
@@ -283,8 +284,9 @@ describe("invalidateAllRelatedQueries registry", () => {
 });
 
 describe("hooks/use-back-with-refresh", () => {
-  it("calls invalidateAllRelatedQueries before navigate", () => {
+  it("order/invoice back uses invalidateAfterOrderGraphChange", () => {
     const content = readRepoFile("hooks/use-back-with-refresh.ts");
+    expect(content).toContain("invalidateAfterOrderGraphChange");
     expect(content).toContain("invalidateAllRelatedQueries");
   });
 });
@@ -376,9 +378,36 @@ describe("invalidateAfterOrderGraphChange", () => {
     expect(content).toContain("queryKeys.orders.all");
   });
 
-  it("use-orders.ts calls invalidateAfterOrderGraphChange", () => {
-    const content = readRepoFile("hooks/queries/use-orders.ts");
-    expect(content).toContain("invalidateAfterOrderGraphChange");
+  const orderGraphHooks = [
+    "use-orders.ts",
+    "use-invoices.ts",
+    "use-shipping.ts",
+    "use-payments.ts",
+  ];
+  for (const file of orderGraphHooks) {
+    it(`${file} calls invalidateAfterOrderGraphChange`, () => {
+      const content = readRepoFile(join("hooks/queries", file));
+      expect(content).toContain("invalidateAfterOrderGraphChange");
+    });
+  }
+
+  const orderGraphPages = [
+    "components/Pages/OrderDetailPage.tsx",
+    "components/Pages/InvoiceDetailPage.tsx",
+  ];
+  for (const rel of orderGraphPages) {
+    it(`${rel} uses invalidateAfterOrderGraphChange for payment/back refresh`, () => {
+      const content = readRepoFile(rel);
+      expect(content).toContain("invalidateAfterOrderGraphChange");
+      expect(content).not.toMatch(/invalidateAllRelatedQueries\s*\(/);
+    });
+  }
+});
+
+describe("invalidateAfterStockChange", () => {
+  it("use-stock-allocation.ts refreshes product detail quantity", () => {
+    const content = readRepoFile("hooks/queries/use-stock-allocation.ts");
+    expect(content).toContain("invalidateAfterStockChange");
   });
 });
 

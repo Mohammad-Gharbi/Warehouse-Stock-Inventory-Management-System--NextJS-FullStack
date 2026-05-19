@@ -25,7 +25,10 @@ import { Separator } from "@/components/ui/separator";
 import { useQueryClient } from "@tanstack/react-query";
 import { useOrder, useDeleteOrder } from "@/hooks/queries";
 import { useBackWithRefresh } from "@/hooks/use-back-with-refresh";
-import { queryKeys, invalidateAllRelatedQueries } from "@/lib/react-query";
+import {
+  queryKeys,
+  invalidateAfterOrderGraphChange,
+} from "@/lib/react-query";
 import { useAuth } from "@/contexts";
 import Navbar from "@/components/layouts/Navbar";
 import {
@@ -257,14 +260,13 @@ export default function OrderDetailPage() {
       return;
 
     const detailKey = queryKeys.orders.detail(orderId);
-    // Invalidate all and immediately refetch order detail (don't wait for poll)
-    invalidateAllRelatedQueries(queryClient);
+    // Refetch order detail + product/category pages that embed order status (recentOrders)
+    invalidateAfterOrderGraphChange(queryClient);
     queryClient.refetchQueries({ queryKey: detailKey });
 
     // Poll: webhook may not have run yet when user lands. Retry at 0.5s, 1.5s, 3s, 5s, 8s
-    // Also invalidate products/portal/orders so Products page, Client page, etc. refetch fresh data
     const runInvalidations = () => {
-      invalidateAllRelatedQueries(queryClient);
+      invalidateAfterOrderGraphChange(queryClient);
       queryClient.refetchQueries({ queryKey: detailKey });
     };
     const delays = [500, 1500, 3000, 5000, 8000];
