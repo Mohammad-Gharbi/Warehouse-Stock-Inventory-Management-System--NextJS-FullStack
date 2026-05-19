@@ -6,6 +6,9 @@
 
 export { createQueryClient, queryKeys } from "./config";
 export { QueryProvider } from "./provider";
-export { invalidateAllRelatedQueries } from "./invalidate-all";
+export {
+  invalidateAllRelatedQueries,
+  invalidateAfterOrderGraphChange,
+} from "./invalidate-all";
 export { cancelOrRemoveDetailQuery } from "./cancel-or-remove-detail";
 

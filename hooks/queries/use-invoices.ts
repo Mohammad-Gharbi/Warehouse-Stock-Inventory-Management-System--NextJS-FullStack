@@ -7,7 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, getErrorMessage } from "@/lib/api";
 import {
   queryKeys,
-  invalidateAllRelatedQueries,
+  invalidateAfterOrderGraphChange,
   cancelOrRemoveDetailQuery,
 } from "@/lib/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -82,7 +82,7 @@ export function useCreateInvoice() {
         data,
       );
 
-      invalidateAllRelatedQueries(queryClient);
+      invalidateAfterOrderGraphChange(queryClient);
 
       toast({
         title: "Invoice Created!",
@@ -176,7 +176,7 @@ export function useUpdateInvoice() {
       });
     },
     onSettled: () => {
-      invalidateAllRelatedQueries(queryClient);
+      invalidateAfterOrderGraphChange(queryClient);
     },
     onSuccess: (data) => {
       toast({
@@ -203,7 +203,7 @@ export function useDeleteInvoice() {
         queryClient,
         queryKeys.invoices.detail(invoiceId),
       );
-      invalidateAllRelatedQueries(queryClient);
+      invalidateAfterOrderGraphChange(queryClient);
 
       toast({
         title: "Invoice Deleted!",
@@ -245,7 +245,7 @@ export function useSendInvoice() {
         data.invoice,
       );
 
-      invalidateAllRelatedQueries(queryClient);
+      invalidateAfterOrderGraphChange(queryClient);
 
       toast({
         title: "Invoice Sent!",

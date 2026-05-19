@@ -4,7 +4,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient, getErrorMessage } from "@/lib/api";
-import { invalidateAllRelatedQueries } from "@/lib/react-query";
+import { invalidateAfterOrderGraphChange } from "@/lib/react-query";
 import { useToast } from "@/hooks/use-toast";
 import type {
   GenerateLabelInput,
@@ -50,7 +50,7 @@ export function useGenerateShippingLabel() {
       return response.data;
     },
     onSuccess: (data: GenerateLabelResponse) => {
-      invalidateAllRelatedQueries(queryClient);
+      invalidateAfterOrderGraphChange(queryClient);
 
       toast({
         title: "Label Generated",
@@ -83,7 +83,7 @@ export function useAddTrackingNumber() {
       return response.data;
     },
     onSuccess: (data: GenerateLabelResponse) => {
-      invalidateAllRelatedQueries(queryClient);
+      invalidateAfterOrderGraphChange(queryClient);
 
       toast({
         title: "Tracking Added",

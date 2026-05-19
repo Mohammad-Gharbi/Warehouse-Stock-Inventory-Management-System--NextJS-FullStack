@@ -50,3 +50,18 @@ export function invalidateAllRelatedQueries(queryClient: QueryClient): void {
   queryClient.invalidateQueries({ queryKey: queryKeys.user.all });
   queryClient.invalidateQueries({ queryKey: queryKeys.auth.all });
 }
+
+/**
+ * Order / payment / shipping / invoice changes affect nested order rows on
+ * product, category, and supplier detail payloads (recentOrders.orderStatus).
+ * Broad invalidation uses *.lists() for catalog entities — detail queries stay stale without this.
+ */
+export function invalidateAfterOrderGraphChange(
+  queryClient: QueryClient,
+): void {
+  invalidateAllRelatedQueries(queryClient);
+  queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
+  queryClient.invalidateQueries({ queryKey: queryKeys.categories.all });
+  queryClient.invalidateQueries({ queryKey: queryKeys.suppliers.all });
+  queryClient.invalidateQueries({ queryKey: queryKeys.orders.all });
+}

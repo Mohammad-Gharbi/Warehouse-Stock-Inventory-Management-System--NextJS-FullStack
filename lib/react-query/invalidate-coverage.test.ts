@@ -148,7 +148,10 @@ function hasMutationInvalidation(fileName: string, content: string): boolean {
       (content.includes("onSuccess") || content.includes("onSettled"))
     );
   }
-  return content.includes("invalidateAllRelatedQueries");
+  return (
+    content.includes("invalidateAllRelatedQueries") ||
+    content.includes("invalidateAfterOrderGraphChange")
+  );
 }
 
 function hasServerInvalidation(content: string): boolean {
@@ -258,10 +261,14 @@ describe("invalidateAllRelatedQueries registry", () => {
   });
 
   it("uses lists() for catalog entities with list+detail only", () => {
+    const broadOnly = content.slice(
+      0,
+      content.indexOf("export function invalidateAfterOrderGraphChange"),
+    );
     for (const key of DOMAIN_KEYS_REQUIRE_LISTS) {
-      expect(content).toContain(key);
+      expect(broadOnly).toContain(key);
     }
-    expect(content).not.toMatch(/queryKeys\.products\.all[^.]/);
+    expect(broadOnly).not.toMatch(/queryKeys\.products\.all[^.]/);
   });
 
   it("uses .all for domains with extra sub-query keys", () => {
@@ -353,9 +360,26 @@ describe("delete mutations cancel/remove detail before broad invalidation", () =
     it(`${file}`, () => {
       const content = readRepoFile(join("hooks/queries", file));
       expect(content).toContain("cancelOrRemoveDetailQuery");
-      expect(content).toMatch(/invalidateAllRelatedQueries/);
+      expect(
+        content.includes("invalidateAllRelatedQueries") ||
+          content.includes("invalidateAfterOrderGraphChange"),
+      ).toBe(true);
     });
   }
+});
+
+describe("invalidateAfterOrderGraphChange", () => {
+  it("refreshes catalog detail queries that embed order rows", () => {
+    const content = readRepoFile("lib/react-query/invalidate-all.ts");
+    expect(content).toContain("invalidateAfterOrderGraphChange");
+    expect(content).toContain("queryKeys.products.all");
+    expect(content).toContain("queryKeys.orders.all");
+  });
+
+  it("use-orders.ts calls invalidateAfterOrderGraphChange", () => {
+    const content = readRepoFile("hooks/queries/use-orders.ts");
+    expect(content).toContain("invalidateAfterOrderGraphChange");
+  });
 });
 
 describe("cancelOrRemoveDetailQuery helper", () => {

@@ -6,7 +6,10 @@
 
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { invalidateAllRelatedQueries } from "@/lib/react-query";
+import {
+  invalidateAllRelatedQueries,
+  invalidateAfterOrderGraphChange,
+} from "@/lib/react-query";
 
 type EntityType =
   | "order"
@@ -18,8 +21,13 @@ type EntityType =
 
 function runInvalidations(
   queryClient: ReturnType<typeof import("@tanstack/react-query").useQueryClient>,
-  _entity: EntityType
+  entity: EntityType,
 ) {
+  // Order/invoice flows embed order status on product/category/supplier detail APIs
+  if (entity === "order" || entity === "invoice") {
+    invalidateAfterOrderGraphChange(queryClient);
+    return;
+  }
   invalidateAllRelatedQueries(queryClient);
 }
 

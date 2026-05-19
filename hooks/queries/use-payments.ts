@@ -5,7 +5,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient, getErrorMessage } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { invalidateAllRelatedQueries } from "@/lib/react-query";
+import { invalidateAfterOrderGraphChange } from "@/lib/react-query";
 import type { CreateCheckoutInput, CheckoutSessionResponse } from "@/types";
 
 /**
@@ -24,7 +24,7 @@ export function useCreateCheckout() {
     },
     onSuccess: (data: CheckoutSessionResponse) => {
       // Invalidate so when user returns from Stripe, all data refetches immediately
-      invalidateAllRelatedQueries(queryClient);
+      invalidateAfterOrderGraphChange(queryClient);
       // Redirect to Stripe Checkout URL
       if (data.url) {
         window.location.href = data.url;

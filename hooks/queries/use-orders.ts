@@ -7,7 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, getErrorMessage } from "@/lib/api";
 import {
   queryKeys,
-  invalidateAllRelatedQueries,
+  invalidateAfterOrderGraphChange,
   cancelOrRemoveDetailQuery,
 } from "@/lib/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -72,7 +72,7 @@ export function useCreateOrder() {
       return response.data;
     },
     onSuccess: (data: Order) => {
-      invalidateAllRelatedQueries(queryClient);
+      invalidateAfterOrderGraphChange(queryClient);
 
       // Show success toast
       toast({
@@ -113,7 +113,7 @@ export function useUpdateOrder() {
     },
     onSuccess: (data: Order) => {
       queryClient.setQueryData<Order>(queryKeys.orders.detail(data.id), data);
-      invalidateAllRelatedQueries(queryClient);
+      invalidateAfterOrderGraphChange(queryClient);
 
       // Show success toast
       toast({
@@ -148,7 +148,7 @@ export function useDeleteOrder() {
     },
     onSuccess: (data: Order) => {
       cancelOrRemoveDetailQuery(queryClient, queryKeys.orders.detail(data.id));
-      invalidateAllRelatedQueries(queryClient);
+      invalidateAfterOrderGraphChange(queryClient);
 
       // Show success toast
       toast({
