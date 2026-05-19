@@ -3,7 +3,8 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { logger } from "@/lib/logger";
-import { captureException } from "@/lib/monitoring/sentry";
+import * as Sentry from "@sentry/nextjs";
+import { isSentryConfigured } from "@/lib/monitoring/sentry";
 
 interface Props {
   children: ReactNode;
@@ -44,11 +45,14 @@ export class ErrorBoundary extends Component<Props, State> {
       componentStack: errorInfo.componentStack,
     });
 
-    // Send to Sentry if configured (logger already handles this in production, but explicit here for clarity)
-    captureException(error, {
-      componentStack: errorInfo.componentStack,
-      errorBoundary: true,
-    });
+    if (isSentryConfigured()) {
+      Sentry.captureException(error, {
+        contexts: {
+          react: { componentStack: errorInfo.componentStack },
+          custom: { errorBoundary: true },
+        },
+      });
+    }
 
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);

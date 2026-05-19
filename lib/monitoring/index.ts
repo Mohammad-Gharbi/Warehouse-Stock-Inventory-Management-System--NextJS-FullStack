@@ -4,6 +4,7 @@
  */
 
 export * from "./sentry";
+export * from "./sentry-config";
 export * from "./sentry-types";
 export * from "./performance";
 export * from "./system-metrics";

@@ -1,58 +1,57 @@
 /**
- * Next.js Instrumentation Hook
- * Required for Sentry to work properly with Next.js App Router
- * This file is automatically loaded by Next.js
- * Also initializes Redis connection at startup
+ * Next.js instrumentation: Sentry (node + edge) and app services (Redis, QStash).
  */
 
+import * as Sentry from "@sentry/nextjs";
+
 export async function register() {
-  // Only run on server-side
-  if (typeof window === "undefined") {
-    // Import Sentry server config
-    // This will initialize Sentry on the server
+  if (process.env.NEXT_RUNTIME === "nodejs") {
     try {
       await import("./sentry.server.config");
     } catch {
-      // Sentry not configured, silently continue
+      // Sentry optional when DSN missing
     }
 
-    // Initialize Redis connection and log status
     try {
       const { initializeRedis } = await import("@/lib/cache/redis");
       initializeRedis();
 
-      // Initialize uptime tracking in Redis
       const { getRedis, isRedisConfigured } = await import("@/lib/cache/redis");
       if (isRedisConfigured()) {
         const redis = getRedis();
         if (redis) {
-          // Set start time if not already set (non-blocking)
           redis
             .exists("app:start_time")
             .then((exists) => {
               if (!exists) {
                 redis
                   .set("app:start_time", new Date().toISOString())
-                  .catch(() => {
-                    // Non-critical, silently fail
-                  });
+                  .catch(() => {});
               }
             })
-            .catch(() => {
-              // Non-critical, silently fail
-            });
+            .catch(() => {});
         }
       }
     } catch {
-      // Redis initialization failed, gracefully continue
+      // Redis optional
     }
 
-    // Initialize QStash connection and log status
     try {
       const { initializeQStash } = await import("@/lib/queue/qstash");
       initializeQStash();
     } catch {
-      // QStash initialization failed, gracefully continue
+      // QStash optional
+    }
+  }
+
+  if (process.env.NEXT_RUNTIME === "edge") {
+    try {
+      await import("./sentry.edge.config");
+    } catch {
+      // Sentry optional when DSN missing
     }
   }
 }
+
+/** App Router: report unhandled request errors to Sentry */
+export const onRequestError = Sentry.captureRequestError;

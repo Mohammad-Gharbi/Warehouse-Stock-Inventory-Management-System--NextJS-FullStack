@@ -181,14 +181,16 @@ export function NotificationDropdown({
               const Icon = getNotificationIcon(notification.type);
               const iconColor = getNotificationColor(notification.type);
               const createdAt = new Date(notification.createdAt);
-              const timeAgo = formatDistanceToNow(createdAt, { addSuffix: true });
+              const timeAgo = formatDistanceToNow(createdAt, {
+                addSuffix: true,
+              });
 
               return (
                 <div
                   key={notification.id}
                   className={cn(
                     "p-4 hover:bg-rose-50/50 dark:hover:bg-white/5 transition-colors",
-                    !notification.read && "bg-rose-50/30 dark:bg-rose-500/5"
+                    !notification.read && "bg-rose-50/30 dark:bg-rose-500/5",
                   )}
                 >
                   <div className="flex items-start gap-3">
@@ -199,7 +201,7 @@ export function NotificationDropdown({
                         iconColor,
                         !notification.read
                           ? "bg-rose-100 dark:bg-rose-500/20"
-                          : "bg-gray-100 dark:bg-gray-700"
+                          : "bg-gray-100 dark:bg-gray-700",
                       )}
                     >
                       <Icon className="h-4 w-4" />
@@ -216,7 +218,7 @@ export function NotificationDropdown({
                           <p
                             className={cn(
                               "text-sm font-medium text-gray-900 dark:text-white mb-1",
-                              !notification.read && "font-semibold"
+                              !notification.read && "font-semibold",
                             )}
                           >
                             {notification.title}
@@ -230,7 +232,7 @@ export function NotificationDropdown({
                           <p
                             className={cn(
                               "text-sm font-medium text-gray-900 dark:text-white mb-1",
-                              !notification.read && "font-semibold"
+                              !notification.read && "font-semibold",
                             )}
                           >
                             {notification.title}

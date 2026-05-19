@@ -1,4 +1,6 @@
+import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
+import { SENTRY_TUNNEL_PATH } from "./lib/monitoring/sentry-config";
 
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -53,10 +55,19 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-
-  ...(process.env.SENTRY_DSN &&
-    {
-    }),
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG ?? "arnob-mahmuds-org",
+  project: process.env.SENTRY_PROJECT ?? "stock-inventory",
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  // First-party tunnel — must match `tunnel` in instrumentation-client.ts (SENTRY_TUNNEL_PATH)
+  tunnelRoute: SENTRY_TUNNEL_PATH,
+  webpack: {
+    automaticVercelMonitors: true,
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
+});
