@@ -109,7 +109,7 @@ Details: `docs/Redis_Sentry_PostHog_INTEGRATION_GUIDE.md`
 | Page-size UI | `components/shared/PaginationSelector.tsx`, `pagination-select-styles.ts` |
 | Consumers | All `*Table.tsx` footers (`variant` + `enabled={!isLoading}`) |
 
-Prevents `NotFoundError: removeChild` when App Router navigates between pages while a Radix `SelectPortal` is active (Sentry: `/orders` after `/products`).
+Prevents `NotFoundError: removeChild` when App Router navigates between pages while a Radix `SelectPortal` is active (Sentry: `/orders` after `/products`). Rows-per-page change resets `pageIndex` to 0 (avoids empty table when page count shrinks).
 
 ## 7c. QStash email queue (2026-05-19)
 

@@ -3,6 +3,7 @@
 /**
  * Shared "Rows per page" Radix Select for data tables.
  * Uses useDeferredRadixSelect so portals tear down safely on App Router navigation.
+ * Changing page size resets pageIndex to 0 so TanStack tables never stay on an out-of-range page.
  */
 
 import {
@@ -65,12 +66,16 @@ export default function PaginationSelector({
     <Select
       key={selectRemountKey}
       value={pagination.pageSize.toString()}
-      onValueChange={(value) =>
-        setPagination((prev) => ({
-          ...prev,
-          pageSize: Number(value),
-        }))
-      }
+      onValueChange={(value) => {
+        const pageSize = Number(value);
+        setPagination((prev) => {
+          if (prev.pageSize === pageSize) return prev;
+          return {
+            pageIndex: 0,
+            pageSize,
+          };
+        });
+      }}
     >
       <SelectTrigger className={styles.trigger}>
         <SelectValue placeholder={pagination.pageSize.toString()} />
