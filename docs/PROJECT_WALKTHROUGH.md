@@ -1,6 +1,6 @@
 # PROJECT_WALKTHROUGH.md
 
-Agent-oriented map of **stock-inventory** (Stockly). Last updated: 2026-05-19 (pre-commit audit re-run).
+Agent-oriented map of **stock-inventory** (Stockly). Last updated: 2026-05-24.
 
 ## 1. What this app is
 
@@ -73,6 +73,8 @@ flowchart LR
 
 **User context:** `contexts/auth-context.tsx` calls `syncSentryUserFromAuth` on session (id, email, role tag).
 
+**Browser Translate noise:** `isBrowserTranslationRemoveChildError` + `scrubSentryEvent` drop `removeChild` when `translated-ltr`/`rtl` (Chrome Translate + React). Real portal bugs without translation still report. Optional `NEXT_PUBLIC_DISABLE_BROWSER_TRANSLATE=true` → `translate="no"` on `<html>` (`app/layout.tsx`); unset = forks/users may translate. Tests: `lib/monitoring/sentry-config.test.ts`.
+
 **Wizard artifacts:** `.env.sentry-build-plugin` (gitignored) for local source map upload; `sentry.client.config.ts` is compatibility stub only.
 
 ## 6. Other optional integrations
@@ -128,25 +130,21 @@ flowchart LR
 - **Security:** `Receiver.verify` with `QSTASH_CURRENT_SIGNING_KEY` / `QSTASH_NEXT_SIGNING_KEY`
 - **Retries:** webhook 500 on send failure → QStash retries; direct fallback in `queueEmailNotification` still logs-only on error
 
-## 8. Quality gates (audit 2026-05-19, re-verified)
+## 8. Quality gates (audit 2026-05-24)
 
 | Check | Status |
 |-------|--------|
 | `npm run lint` | pass |
 | `npm run build` | pass |
-| `npm run test` | 217 passed |
+| `npm run test` | 220 passed |
 | `npm run test:invalidate` | 200 passed |
-| Product delete | soft/hard/409 + no post-delete GET 404 on detail |
-| QStash email webhook | single body read + Receiver + tests in `qstash-webhook.test.ts` |
-| Radix table Select | `useDeferredRadixSelect` + shared `PaginationSelector` on all tables |
-| Sentry | `/api/monitoring` tunnel |
-| Hydration | `ClientDateDisplay`, `format-stable.ts` |
-| Vercel headers | `lib/vercel/production-headers.ts` |
+| Radix table Select | `useDeferredRadixSelect` + `PaginationSelector` (11 tables) |
+| Pagination clamp + page-size reset | `useClampPaginationIndex` + `PaginationSelector` pageIndex 0 |
+| Sentry | tunnel + translate scrub + `syncSentryUserFromAuth` |
+| Browser translate | default allows Translate; optional env blocks |
 | Python | N/A |
 
-**Gaps (OK):** Sentry user context optional; archived SKU unique; export-only `toLocaleDateString`; optional `use-deferred-radix-select.test.ts`.
-
-**Pending commit:** Radix table Select refactor (hook + `PaginationSelector` + 11 tables + `OrderList` static import) — lint/test/build/invalidate all pass locally.
+**Gaps (OK):** optional deferred-select unit test; i18n not implemented (README documents Translate caveat).
 
 **Manual QA:** soft-delete from product detail (1 DELETE, no GET 404); cross-page list refresh without reload; prod email queue after deploy (no Sentry body-read error); `/products` → `/orders` (no removeChild).
 

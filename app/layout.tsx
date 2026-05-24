@@ -108,6 +108,10 @@ export const metadata = {
   },
 };
 
+/** Optional: set NEXT_PUBLIC_DISABLE_BROWSER_TRANSLATE=true on Vercel prod only (blocks Chrome Translate). */
+const disableBrowserTranslate =
+  process.env.NEXT_PUBLIC_DISABLE_BROWSER_TRANSLATE === "true";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -116,6 +120,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      {...(disableBrowserTranslate ? { translate: "no" as const } : {})}
       suppressHydrationWarning
       style={{ overscrollBehavior: "none" }}
       data-scroll-behavior="smooth"

@@ -22,11 +22,56 @@ export function getTracesSampleRate(): number {
   return process.env.NODE_ENV === "production" ? 0.1 : 1;
 }
 
-/** Strip auth/cookies before events leave the app */
+/**
+ * Chrome/Edge "Translate this page" mutates the DOM; React then throws NotFoundError on removeChild.
+ * Drop only when translation is indicated so real Radix portal bugs still reach Sentry.
+ */
+export function isBrowserTranslationRemoveChildError(
+  event: ErrorEvent,
+): boolean {
+  const values = event.exception?.values ?? [];
+  const isRemoveChild = values.some(
+    (v) =>
+      (v.type === "NotFoundError" ||
+        (typeof v.value === "string" && v.value.includes("NotFoundError"))) &&
+      typeof v.value === "string" &&
+      v.value.includes("removeChild") &&
+      v.value.includes("not a child"),
+  );
+  if (!isRemoveChild) {
+    return false;
+  }
+
+  if (typeof document !== "undefined") {
+    const root = document.documentElement;
+    if (
+      root.classList.contains("translated-ltr") ||
+      root.classList.contains("translated-rtl")
+    ) {
+      return true;
+    }
+  }
+
+  const serialized = JSON.stringify({
+    breadcrumbs: event.breadcrumbs,
+    contexts: event.contexts,
+    extra: event.extra,
+  });
+  return (
+    serialized.includes("translated-ltr") ||
+    serialized.includes("translated-rtl")
+  );
+}
+
+/** Strip auth/cookies before events leave the app; drop known browser-translation DOM noise */
 export function scrubSentryEvent(
   event: ErrorEvent,
   _hint?: EventHint,
 ): ErrorEvent | null {
+  if (isBrowserTranslationRemoveChildError(event)) {
+    return null;
+  }
+
   if (event.request) {
     delete event.request.headers?.authorization;
     delete event.request.headers?.cookie;

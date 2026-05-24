@@ -252,6 +252,7 @@ NEXT_PUBLIC_API_URL="http://localhost:3000"
 # --- Sentry (error monitoring) - https://sentry.io ---
 # SENTRY_DSN=
 # NEXT_PUBLIC_SENTRY_DSN=
+# NEXT_PUBLIC_DISABLE_BROWSER_TRANSLATE=false  # optional prod-only; see "Browser translation" below
 
 # --- Upstash Redis (caching, rate limit) - https://upstash.com ---
 # UPSTASH_REDIS_URL=
@@ -308,6 +309,14 @@ Or copy the project’s `.env.example` to `.env` and leave the optional variable
 - **Upstash Redis / QStash:** [upstash.com](https://upstash.com)
 - **Sentry:** [sentry.io](https://sentry.io)
 - **OpenRouter:** [openrouter.ai](https://openrouter.ai)
+
+### Browser translation (Chrome / Edge)
+
+The UI is **English**. Contributors worldwide may use the browser **“Translate this page”** feature; that mutates the DOM and can trigger React `removeChild` errors (caught by ErrorBoundary). This is a known browser + React limitation, not bad inventory logic.
+
+- **QA:** Prefer Incognito with extensions off and **do not** translate the page when testing navigation or tables.
+- **Sentry:** `scrubSentryEvent` drops `removeChild` events when translation is detected (`translated-ltr` / `translated-rtl`).
+- **Optional prod hardening:** Set `NEXT_PUBLIC_DISABLE_BROWSER_TRANSLATE=true` on your deployment only (adds `translate="no"` on `<html>`; forks stay translatable by default).
 
 ---
 
