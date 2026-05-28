@@ -46,6 +46,7 @@ import {
   useProducts,
   useClientBrowseProducts,
 } from "@/hooks/queries";
+import { DeferredSelectGate } from "@/components/shared";
 import {
   createOrderSchema,
   updateOrderSchema,
@@ -698,34 +699,58 @@ export default function OrderDialog({
                   <label className="text-sm font-medium text-white/80">
                     Order Status
                   </label>
-                  <Select
-                    value={
-                      editFormMethods.watch("status") || editingOrder.status
-                    }
-                    onValueChange={(value) =>
-                      editFormMethods.setValue("status", value as OrderStatus)
+                  <DeferredSelectGate
+                    enabled={open}
+                    placeholder={
+                      <div
+                        className="flex h-11 w-full items-center rounded-md border border-violet-400/30 bg-white/10 px-3 text-sm text-white/60"
+                        aria-hidden
+                      >
+                        {orderStatusOptions.find(
+                          (o) =>
+                            o.value ===
+                            (editFormMethods.watch("status") ||
+                              editingOrder.status),
+                        )?.label ?? "Select Status"}
+                      </div>
                     }
                   >
-                    <SelectTrigger className="h-11 w-full border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]">
-                      <SelectValue placeholder="Select Status" />
-                    </SelectTrigger>
-                    <SelectContent
-                      className="border-violet-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
-                      position="popper"
-                      sideOffset={5}
-                      align="start"
-                    >
-                      {orderStatusOptions.map((option) => (
-                        <SelectItem
-                          key={option.value}
-                          value={option.value}
-                          className="cursor-pointer text-gray-900 dark:text-white focus:bg-violet-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                    {({ selectRemountKey }) => (
+                      <Select
+                        key={selectRemountKey}
+                        value={
+                          editFormMethods.watch("status") ||
+                          editingOrder.status
+                        }
+                        onValueChange={(value) =>
+                          editFormMethods.setValue(
+                            "status",
+                            value as OrderStatus,
+                          )
+                        }
+                      >
+                        <SelectTrigger className="h-11 w-full border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]">
+                          <SelectValue placeholder="Select Status" />
+                        </SelectTrigger>
+                        <SelectContent
+                          className="border-violet-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
+                          position="popper"
+                          sideOffset={5}
+                          align="start"
                         >
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                          {orderStatusOptions.map((option) => (
+                            <SelectItem
+                              key={option.value}
+                              value={option.value}
+                              className="cursor-pointer text-gray-900 dark:text-white focus:bg-violet-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                            >
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </DeferredSelectGate>
                 </div>
 
                 {/* Payment Status */}
@@ -733,38 +758,58 @@ export default function OrderDialog({
                   <label className="text-sm font-medium text-white/80">
                     Payment Status
                   </label>
-                  <Select
-                    value={
-                      editFormMethods.watch("paymentStatus") ||
-                      editingOrder.paymentStatus
-                    }
-                    onValueChange={(value) =>
-                      editFormMethods.setValue(
-                        "paymentStatus",
-                        value as PaymentStatus,
-                      )
+                  <DeferredSelectGate
+                    enabled={open}
+                    placeholder={
+                      <div
+                        className="flex h-11 w-full items-center rounded-md border border-violet-400/30 bg-white/10 px-3 text-sm text-white/60"
+                        aria-hidden
+                      >
+                        {paymentStatusOptions.find(
+                          (o) =>
+                            o.value ===
+                            (editFormMethods.watch("paymentStatus") ||
+                              editingOrder.paymentStatus),
+                        )?.label ?? "Select Payment Status"}
+                      </div>
                     }
                   >
-                    <SelectTrigger className="h-11 w-full border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]">
-                      <SelectValue placeholder="Select Payment Status" />
-                    </SelectTrigger>
-                    <SelectContent
-                      className="border-violet-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
-                      position="popper"
-                      sideOffset={5}
-                      align="start"
-                    >
-                      {paymentStatusOptions.map((option) => (
-                        <SelectItem
-                          key={option.value}
-                          value={option.value}
-                          className="cursor-pointer text-gray-900 dark:text-white focus:bg-violet-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                    {({ selectRemountKey }) => (
+                      <Select
+                        key={selectRemountKey}
+                        value={
+                          editFormMethods.watch("paymentStatus") ||
+                          editingOrder.paymentStatus
+                        }
+                        onValueChange={(value) =>
+                          editFormMethods.setValue(
+                            "paymentStatus",
+                            value as PaymentStatus,
+                          )
+                        }
+                      >
+                        <SelectTrigger className="h-11 w-full border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]">
+                          <SelectValue placeholder="Select Payment Status" />
+                        </SelectTrigger>
+                        <SelectContent
+                          className="border-violet-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
+                          position="popper"
+                          sideOffset={5}
+                          align="start"
                         >
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                          {paymentStatusOptions.map((option) => (
+                            <SelectItem
+                              key={option.value}
+                              value={option.value}
+                              className="cursor-pointer text-gray-900 dark:text-white focus:bg-violet-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                            >
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </DeferredSelectGate>
                 </div>
 
                 {/* Tracking Number */}
@@ -1015,54 +1060,72 @@ export default function OrderDialog({
                               <Label className="text-white/80 text-sm">
                                 Product {index + 1}
                               </Label>
-                              <Select
-                                value={productId || ""}
-                                onValueChange={(value) => {
-                                  createSetValue(
-                                    `items.${index}.productId`,
-                                    value,
-                                  );
-                                  // Reset quantity to 1 when product changes
-                                  createSetValue(`items.${index}.quantity`, 1);
-                                }}
-                                disabled={
-                                  isClientCreatingOrder &&
-                                  availableProducts.length === 0
+                              <DeferredSelectGate
+                                enabled={open}
+                                placeholder={
+                                  <div
+                                    className="flex h-11 w-full items-center rounded-md border border-violet-400/30 bg-white/10 px-3 text-sm text-white/60"
+                                    aria-hidden
+                                  >
+                                    {selectedProduct?.name ??
+                                      productSelectPlaceholder}
+                                  </div>
                                 }
                               >
-                                <SelectTrigger className="h-11 w-full border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]">
-                                  <SelectValue
-                                    placeholder={productSelectPlaceholder}
-                                  />
-                                </SelectTrigger>
-                                <SelectContent
-                                  className="border-violet-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
-                                  position="popper"
-                                  sideOffset={5}
-                                  align="start"
-                                >
-                                  {availableProducts.length === 0 &&
-                                  isClientCreatingOrder &&
-                                  productOwner ? (
-                                    <div className="px-2 py-3 text-sm text-muted-foreground dark:text-white/60 text-center">
-                                      {productOwner.name} hasn&apos;t added any
-                                      products yet
-                                    </div>
-                                  ) : (
-                                    availableProducts.map((product) => (
-                                      <SelectItem
-                                        key={product.id}
-                                        value={product.id}
-                                        className="cursor-pointer text-gray-900 dark:text-white focus:bg-violet-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
-                                      >
-                                        {product.name} - $
-                                        {Number(product.price).toFixed(2)}{" "}
-                                        (Stock: {product.quantity})
-                                      </SelectItem>
-                                    ))
-                                  )}
-                                </SelectContent>
-                              </Select>
+                                {({ selectRemountKey }) => (
+                                  <Select
+                                    key={selectRemountKey}
+                                    value={productId || ""}
+                                    onValueChange={(value) => {
+                                      createSetValue(
+                                        `items.${index}.productId`,
+                                        value,
+                                      );
+                                      createSetValue(
+                                        `items.${index}.quantity`,
+                                        1,
+                                      );
+                                    }}
+                                    disabled={
+                                      isClientCreatingOrder &&
+                                      availableProducts.length === 0
+                                    }
+                                  >
+                                    <SelectTrigger className="h-11 w-full border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]">
+                                      <SelectValue
+                                        placeholder={productSelectPlaceholder}
+                                      />
+                                    </SelectTrigger>
+                                    <SelectContent
+                                      className="border-violet-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
+                                      position="popper"
+                                      sideOffset={5}
+                                      align="start"
+                                    >
+                                      {availableProducts.length === 0 &&
+                                      isClientCreatingOrder &&
+                                      productOwner ? (
+                                        <div className="px-2 py-3 text-sm text-muted-foreground dark:text-white/60 text-center">
+                                          {productOwner.name} hasn&apos;t added
+                                          any products yet
+                                        </div>
+                                      ) : (
+                                        availableProducts.map((product) => (
+                                          <SelectItem
+                                            key={product.id}
+                                            value={product.id}
+                                            className="cursor-pointer text-gray-900 dark:text-white focus:bg-violet-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                                          >
+                                            {product.name} - $
+                                            {Number(product.price).toFixed(2)}{" "}
+                                            (Stock: {product.quantity})
+                                          </SelectItem>
+                                        ))
+                                      )}
+                                    </SelectContent>
+                                  </Select>
+                                )}
+                              </DeferredSelectGate>
                               {createErrors.items?.[index]?.productId && (
                                 <p className="text-red-500 text-xs">
                                   {String(

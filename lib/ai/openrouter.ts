@@ -1,63 +1,40 @@
 /**
  * OpenRouter API client
- * Use OpenAI-compatible models (and others) via OpenRouter free tier.
+ * Use OpenAI-compatible models via OpenRouter.
  * Base URL: https://openrouter.ai/api/v1
- * Docs: https://openrouter.ai/docs
  */
+
+import type {
+  ChatCompletionOptions,
+  ChatCompletionFailureKind,
+  ChatCompletionResponse,
+  ChatCompletionResult,
+  ChatMessage,
+} from "./types";
 
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 
-export interface OpenRouterMessage {
-  role: "system" | "user" | "assistant";
-  content: string;
-}
+/** @deprecated Use ChatMessage from ./types */
+export type OpenRouterMessage = ChatMessage;
 
-export interface OpenRouterChatOptions {
-  /** Model ID (e.g. openai/gpt-4o-mini, openai/gpt-3.5-turbo). Default: openai/gpt-4o-mini */
-  model?: string;
-  /** Max tokens in response */
-  max_tokens?: number;
-  /** Temperature 0-2 */
-  temperature?: number;
-}
+/** @deprecated Use ChatCompletionOptions from ./types */
+export type OpenRouterChatOptions = ChatCompletionOptions;
 
-export interface OpenRouterChatResponse {
-  id: string;
-  choices: Array<{
-    message: { role: string; content: string };
-    finish_reason: string;
-  }>;
-  usage?: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-}
+/** @deprecated Use ChatCompletionResponse from ./types */
+export type OpenRouterChatResponse = ChatCompletionResponse;
 
-export type OpenRouterFailureKind =
-  | "not_configured"
-  | "billing"
-  | "rate_limit"
-  | "upstream";
+/** @deprecated Use ChatCompletionFailureKind from ./types */
+export type OpenRouterFailureKind = ChatCompletionFailureKind;
 
-export type OpenRouterResult =
-  | { ok: true; data: OpenRouterChatResponse }
-  | {
-      ok: false;
-      kind: OpenRouterFailureKind;
-      status?: number;
-      message?: string;
-    };
+/** @deprecated Use ChatCompletionResult from ./types */
+export type OpenRouterResult = ChatCompletionResult;
 
-/**
- * Check if OpenRouter is configured (API key set and non-empty)
- */
 export function isOpenRouterConfigured(): boolean {
   const key = process.env.OPENROUTER_API_KEY;
   return typeof key === "string" && key.trim().length > 0;
 }
 
-function mapHttpStatusToKind(status: number): OpenRouterFailureKind {
+function mapHttpStatusToKind(status: number): ChatCompletionFailureKind {
   if (status === 402) {
     return "billing";
   }
@@ -68,15 +45,14 @@ function mapHttpStatusToKind(status: number): OpenRouterFailureKind {
 }
 
 /**
- * Create a chat completion via OpenRouter (OpenAI-compatible API).
- * Returns a typed result instead of throwing — callers map kind to HTTP status.
+ * Create a chat completion via OpenRouter only (no Groq fallback).
  */
-export async function createChatCompletion(
-  messages: OpenRouterMessage[],
-  options: OpenRouterChatOptions = {},
-): Promise<OpenRouterResult> {
+export async function createOpenRouterChatCompletion(
+  messages: ChatMessage[],
+  options: ChatCompletionOptions = {},
+): Promise<ChatCompletionResult> {
   if (!isOpenRouterConfigured()) {
-    return { ok: false, kind: "not_configured" };
+    return { ok: false, kind: "not_configured", provider: "openrouter" };
   }
 
   const apiKey = process.env.OPENROUTER_API_KEY!;
@@ -107,18 +83,20 @@ export async function createChatCompletion(
       return {
         ok: false,
         kind,
+        provider: "openrouter",
         status: response.status,
         message: text.slice(0, 500),
       };
     }
 
-    const data = (await response.json()) as OpenRouterChatResponse;
-    return { ok: true, data };
+    const data = (await response.json()) as ChatCompletionResponse;
+    return { ok: true, data, provider: "openrouter" };
   } catch (error) {
     console.error("[OpenRouter] Request failed:", error);
     return {
       ok: false,
       kind: "upstream",
+      provider: "openrouter",
       message: error instanceof Error ? error.message : "Request failed",
     };
   }

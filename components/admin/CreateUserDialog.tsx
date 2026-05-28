@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2, Plus, Eye, EyeOff, UserPlus } from "lucide-react";
+import { DeferredSelectGate } from "@/components/shared";
 import { useCreateUser } from "@/hooks/queries";
 import {
   createUserAdminSchema,
@@ -222,32 +223,48 @@ export default function CreateUserDialog() {
             <Label htmlFor="role" className="text-sm font-medium text-white/80">
               User Role
             </Label>
-            <Select
-              value={selectedRole ?? "user"}
-              onValueChange={(val) =>
-                setValue("role", val as CreateUserAdminFormData["role"])
+            <DeferredSelectGate
+              enabled={open}
+              placeholder={
+                <div
+                  className="flex h-11 w-full items-center rounded-md border border-blue-400/30 bg-white/10 px-3 text-sm text-white/60"
+                  aria-hidden
+                >
+                  {ROLE_OPTIONS.find((o) => o.value === selectedRole)?.label ??
+                    "Select role"}
+                </div>
               }
             >
-              <SelectTrigger className="h-11 w-full border-blue-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-blue-400 focus:ring-blue-500/50 shadow-[0_10px_30px_rgba(59,130,246,0.15)]">
-                <SelectValue placeholder="Select role" />
-              </SelectTrigger>
-              <SelectContent
-                className="border-blue-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
-                position="popper"
-                sideOffset={5}
-                align="start"
-              >
-                {ROLE_OPTIONS.map((opt) => (
-                  <SelectItem
-                    key={opt.value}
-                    value={opt.value}
-                    className={`cursor-pointer focus:bg-blue-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white ${opt.color}`}
+              {({ selectRemountKey }) => (
+                <Select
+                  key={selectRemountKey}
+                  value={selectedRole ?? "user"}
+                  onValueChange={(val) =>
+                    setValue("role", val as CreateUserAdminFormData["role"])
+                  }
+                >
+                  <SelectTrigger className="h-11 w-full border-blue-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-blue-400 focus:ring-blue-500/50 shadow-[0_10px_30px_rgba(59,130,246,0.15)]">
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent
+                    className="border-blue-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
+                    position="popper"
+                    sideOffset={5}
+                    align="start"
                   >
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                    {ROLE_OPTIONS.map((opt) => (
+                      <SelectItem
+                        key={opt.value}
+                        value={opt.value}
+                        className={`cursor-pointer focus:bg-blue-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white ${opt.color}`}
+                      >
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </DeferredSelectGate>
             {errors.role && (
               <p className="text-sm text-rose-400">{errors.role.message}</p>
             )}

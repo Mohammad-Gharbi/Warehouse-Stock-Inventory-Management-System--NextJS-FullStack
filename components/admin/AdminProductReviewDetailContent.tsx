@@ -36,7 +36,7 @@ import {
   useUpdateProductReview,
   useDeleteProductReview,
 } from "@/hooks/queries";
-import { PageContentWrapper } from "@/components/shared";
+import { DeferredSelectGate, PageContentWrapper } from "@/components/shared";
 import { format } from "date-fns";
 import type { ProductReview, ProductReviewStatus } from "@/types";
 import { cn } from "@/lib/utils";
@@ -241,51 +241,80 @@ export default function AdminProductReviewDetailContent() {
                   <div>
                     <dt className="text-muted-foreground">Status</dt>
                     <dd className="mt-1">
-                      <Select
-                        value={r.status}
-                        onValueChange={(v) =>
-                          handleStatusChange(v as ProductReviewStatus)
+                      <DeferredSelectGate
+                        placeholder={
+                          <div
+                            className="w-[140px] h-9 rounded-md border border-border flex items-center px-2 text-sm"
+                            aria-hidden
+                          >
+                            {STATUS_OPTIONS.find((o) => o.value === r.status)
+                              ?.label ?? r.status}
+                          </div>
                         }
-                        disabled={isUpdating}
                       >
-                        <SelectTrigger
-                          className={cn(
-                            "w-[140px]",
-                            getStatusVariant(r.status) === "destructive" &&
-                              "border-destructive text-destructive",
-                          )}
-                        >
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {STATUS_OPTIONS.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        {({ selectRemountKey }) => (
+                          <Select
+                            key={selectRemountKey}
+                            value={r.status}
+                            onValueChange={(v) =>
+                              handleStatusChange(v as ProductReviewStatus)
+                            }
+                            disabled={isUpdating}
+                          >
+                            <SelectTrigger
+                              className={cn(
+                                "w-[140px]",
+                                getStatusVariant(r.status) === "destructive" &&
+                                  "border-destructive text-destructive",
+                              )}
+                            >
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {STATUS_OPTIONS.map((opt) => (
+                                <SelectItem key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </DeferredSelectGate>
                     </dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Rating</dt>
                     <dd className="mt-1">
-                      <Select
-                        value={String(r.rating)}
-                        onValueChange={(v) => handleRatingChange(Number(v))}
-                        disabled={isUpdating}
+                      <DeferredSelectGate
+                        placeholder={
+                          <div
+                            className="w-[120px] h-9 rounded-md border border-border flex items-center px-2 text-sm"
+                            aria-hidden
+                          >
+                            {r.rating} star{r.rating !== 1 ? "s" : ""}
+                          </div>
+                        }
                       >
-                        <SelectTrigger className="w-[120px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {RATINGS.map((n) => (
-                            <SelectItem key={n} value={String(n)}>
-                              {n} star{n !== 1 ? "s" : ""}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        {({ selectRemountKey }) => (
+                          <Select
+                            key={selectRemountKey}
+                            value={String(r.rating)}
+                            onValueChange={(v) => handleRatingChange(Number(v))}
+                            disabled={isUpdating}
+                          >
+                            <SelectTrigger className="w-[120px]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {RATINGS.map((n) => (
+                                <SelectItem key={n} value={String(n)}>
+                                  {n} star{n !== 1 ? "s" : ""}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </DeferredSelectGate>
                     </dd>
                   </div>
                 </dl>

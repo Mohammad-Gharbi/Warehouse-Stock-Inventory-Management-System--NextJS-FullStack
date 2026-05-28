@@ -325,7 +325,7 @@ export default function LoginPage() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-                {/* Test Account Dropdown - client-only after layout effect to avoid Radix Select aria-controls hydration mismatch; placeholder matches trigger so no visual flash */}
+                {/* Test account Select — always controlled (value="" when empty) to avoid uncontrolled→controlled warning */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700 dark:text-white/80">
                     Test Accounts To Login With
@@ -343,7 +343,7 @@ export default function LoginPage() {
                     {({ selectRemountKey }) => (
                     <Select
                       key={selectRemountKey}
-                      value={selectedRole || undefined}
+                      value={selectedRole}
                       onValueChange={handleRoleSelect}
                     >
                       <SelectTrigger className="w-full border-sky-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus:border-sky-400 focus:ring-sky-500/50">

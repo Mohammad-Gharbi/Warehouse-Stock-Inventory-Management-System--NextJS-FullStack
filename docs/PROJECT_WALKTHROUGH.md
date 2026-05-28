@@ -108,7 +108,7 @@ Details: `docs/Redis_Sentry_PostHog_INTEGRATION_GUIDE.md`
 | Piece | File |
 |-------|------|
 | Defer hook | `hooks/use-deferred-radix-select.ts` |
-| Reusable gate | `components/shared/DeferredSelectGate.tsx` (LoginPage, filter toolbars, admin order detail) |
+| Reusable gate | `components/shared/DeferredSelectGate.tsx` (LoginPage, filter toolbars, admin detail pages, form dialogs with `enabled={open}`, shipping dialog) |
 | Page-size UI | `components/shared/PaginationSelector.tsx`, `pagination-select-styles.ts` |
 | Consumers | All `*Table.tsx` footers (`variant` + `enabled={!isLoading}`) |
 
@@ -118,12 +118,12 @@ Prevents `NotFoundError: removeChild` when App Router navigates between pages wh
 
 | Issue | Implementation |
 |-------|----------------|
-| OpenRouter 402 → Sentry 502 | `lib/ai/openrouter.ts` (`OpenRouterResult`); `serviceUnavailableResponse` in `lib/api/response-helpers.ts`; `app/api/ai/insights/route.ts` |
+| OpenRouter 402 → Sentry 502 | `lib/ai/create-chat-completion.ts` (OpenRouter → Groq fallback); `lib/ai/openrouter.ts` + `lib/ai/groq.ts`; `serviceUnavailableResponse` in `lib/api/response-helpers.ts`; `app/api/ai/insights/route.ts` |
 | OAuth `User_username_key` | `lib/auth/unique-username.ts`; `createGoogleOAuthUser` + P2002 recovery in Google callback |
 | Hydration on `/` | Root `force-dynamic` + SSR props in `app/page.tsx` (no route Suspense); `CategoryList` always mounts `CategoryFilters` (`DeferredSelectGate`) |
-| Filter/login Selects | `DeferredSelectGate` on status/view Selects + `LoginPage` |
+| Filter/login/dialog Selects | `DeferredSelectGate` on status/view Selects, `LoginPage`, order/product/invoice/support dialogs, admin form dialogs |
 
-Tests: `lib/ai/openrouter.test.ts`, `lib/auth/unique-username.test.ts`.
+Tests: `lib/ai/openrouter.test.ts`, `lib/ai/groq.test.ts`, `lib/ai/create-chat-completion.test.ts`, `lib/auth/unique-username.test.ts`.
 
 ## 7e. Home route SSR (no Suspense, 2026-05-19)
 

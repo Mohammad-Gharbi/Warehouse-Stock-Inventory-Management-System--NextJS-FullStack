@@ -47,7 +47,7 @@ import {
   useSupportTicketReplies,
   useCreateSupportTicketReply,
 } from "@/hooks/queries";
-import { PageContentWrapper } from "@/components/shared";
+import { DeferredSelectGate, PageContentWrapper } from "@/components/shared";
 import { format } from "date-fns";
 import type {
   SupportTicket,
@@ -321,30 +321,45 @@ export default function AdminSupportTicketDetailContent() {
                       >
                         {t.status.replace("_", " ")}
                       </span>
-                      <Select
-                        value={t.status}
-                        onValueChange={(v) =>
-                          handleStatusChange(v as SupportTicketStatus)
+                      <DeferredSelectGate
+                        placeholder={
+                          <div
+                            className="w-[160px] h-9 rounded-md border border-border flex items-center px-2 text-sm"
+                            aria-hidden
+                          >
+                            {STATUS_OPTIONS.find((o) => o.value === t.status)
+                              ?.label ?? t.status}
+                          </div>
                         }
-                        disabled={isUpdating}
                       >
-                        <SelectTrigger
-                          className={cn(
-                            "w-[160px]",
-                            getStatusVariant(t.status) === "destructive" &&
-                              "border-destructive text-destructive",
-                          )}
-                        >
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {STATUS_OPTIONS.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        {({ selectRemountKey }) => (
+                          <Select
+                            key={selectRemountKey}
+                            value={t.status}
+                            onValueChange={(v) =>
+                              handleStatusChange(v as SupportTicketStatus)
+                            }
+                            disabled={isUpdating}
+                          >
+                            <SelectTrigger
+                              className={cn(
+                                "w-[160px]",
+                                getStatusVariant(t.status) === "destructive" &&
+                                  "border-destructive text-destructive",
+                              )}
+                            >
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {STATUS_OPTIONS.map((opt) => (
+                                <SelectItem key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </DeferredSelectGate>
                     </dd>
                   </div>
                   <div>
@@ -358,24 +373,40 @@ export default function AdminSupportTicketDetailContent() {
                       >
                         {t.priority}
                       </span>
-                      <Select
-                        value={t.priority}
-                        onValueChange={(v) =>
-                          handlePriorityChange(v as SupportTicketPriority)
+                      <DeferredSelectGate
+                        placeholder={
+                          <div
+                            className="w-[140px] h-9 rounded-md border border-border flex items-center px-2 text-sm"
+                            aria-hidden
+                          >
+                            {PRIORITY_OPTIONS.find(
+                              (o) => o.value === t.priority,
+                            )?.label ?? t.priority}
+                          </div>
                         }
-                        disabled={isUpdating}
                       >
-                        <SelectTrigger className="w-[140px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {PRIORITY_OPTIONS.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        {({ selectRemountKey }) => (
+                          <Select
+                            key={selectRemountKey}
+                            value={t.priority}
+                            onValueChange={(v) =>
+                              handlePriorityChange(v as SupportTicketPriority)
+                            }
+                            disabled={isUpdating}
+                          >
+                            <SelectTrigger className="w-[140px]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {PRIORITY_OPTIONS.map((opt) => (
+                                <SelectItem key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </DeferredSelectGate>
                     </dd>
                   </div>
                 </dl>

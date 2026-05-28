@@ -1,11 +1,11 @@
 /**
- * AI-powered inventory insights via OpenRouter (OpenAI-compatible models)
+ * AI-powered inventory insights via OpenRouter (primary) or Groq (fallback).
  * POST /api/ai/insights — accepts summary of analytics, returns short AI recommendations
  */
 
 import { NextRequest } from "next/server";
 import { getSessionFromRequest } from "@/utils/auth";
-import { createChatCompletion, isOpenRouterConfigured } from "@/lib/ai";
+import { createChatCompletion, isLlmConfigured } from "@/lib/ai";
 import {
   successResponse,
   errorResponse,
@@ -14,8 +14,8 @@ import {
 
 const SYSTEM_PROMPT = `You are a concise inventory advisor. Given a short summary of inventory metrics, reply with 2-4 brief, actionable recommendations (one short sentence each). Focus on reorder suggestions, low-stock attention, and value optimization. Keep the tone professional and direct. Do not use markdown or bullet symbols.`;
 
-const BILLING_MESSAGE =
-  "AI credits exhausted. Add credits to your OpenRouter account or set a paid model.";
+const LLM_NOT_CONFIGURED =
+  "AI insights are not configured. Set OPENROUTER_API_KEY and/or GROQ_API_KEY in .env.";
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,11 +24,10 @@ export async function POST(request: NextRequest) {
       return errorResponse("Unauthorized", 401);
     }
 
-    if (!isOpenRouterConfigured()) {
-      return serviceUnavailableResponse(
-        "AI insights are not configured. Set OPENROUTER_API_KEY in .env.",
-        { code: "OPENROUTER_NOT_CONFIGURED" },
-      );
+    if (!isLlmConfigured()) {
+      return serviceUnavailableResponse(LLM_NOT_CONFIGURED, {
+        code: "LLM_NOT_CONFIGURED",
+      });
     }
 
     let body: { summary?: string };
@@ -57,27 +56,34 @@ export async function POST(request: NextRequest) {
 
     if (!result.ok) {
       if (result.kind === "billing") {
-        return serviceUnavailableResponse(BILLING_MESSAGE, {
-          code: "OPENROUTER_BILLING",
-          status: result.status,
-        });
+        return serviceUnavailableResponse(
+          "AI credits exhausted on configured providers. Add OpenRouter credits or set GROQ_API_KEY.",
+          {
+            code: "LLM_BILLING",
+            provider: result.provider,
+            status: result.status,
+          },
+        );
       }
       if (result.kind === "not_configured") {
-        return serviceUnavailableResponse(
-          "AI insights are not configured. Set OPENROUTER_API_KEY in .env.",
-          { code: "OPENROUTER_NOT_CONFIGURED" },
-        );
+        return serviceUnavailableResponse(LLM_NOT_CONFIGURED, {
+          code: "LLM_NOT_CONFIGURED",
+        });
       }
       if (result.kind === "rate_limit") {
         return serviceUnavailableResponse(
           "AI service rate limit reached. Please try again later.",
-          { code: "OPENROUTER_RATE_LIMIT", status: result.status },
+          {
+            code: "LLM_RATE_LIMIT",
+            provider: result.provider,
+            status: result.status,
+          },
         );
       }
       return errorResponse(
         "AI service is temporarily unavailable",
         502,
-        { code: "OPENROUTER_UPSTREAM", status: result.status },
+        { code: "LLM_UPSTREAM", provider: result.provider, status: result.status },
         { reportToSentry: true },
       );
     }
@@ -86,11 +92,11 @@ export async function POST(request: NextRequest) {
     if (!text) {
       return serviceUnavailableResponse(
         "AI service did not return insights. Try again later.",
-        { code: "OPENROUTER_EMPTY_RESPONSE" },
+        { code: "LLM_EMPTY_RESPONSE", provider: result.provider },
       );
     }
 
-    return successResponse({ text });
+    return successResponse({ text, provider: result.provider });
   } catch (error) {
     console.error("[AI insights]", error);
     return errorResponse(

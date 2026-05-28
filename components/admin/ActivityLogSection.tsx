@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState, useLayoutEffect } from "react";
+import { DeferredSelectGate } from "@/components/shared";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -213,12 +214,7 @@ export default function ActivityLogSection({
   const queryClient = useQueryClient();
   const [period, setPeriod] = useState<ActivityLogPeriod>(initialPeriod);
   const [searchTerm, setSearchTerm] = useState("");
-  const [periodSelectMounted, setPeriodSelectMounted] = useState(false);
   const { data, isPending } = useAuditLogs({ period });
-
-  useLayoutEffect(() => {
-    setPeriodSelectMounted(true);
-  }, []);
 
   useLayoutEffect(() => {
     if (initialLogs != null && initialPeriod === period) {
@@ -394,49 +390,55 @@ export default function ActivityLogSection({
               </Button>
             )}
           </div>
-          {periodSelectMounted ? (
-            <Select
-              value={period}
-              onValueChange={(v) => setPeriod(v as ActivityLogPeriod)}
-            >
-              <SelectTrigger
+          <DeferredSelectGate
+            placeholder={
+              <div
                 className={cn(
                   "w-full sm:w-[180px] h-10 rounded-[28px] border border-sky-400/30 dark:border-sky-400/30",
                   "bg-gradient-to-r from-sky-500/25 via-sky-500/15 to-sky-500/10 dark:from-sky-500/25 dark:via-sky-500/15 dark:to-sky-500/10",
                   "text-gray-700 dark:text-white shadow-[0_10px_30px_rgba(2,132,199,0.2)] backdrop-blur-sm",
-                  "transition duration-200 hover:border-sky-300/40 hover:from-sky-500/35 hover:via-sky-500/25 hover:to-sky-500/15",
-                  "dark:hover:border-sky-300/40 dark:hover:from-sky-500/35 dark:hover:via-sky-500/25 dark:hover:to-sky-500/15",
+                  "flex items-center px-3 text-sm",
                 )}
+                aria-hidden
               >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent
-                className="rounded-xl border-sky-400/20 bg-white/95 dark:bg-popover/95 shadow-[0_10px_30px_rgba(2,132,199,0.15)]"
-                position="popper"
+                {PERIODS.find((p) => p.value === period)?.label ?? "Last 7 days"}
+              </div>
+            }
+          >
+            {({ selectRemountKey }) => (
+              <Select
+                key={selectRemountKey}
+                value={period}
+                onValueChange={(v) => setPeriod(v as ActivityLogPeriod)}
               >
-                {PERIODS.map((p) => (
-                  <SelectItem
-                    key={p.value}
-                    value={p.value}
-                    className="cursor-pointer"
-                  >
-                    {p.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : (
-            <div
-              className={cn(
-                "w-full sm:w-[180px] h-10 rounded-[28px] border border-sky-400/30 dark:border-sky-400/30",
-                "bg-gradient-to-r from-sky-500/25 via-sky-500/15 to-sky-500/10 dark:from-sky-500/25 dark:via-sky-500/15 dark:to-sky-500/10",
-                "text-gray-700 dark:text-white shadow-[0_10px_30px_rgba(2,132,199,0.2)] backdrop-blur-sm",
-                "flex items-center justify-between px-3 py-2.5 text-sm",
-              )}
-            >
-              {PERIODS.find((p) => p.value === period)?.label ?? "Last 7 days"}
-            </div>
-          )}
+                <SelectTrigger
+                  className={cn(
+                    "w-full sm:w-[180px] h-10 rounded-[28px] border border-sky-400/30 dark:border-sky-400/30",
+                    "bg-gradient-to-r from-sky-500/25 via-sky-500/15 to-sky-500/10 dark:from-sky-500/25 dark:via-sky-500/15 dark:to-sky-500/10",
+                    "text-gray-700 dark:text-white shadow-[0_10px_30px_rgba(2,132,199,0.2)] backdrop-blur-sm",
+                    "transition duration-200 hover:border-sky-300/40 hover:from-sky-500/35 hover:via-sky-500/25 hover:to-sky-500/15",
+                    "dark:hover:border-sky-300/40 dark:hover:from-sky-500/35 dark:hover:via-sky-500/25 dark:hover:to-sky-500/15",
+                  )}
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent
+                  className="rounded-xl border-sky-400/20 bg-white/95 dark:bg-popover/95 shadow-[0_10px_30px_rgba(2,132,199,0.15)]"
+                  position="popper"
+                >
+                  {PERIODS.map((p) => (
+                    <SelectItem
+                      key={p.value}
+                      value={p.value}
+                      className="cursor-pointer"
+                    >
+                      {p.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </DeferredSelectGate>
         </div>
       </div>
       {isPending && logs.length === 0 ? (

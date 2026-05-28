@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { createChatCompletion } from "./openrouter";
+import { createOpenRouterChatCompletion } from "./openrouter";
 
-describe("createChatCompletion", () => {
+describe("createOpenRouterChatCompletion", () => {
   const originalKey = process.env.OPENROUTER_API_KEY;
 
   beforeEach(() => {
     process.env.OPENROUTER_API_KEY = "test-key";
+    delete process.env.GROQ_API_KEY;
     vi.stubGlobal("fetch", vi.fn());
   });
 
@@ -20,7 +21,7 @@ describe("createChatCompletion", () => {
       new Response("insufficient credits", { status: 402 }),
     );
 
-    const result = await createChatCompletion([
+    const result = await createOpenRouterChatCompletion([
       { role: "user", content: "hi" },
     ]);
 
@@ -36,19 +37,25 @@ describe("createChatCompletion", () => {
       new Response(
         JSON.stringify({
           id: "1",
-          choices: [{ message: { role: "assistant", content: "ok" }, finish_reason: "stop" }],
+          choices: [
+            {
+              message: { role: "assistant", content: "ok" },
+              finish_reason: "stop",
+            },
+          ],
         }),
         { status: 200 },
       ),
     );
 
-    const result = await createChatCompletion([
+    const result = await createOpenRouterChatCompletion([
       { role: "user", content: "hi" },
     ]);
 
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.data.choices[0]?.message.content).toBe("ok");
+      expect(result.provider).toBe("openrouter");
     }
   });
 });

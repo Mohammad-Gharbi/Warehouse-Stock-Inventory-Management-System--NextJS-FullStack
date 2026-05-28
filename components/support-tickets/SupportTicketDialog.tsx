@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MessageSquare, Loader2 } from "lucide-react";
+import { DeferredSelectGate } from "@/components/shared";
 import { useCreateSupportTicket } from "@/hooks/queries";
 import { cn } from "@/lib/utils";
 import type { SupportTicketPriority } from "@/types";
@@ -190,36 +191,59 @@ export default function SupportTicketDialog({
               >
                 Send to (product owner)
               </Label>
-              <Select
-                value={assignedToId ?? "none"}
-                onValueChange={(v) => setAssignedToId(v === "none" ? null : v)}
-                disabled={isPending}
+              <DeferredSelectGate
+                enabled={open}
+                placeholder={
+                  <div
+                    className={cn(
+                      "flex h-11 w-full items-center rounded-xl px-3 text-sm text-white/60",
+                      inputClass,
+                    )}
+                    aria-hidden
+                  >
+                    {assignedToId
+                      ? productOwners.find((po) => po.id === assignedToId)
+                          ?.name ?? "Select product owner"
+                      : "Select product owner (optional)"}
+                  </div>
+                }
               >
-                <SelectTrigger
-                  id="support-ticket-send-to"
-                  className={cn("h-11 rounded-xl", inputClass)}
-                >
-                  <SelectValue placeholder="Select product owner (optional)" />
-                </SelectTrigger>
-                <SelectContent
-                  className="rounded-xl border-sky-400/20 dark:border-white/10 bg-white/95 dark:bg-popover/95 backdrop-blur-sm"
-                  position="popper"
-                  sideOffset={5}
-                >
-                  <SelectItem value="none" className="cursor-pointer">
-                    — No specific owner —
-                  </SelectItem>
-                  {productOwners.map((po) => (
-                    <SelectItem
-                      key={po.id}
-                      value={po.id}
-                      className="cursor-pointer"
+                {({ selectRemountKey }) => (
+                  <Select
+                    key={selectRemountKey}
+                    value={assignedToId ?? "none"}
+                    onValueChange={(v) =>
+                      setAssignedToId(v === "none" ? null : v)
+                    }
+                    disabled={isPending}
+                  >
+                    <SelectTrigger
+                      id="support-ticket-send-to"
+                      className={cn("h-11 rounded-xl", inputClass)}
                     >
-                      {po.name} ({po.email})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                      <SelectValue placeholder="Select product owner (optional)" />
+                    </SelectTrigger>
+                    <SelectContent
+                      className="rounded-xl border-sky-400/20 dark:border-white/10 bg-white/95 dark:bg-popover/95 backdrop-blur-sm"
+                      position="popper"
+                      sideOffset={5}
+                    >
+                      <SelectItem value="none" className="cursor-pointer">
+                        — No specific owner —
+                      </SelectItem>
+                      {productOwners.map((po) => (
+                        <SelectItem
+                          key={po.id}
+                          value={po.id}
+                          className="cursor-pointer"
+                        >
+                          {po.name} ({po.email})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </DeferredSelectGate>
             </div>
           )}
           <div className="space-y-2">
@@ -229,33 +253,54 @@ export default function SupportTicketDialog({
             >
               Priority
             </Label>
-            <Select
-              value={priority}
-              onValueChange={(v) => setPriority(v as SupportTicketPriority)}
-              disabled={isPending}
+            <DeferredSelectGate
+              enabled={open}
+              placeholder={
+                <div
+                  className={cn(
+                    "flex h-11 w-full items-center rounded-xl px-3 text-sm text-white/60",
+                    inputClass,
+                  )}
+                  aria-hidden
+                >
+                  {PRIORITIES.find((p) => p.value === priority)?.label ??
+                    "Priority"}
+                </div>
+              }
             >
-              <SelectTrigger
-                id="support-ticket-priority"
-                className={cn("h-11 rounded-xl w-full", inputClass)}
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent
-                className="rounded-xl border-sky-400/20 dark:border-white/10 bg-white/95 dark:bg-popover/95"
-                position="popper"
-                sideOffset={5}
-              >
-                {PRIORITIES.map((p) => (
-                  <SelectItem
-                    key={p.value}
-                    value={p.value}
-                    className="cursor-pointer"
+              {({ selectRemountKey }) => (
+                <Select
+                  key={selectRemountKey}
+                  value={priority}
+                  onValueChange={(v) =>
+                    setPriority(v as SupportTicketPriority)
+                  }
+                  disabled={isPending}
+                >
+                  <SelectTrigger
+                    id="support-ticket-priority"
+                    className={cn("h-11 rounded-xl w-full", inputClass)}
                   >
-                    {p.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent
+                    className="rounded-xl border-sky-400/20 dark:border-white/10 bg-white/95 dark:bg-popover/95"
+                    position="popper"
+                    sideOffset={5}
+                  >
+                    {PRIORITIES.map((p) => (
+                      <SelectItem
+                        key={p.value}
+                        value={p.value}
+                        className="cursor-pointer"
+                      >
+                        {p.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </DeferredSelectGate>
           </div>
           <DialogFooter className="mt-6 flex flex-col sm:flex-row items-center gap-3">
             <DialogClose asChild>

@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DeferredSelectGate } from "@/components/shared";
 import { useCreateWarehouse, useUpdateWarehouse } from "@/hooks/queries";
 import { Warehouse } from "@/types";
 
@@ -197,27 +198,46 @@ export default function WarehouseDialog({
             >
               Warehouse Type
             </Label>
-            <Select value={type} onValueChange={setType}>
-              <SelectTrigger className="h-11 w-full border-teal-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-teal-400 focus:ring-teal-500/50 shadow-[0_10px_30px_rgba(20,184,166,0.15)]">
-                <SelectValue placeholder="Select type" />
-              </SelectTrigger>
-              <SelectContent
-                className="border-teal-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
-                position="popper"
-                sideOffset={5}
-                align="start"
-              >
-                {warehouseTypes.map((wt) => (
-                  <SelectItem
-                    key={wt.value}
-                    value={wt.value}
-                    className="cursor-pointer text-gray-900 dark:text-white focus:bg-teal-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+            <DeferredSelectGate
+              enabled={open}
+              placeholder={
+                <div
+                  className="flex h-11 w-full items-center rounded-md border border-teal-400/30 bg-white/10 px-3 text-sm text-white/60"
+                  aria-hidden
+                >
+                  {warehouseTypes.find((wt) => wt.value === type)?.label ??
+                    "Select type"}
+                </div>
+              }
+            >
+              {({ selectRemountKey }) => (
+                <Select
+                  key={selectRemountKey}
+                  value={type}
+                  onValueChange={setType}
+                >
+                  <SelectTrigger className="h-11 w-full border-teal-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-teal-400 focus:ring-teal-500/50 shadow-[0_10px_30px_rgba(20,184,166,0.15)]">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent
+                    className="border-teal-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
+                    position="popper"
+                    sideOffset={5}
+                    align="start"
                   >
-                    {wt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                    {warehouseTypes.map((wt) => (
+                      <SelectItem
+                        key={wt.value}
+                        value={wt.value}
+                        className="cursor-pointer text-gray-900 dark:text-white focus:bg-teal-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                      >
+                        {wt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </DeferredSelectGate>
           </div>
           <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-teal-400/20">
             <Switch

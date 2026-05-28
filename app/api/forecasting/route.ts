@@ -10,7 +10,7 @@ import { generateForecastingSummary } from "@/lib/forecasting";
 import { getCache, setCache, cacheKeys } from "@/lib/cache";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
 import type { ForecastingSummary } from "@/types";
-import { createChatCompletion, isOpenRouterConfigured } from "@/lib/ai";
+import { createChatCompletion, isLlmConfigured } from "@/lib/ai";
 
 /**
  * Generate AI insights from forecasting data
@@ -18,7 +18,7 @@ import { createChatCompletion, isOpenRouterConfigured } from "@/lib/ai";
 async function generateAIInsights(
   summary: ForecastingSummary,
 ): Promise<string> {
-  if (!isOpenRouterConfigured()) {
+  if (!isLlmConfigured()) {
     return "";
   }
 
@@ -45,6 +45,7 @@ ${urgentProducts ? `- Urgent reorder needed: ${urgentProducts}` : ""}
 Provide brief, professional insights focusing on immediate actions.`;
 
   try {
+    // model is OpenRouter-only; Groq fallback uses GROQ_MODEL / DEFAULT_GROQ_MODEL
     const response = await createChatCompletion(
       [{ role: "user", content: prompt }],
       {

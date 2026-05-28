@@ -4,6 +4,7 @@
  * Defers Radix Select mount until the App Router route is stable (one animation frame).
  * Use on nav-heavy pages and any Select that portals to document.body, so portals
  * tear down cleanly before the next route unmounts (avoids removeChild NotFoundError).
+ * In dialogs, pass enabled={open} so Select mounts only while the dialog is open.
  */
 
 import type { ReactNode } from "react";

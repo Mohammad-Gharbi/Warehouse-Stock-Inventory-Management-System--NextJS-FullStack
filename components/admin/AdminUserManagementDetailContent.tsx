@@ -39,7 +39,7 @@ import {
 } from "lucide-react";
 import { useUser, useUpdateUser, useDeleteUser } from "@/hooks/queries";
 import { useAuth } from "@/contexts";
-import { PageContentWrapper } from "@/components/shared";
+import { DeferredSelectGate, PageContentWrapper } from "@/components/shared";
 import { format } from "date-fns";
 import type { UserForAdmin, UserRole } from "@/types";
 import { cn } from "@/lib/utils";
@@ -391,29 +391,50 @@ export default function AdminUserManagementDetailContent() {
                   >
                     Role
                   </Label>
-                  <Select
-                    value={u.role ?? "null"}
-                    onValueChange={handleRoleChange}
-                    disabled={isUpdating || isProtected}
+                  <DeferredSelectGate
+                    placeholder={
+                      <div
+                        id="um-role"
+                        className={cn(
+                          "w-[140px] h-9 rounded-[28px] mt-1 border flex items-center px-2 text-sm",
+                          getRoleColor(u.role),
+                        )}
+                        aria-hidden
+                      >
+                        {u.role
+                          ? (ROLE_OPTIONS.find((o) => o.value === u.role)
+                              ?.label ?? u.role)
+                          : "(none)"}
+                      </div>
+                    }
                   >
-                    <SelectTrigger
-                      id="um-role"
-                      className={cn(
-                        "w-[140px] rounded-[28px] mt-1",
-                        getRoleColor(u.role),
-                      )}
-                    >
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ROLE_OPTIONS.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                      <SelectItem value="null">(none)</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    {({ selectRemountKey }) => (
+                      <Select
+                        key={selectRemountKey}
+                        value={u.role ?? "null"}
+                        onValueChange={handleRoleChange}
+                        disabled={isUpdating || isProtected}
+                      >
+                        <SelectTrigger
+                          id="um-role"
+                          className={cn(
+                            "w-[140px] rounded-[28px] mt-1",
+                            getRoleColor(u.role),
+                          )}
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {ROLE_OPTIONS.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                          <SelectItem value="null">(none)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </DeferredSelectGate>
                 </div>
               </div>
             </div>

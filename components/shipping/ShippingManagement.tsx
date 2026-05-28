@@ -30,6 +30,7 @@ import {
   useGenerateShippingLabel,
   useAddTrackingNumber,
 } from "@/hooks/queries";
+import { DeferredSelectGate } from "@/components/shared";
 import {
   Truck,
   Package,
@@ -202,33 +203,49 @@ export default function ShippingManagement({
                 <Label htmlFor="carrier" className="text-white/90">
                   Carrier
                 </Label>
-                <Select
-                  value={carrier}
-                  onValueChange={(v) => setCarrier(v as ShippingCarrier)}
+                <DeferredSelectGate
+                  enabled={open}
+                  placeholder={
+                    <div
+                      className="flex h-11 w-full items-center rounded-md border border-emerald-400/30 bg-white/10 px-3 text-sm text-white/60"
+                      aria-hidden
+                    >
+                      {CARRIERS.find((c) => c.value === carrier)?.label ??
+                        "Select carrier"}
+                    </div>
+                  }
                 >
-                  <SelectTrigger
-                    id="carrier"
-                    className="h-11 w-full border-emerald-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-emerald-400 focus:ring-emerald-500/50 shadow-[0_10px_30px_rgba(16,185,129,0.15)] dark:shadow-[0_10px_30px_rgba(16,185,129,0.1)]"
-                  >
-                    <SelectValue placeholder="Select carrier" />
-                  </SelectTrigger>
-                  <SelectContent
-                    className="border-emerald-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
-                    position="popper"
-                    sideOffset={5}
-                    align="start"
-                  >
-                    {CARRIERS.map((c) => (
-                      <SelectItem
-                        key={c.value}
-                        value={c.value}
-                        className="cursor-pointer text-gray-900 dark:text-white focus:bg-emerald-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                  {({ selectRemountKey }) => (
+                    <Select
+                      key={selectRemountKey}
+                      value={carrier}
+                      onValueChange={(v) => setCarrier(v as ShippingCarrier)}
+                    >
+                      <SelectTrigger
+                        id="carrier"
+                        className="h-11 w-full border-emerald-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-emerald-400 focus:ring-emerald-500/50 shadow-[0_10px_30px_rgba(16,185,129,0.15)] dark:shadow-[0_10px_30px_rgba(16,185,129,0.1)]"
                       >
-                        {c.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                        <SelectValue placeholder="Select carrier" />
+                      </SelectTrigger>
+                      <SelectContent
+                        className="border-emerald-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
+                        position="popper"
+                        sideOffset={5}
+                        align="start"
+                      >
+                        {CARRIERS.map((c) => (
+                          <SelectItem
+                            key={c.value}
+                            value={c.value}
+                            className="cursor-pointer text-gray-900 dark:text-white focus:bg-emerald-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                          >
+                            {c.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </DeferredSelectGate>
               </div>
 
               <Button
@@ -264,33 +281,51 @@ export default function ShippingManagement({
                 <Label htmlFor="manual-carrier" className="text-white/90">
                   Carrier
                 </Label>
-                <Select
-                  value={manualCarrier}
-                  onValueChange={(v) => setManualCarrier(v as ShippingCarrier)}
+                <DeferredSelectGate
+                  enabled={open}
+                  placeholder={
+                    <div
+                      className="flex h-11 w-full items-center rounded-md border border-emerald-400/30 bg-white/10 px-3 text-sm text-white/60"
+                      aria-hidden
+                    >
+                      {CARRIERS.find((c) => c.value === manualCarrier)?.label ??
+                        "Select carrier"}
+                    </div>
+                  }
                 >
-                  <SelectTrigger
-                    id="manual-carrier"
-                    className="h-11 w-full border-emerald-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-emerald-400 focus:ring-emerald-500/50 shadow-[0_10px_30px_rgba(16,185,129,0.15)] dark:shadow-[0_10px_30px_rgba(16,185,129,0.1)]"
-                  >
-                    <SelectValue placeholder="Select carrier" />
-                  </SelectTrigger>
-                  <SelectContent
-                    className="border-emerald-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
-                    position="popper"
-                    sideOffset={5}
-                    align="start"
-                  >
-                    {CARRIERS.map((c) => (
-                      <SelectItem
-                        key={c.value}
-                        value={c.value}
-                        className="cursor-pointer text-gray-900 dark:text-white focus:bg-emerald-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                  {({ selectRemountKey }) => (
+                    <Select
+                      key={selectRemountKey}
+                      value={manualCarrier}
+                      onValueChange={(v) =>
+                        setManualCarrier(v as ShippingCarrier)
+                      }
+                    >
+                      <SelectTrigger
+                        id="manual-carrier"
+                        className="h-11 w-full border-emerald-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-emerald-400 focus:ring-emerald-500/50 shadow-[0_10px_30px_rgba(16,185,129,0.15)] dark:shadow-[0_10px_30px_rgba(16,185,129,0.1)]"
                       >
-                        {c.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                        <SelectValue placeholder="Select carrier" />
+                      </SelectTrigger>
+                      <SelectContent
+                        className="border-emerald-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
+                        position="popper"
+                        sideOffset={5}
+                        align="start"
+                      >
+                        {CARRIERS.map((c) => (
+                          <SelectItem
+                            key={c.value}
+                            value={c.value}
+                            className="cursor-pointer text-gray-900 dark:text-white focus:bg-emerald-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                          >
+                            {c.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </DeferredSelectGate>
               </div>
 
               <div className="space-y-2">

@@ -37,6 +37,7 @@ import { FileText, Calendar as CalendarIcon } from "lucide-react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormField, FormNumberField } from "@/components/forms";
+import { DeferredSelectGate } from "@/components/shared";
 
 interface InvoiceDialogProps {
   children?: React.ReactNode;
@@ -438,28 +439,49 @@ export default function InvoiceDialog({
                   <label className="text-sm font-medium text-white/80">
                     Invoice Status
                   </label>
-                  <Select
-                    value={editFormMethods.watch("status") || editingInvoice.status}
-                    onValueChange={(value) =>
-                      editFormMethods.setValue("status", value as InvoiceStatus)
+                  <DeferredSelectGate
+                    enabled={open}
+                    placeholder={
+                      <div
+                        className="flex h-11 w-full items-center rounded-md border border-indigo-400/30 bg-white/10 px-3 text-sm text-white/60 capitalize"
+                        aria-hidden
+                      >
+                        {editWatch("status") || editingInvoice.status}
+                      </div>
                     }
                   >
-                    <SelectTrigger className="h-11 w-full border-indigo-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-indigo-400 focus:ring-indigo-500/50 shadow-[0_10px_30px_rgba(99,102,241,0.15)]">
-                      <SelectValue placeholder="Select Status" />
-                    </SelectTrigger>
-                    <SelectContent
-                      className="border-indigo-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
-                      position="popper"
-                      sideOffset={5}
-                      align="start"
-                    >
-                      <SelectItem value="draft">Draft</SelectItem>
-                      <SelectItem value="sent">Sent</SelectItem>
-                      <SelectItem value="paid">Paid</SelectItem>
-                      <SelectItem value="overdue">Overdue</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    {({ selectRemountKey }) => (
+                      <Select
+                        key={selectRemountKey}
+                        value={
+                          editFormMethods.watch("status") ||
+                          editingInvoice.status
+                        }
+                        onValueChange={(value) =>
+                          editFormMethods.setValue(
+                            "status",
+                            value as InvoiceStatus,
+                          )
+                        }
+                      >
+                        <SelectTrigger className="h-11 w-full border-indigo-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-indigo-400 focus:ring-indigo-500/50 shadow-[0_10px_30px_rgba(99,102,241,0.15)]">
+                          <SelectValue placeholder="Select Status" />
+                        </SelectTrigger>
+                        <SelectContent
+                          className="border-indigo-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
+                          position="popper"
+                          sideOffset={5}
+                          align="start"
+                        >
+                          <SelectItem value="draft">Draft</SelectItem>
+                          <SelectItem value="sent">Sent</SelectItem>
+                          <SelectItem value="paid">Paid</SelectItem>
+                          <SelectItem value="overdue">Overdue</SelectItem>
+                          <SelectItem value="cancelled">Cancelled</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </DeferredSelectGate>
                 </div>
 
                 {/* Amount Paid */}
@@ -594,25 +616,47 @@ export default function InvoiceDialog({
               <Label htmlFor="order-select" className="text-sm font-medium text-white/80">
                 Select Order <span className="text-red-400">*</span>
               </Label>
-              <Select value={selectedOrderId} onValueChange={setSelectedOrderId}>
-                <SelectTrigger
-                  id="order-select"
-                  className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder:text-white/40 focus-visible:border-indigo-400 focus-visible:ring-indigo-500/50 shadow-[0_10px_30px_rgba(99,102,241,0.15)]"
-                >
-                  <SelectValue placeholder="Select an order..." />
-                </SelectTrigger>
-                <SelectContent className="bg-white/80 dark:bg-popover/50 backdrop-blur-sm">
-                  {availableOrders.map((order) => {
-                    const placer = order.placedByName || order.placedByEmail || null;
-                    const showPlacer = isAdminInvoicesPage && isAdmin && placer;
-                    return (
-                      <SelectItem key={order.id} value={order.id}>
-                        {order.orderNumber} - {fmt(order.total)} ({order.status}){showPlacer ? ` — ${placer}` : ""}
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
+              <DeferredSelectGate
+                enabled={open}
+                placeholder={
+                  <div
+                    className="flex h-11 w-full items-center rounded-md border border-white/20 bg-white/10 px-3 text-sm text-white/60"
+                    aria-hidden
+                  >
+                    {selectedOrder?.orderNumber ?? "Select an order..."}
+                  </div>
+                }
+              >
+                {({ selectRemountKey }) => (
+                  <Select
+                    key={selectRemountKey}
+                    value={selectedOrderId}
+                    onValueChange={setSelectedOrderId}
+                  >
+                    <SelectTrigger
+                      id="order-select"
+                      className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder:text-white/40 focus-visible:border-indigo-400 focus-visible:ring-indigo-500/50 shadow-[0_10px_30px_rgba(99,102,241,0.15)]"
+                    >
+                      <SelectValue placeholder="Select an order..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white/80 dark:bg-popover/50 backdrop-blur-sm">
+                      {availableOrders.map((order) => {
+                        const placer =
+                          order.placedByName || order.placedByEmail || null;
+                        const showPlacer =
+                          isAdminInvoicesPage && isAdmin && placer;
+                        return (
+                          <SelectItem key={order.id} value={order.id}>
+                            {order.orderNumber} - {fmt(order.total)} (
+                            {order.status})
+                            {showPlacer ? ` — ${placer}` : ""}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                )}
+              </DeferredSelectGate>
               {selectedOrder && (
                 <p className="text-xs text-white/60">
                   Order Total: ${selectedOrder.total.toFixed(2)} | Items: {selectedOrder.items?.length || 0}

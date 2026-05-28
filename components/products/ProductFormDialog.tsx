@@ -41,6 +41,7 @@ import {
   calculateProductStatus,
   type ProductFormData,
 } from "@/lib/validations";
+import { DeferredSelectGate } from "@/components/shared";
 
 interface AddProductDialogProps {
   allProducts: Product[];
@@ -246,59 +247,91 @@ export default function AddProductDialog({
                   Category
                 </label>
                 {/* Always string value — avoids controlled/uncontrolled flip from `|| undefined` */}
-                <Select
-                  value={selectedCategory}
-                  onValueChange={(value) => setSelectedCategory(value)}
+                <DeferredSelectGate
+                  enabled={openProductDialog}
+                  placeholder={
+                    <div
+                      className="flex h-11 w-full items-center rounded-md border border-rose-400/30 bg-white/10 px-3 text-sm text-white/60"
+                      aria-hidden
+                    >
+                      {activeCategories.find((c) => c.id === selectedCategory)
+                        ?.name ?? "Select Category"}
+                    </div>
+                  }
                 >
-                  <SelectTrigger className="h-11 w-full border-rose-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-rose-400 focus:ring-rose-500/50 shadow-[0_10px_30px_rgba(225,29,72,0.15)]">
-                    <SelectValue placeholder="Select Category" />
-                  </SelectTrigger>
-                  <SelectContent
-                    className="border-rose-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
-                    position="popper"
-                    sideOffset={5}
-                    align="start"
-                  >
-                    {activeCategories.map((category) => (
-                      <SelectItem
-                        key={category.id}
-                        value={category.id}
-                        className="cursor-pointer text-gray-900 dark:text-white focus:bg-rose-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                  {({ selectRemountKey }) => (
+                    <Select
+                      key={selectRemountKey}
+                      value={selectedCategory}
+                      onValueChange={(value) => setSelectedCategory(value)}
+                    >
+                      <SelectTrigger className="h-11 w-full border-rose-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-rose-400 focus:ring-rose-500/50 shadow-[0_10px_30px_rgba(225,29,72,0.15)]">
+                        <SelectValue placeholder="Select Category" />
+                      </SelectTrigger>
+                      <SelectContent
+                        className="border-rose-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
+                        position="popper"
+                        sideOffset={5}
+                        align="start"
                       >
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                        {activeCategories.map((category) => (
+                          <SelectItem
+                            key={category.id}
+                            value={category.id}
+                            className="cursor-pointer text-gray-900 dark:text-white focus:bg-rose-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                          >
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </DeferredSelectGate>
               </div>
               <div className="mt-5 flex flex-col gap-2">
                 <label className="text-sm font-medium text-white/80">
                   Supplier
                 </label>
-                <Select
-                  value={selectedSupplier}
-                  onValueChange={(value) => setSelectedSupplier(value)}
+                <DeferredSelectGate
+                  enabled={openProductDialog}
+                  placeholder={
+                    <div
+                      className="flex h-11 w-full items-center rounded-md border border-rose-400/30 bg-white/10 px-3 text-sm text-white/60"
+                      aria-hidden
+                    >
+                      {activeSuppliers.find((s) => s.id === selectedSupplier)
+                        ?.name ?? "Select Supplier"}
+                    </div>
+                  }
                 >
-                  <SelectTrigger className="h-11 w-full border-rose-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-rose-400 focus:ring-rose-500/50 shadow-[0_10px_30px_rgba(225,29,72,0.15)]">
-                    <SelectValue placeholder="Select Supplier" />
-                  </SelectTrigger>
-                  <SelectContent
-                    className="border-rose-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
-                    position="popper"
-                    sideOffset={5}
-                    align="start"
-                  >
-                    {activeSuppliers.map((supplier) => (
-                      <SelectItem
-                        key={supplier.id}
-                        value={supplier.id}
-                        className="cursor-pointer text-gray-900 dark:text-white focus:bg-rose-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                  {({ selectRemountKey }) => (
+                    <Select
+                      key={selectRemountKey}
+                      value={selectedSupplier}
+                      onValueChange={(value) => setSelectedSupplier(value)}
+                    >
+                      <SelectTrigger className="h-11 w-full border-rose-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-rose-400 focus:ring-rose-500/50 shadow-[0_10px_30px_rgba(225,29,72,0.15)]">
+                        <SelectValue placeholder="Select Supplier" />
+                      </SelectTrigger>
+                      <SelectContent
+                        className="border-rose-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
+                        position="popper"
+                        sideOffset={5}
+                        align="start"
                       >
-                        {supplier.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                        {activeSuppliers.map((supplier) => (
+                          <SelectItem
+                            key={supplier.id}
+                            value={supplier.id}
+                            className="cursor-pointer text-gray-900 dark:text-white focus:bg-rose-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                          >
+                            {supplier.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </DeferredSelectGate>
               </div>
             </div>
             <DialogFooter className="mt-9 mb-4 flex flex-col sm:flex-row items-center gap-4">
