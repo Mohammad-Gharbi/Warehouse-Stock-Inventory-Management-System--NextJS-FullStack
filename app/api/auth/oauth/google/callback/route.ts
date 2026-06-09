@@ -126,9 +126,13 @@ export async function GET(request: NextRequest) {
     const state = searchParams.get("state");
     const error = searchParams.get("error");
 
-    // Check for OAuth errors
+    // Check for OAuth errors — access_denied means the user cancelled the Google consent screen;
+    // this is expected UX, not a system error, so it must not be sent to Sentry
     if (error) {
-      logger.error("Google OAuth error:", error);
+      if (error !== "access_denied") {
+        // Only log unexpected OAuth errors (e.g. server_error from Google)
+        logger.warn("Google OAuth error:", error);
+      }
       return NextResponse.redirect(
         new URL("/login?error=oauth_failed", request.url)
       );

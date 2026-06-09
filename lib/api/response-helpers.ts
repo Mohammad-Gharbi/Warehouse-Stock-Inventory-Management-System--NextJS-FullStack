@@ -42,7 +42,11 @@ export function errorResponse(
 ): NextResponse<ApiError> {
   const reportToSentry = options?.reportToSentry ?? true;
 
-  logger.error("API Error:", { error, statusCode, details });
+  if (statusCode < 500) {
+    logger.warn("API Error:", { error, statusCode, details });
+  } else {
+    logger.error("API Error:", { error, statusCode, details });
+  }
 
   if (statusCode >= 500 && reportToSentry) {
     const errorObj = new Error(error);

@@ -62,8 +62,9 @@ flowchart LR
 | Boot     | `instrumentation.ts`                                          | Loads server/edge config; `onRequestError`                    |
 | Build    | `next.config.ts`                                              | `withSentryConfig`, `tunnelRoute: /api/monitoring`            |
 | Errors   | `app/global-error.tsx`, `components/shared/ErrorBoundary.tsx` | Uncaught + React errors                                       |
-| API      | `lib/api/response-helpers.ts`                                 | 5xx → Sentry                                                  |
-| Logs     | `lib/logger.ts`                                               | Production errors/warnings → Sentry                           |
+| API      | `lib/api/response-helpers.ts`                                 | 5xx → Sentry; 4xx → `logger.warn` only                        |
+| Logs     | `lib/logger.ts`                                               | 5xx → Sentry; Axios 4xx skipped (`isExpectedClientError`)     |
+| Errors   | `lib/api/errors.ts`                                           | `getErrorHttpStatus`, `isExpectedClientError`                 |
 
 **Verification checklist (manual):**
 
@@ -114,7 +115,20 @@ Details: `docs/Redis_Sentry_PostHog_INTEGRATION_GUIDE.md`
 
 Prevents `NotFoundError: removeChild` when App Router navigates between pages while a Radix `SelectPortal` is active (Sentry: `/orders` after `/products`). Rows-per-page change resets `pageIndex` to 0. Filter/search shrink uses `hooks/use-clamp-pagination-index.ts` to clamp `pageIndex` to the last valid page.
 
-## 7d. Sentry production fixes (2026-05-19)
+## 7d. Validation + 4xx Sentry guard (REQ-0010/0011, 2026-05-19)
+
+| Piece | File |
+|-------|------|
+| Product body schemas | `lib/validations/product.ts` — `createProductBodySchema`, `updateProductBodySchema`, `productFormSubmitSchema` |
+| Products API | `app/api/products/route.ts` — POST/PUT `safeParse`, `logger.warn` on validation fail |
+| Client form | `components/products/ProductFormDialog.tsx` — unified Zod submit |
+| Invoice UX | `hooks/queries/use-invoices.ts` — 409 toast |
+| OAuth deny | `app/api/auth/oauth/google/callback/route.ts` — silent `access_denied` |
+| Tests | `lib/validations/product-api.test.ts`, `lib/logger.test.ts` |
+
+**Out of scope:** no mutation invalidation / prefetch / SSR changes.
+
+## 7e. Sentry production fixes (2026-05-19)
 
 | Issue | Implementation |
 |-------|----------------|
@@ -125,7 +139,7 @@ Prevents `NotFoundError: removeChild` when App Router navigates between pages wh
 
 Tests: `lib/ai/openrouter.test.ts`, `lib/ai/groq.test.ts`, `lib/ai/create-chat-completion.test.ts`, `lib/auth/unique-username.test.ts`.
 
-## 7e. Home route SSR (no Suspense, 2026-05-19)
+## 7f. Home route SSR (no Suspense, 2026-05-19)
 
 | Piece | File / behavior |
 |-------|-----------------|
@@ -159,7 +173,7 @@ flowchart LR
 |-------|--------|
 | `npm run lint` | pass |
 | `npm run build` | pass |
-| `npm run test` | 224 passed |
+| `npm run test` | 239 passed |
 | `npm run test:invalidate` | 200 passed |
 | Radix table Select | `useDeferredRadixSelect` + `PaginationSelector` (11 tables) |
 | Pagination clamp + page-size reset | `useClampPaginationIndex` + `PaginationSelector` pageIndex 0 |

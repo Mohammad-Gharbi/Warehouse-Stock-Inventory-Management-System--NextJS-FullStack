@@ -156,3 +156,32 @@ export function isAuthError(error: unknown): boolean {
   return false;
 }
 
+/**
+ * Extract HTTP status from ApiError, AxiosError, or objects with statusCode
+ */
+export function getErrorHttpStatus(error: unknown): number | undefined {
+  if (error instanceof ApiError) {
+    return error.statusCode;
+  }
+  if (isAxiosError(error)) {
+    return error.response?.status;
+  }
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "statusCode" in error &&
+    typeof (error as { statusCode: unknown }).statusCode === "number"
+  ) {
+    return (error as { statusCode: number }).statusCode;
+  }
+  return undefined;
+}
+
+/**
+ * Expected client errors (4xx) — should not be reported to Sentry
+ */
+export function isExpectedClientError(error: unknown): boolean {
+  const status = getErrorHttpStatus(error);
+  return status !== undefined && status >= 400 && status < 500;
+}
+

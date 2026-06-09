@@ -6,7 +6,10 @@
 // Product validations
 export {
   productSchema,
+  productFormSubmitSchema,
+  createProductBodySchema,
   createProductSchema,
+  updateProductBodySchema,
   updateProductSchema,
   calculateProductStatus,
   type ProductFormData,

@@ -270,6 +270,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(transformedInvoice, { status: 201 });
   } catch (error) {
+    // Duplicate invoice is an expected business-logic rejection — return 409 and do not log to Sentry
+    if (error instanceof Error && error.message.startsWith("Invoice already exists")) {
+      return NextResponse.json({ error: error.message }, { status: 409 });
+    }
     logger.error("Error creating invoice:", error);
     return NextResponse.json(
       {

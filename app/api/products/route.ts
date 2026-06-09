@@ -26,6 +26,10 @@ import { checkAndSendStockAlerts } from "@/lib/email/notifications";
 import { getCache, setCache, invalidateCache, cacheKeys } from "@/lib/cache";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
 import { createAuditLog } from "@/prisma/audit-log";
+import {
+  createProductBodySchema,
+  updateProductBodySchema,
+} from "@/lib/validations/product";
 // NOTE: Performance tracking wrapper is available but deferred until after all features are implemented
 // import { withPerformanceTracking } from "@/lib/api/performance-wrapper";
 
@@ -186,6 +190,21 @@ export async function POST(request: NextRequest) {
 
     const userId = session.id;
     const body = await request.json();
+
+    const validationResult = createProductBodySchema.safeParse(body);
+    if (!validationResult.success) {
+      logger.warn("Invalid product creation data", {
+        errors: validationResult.error.errors,
+      });
+      return NextResponse.json(
+        {
+          error: "Invalid request body",
+          details: validationResult.error.errors,
+        },
+        { status: 400 },
+      );
+    }
+
     const {
       name,
       sku,
@@ -197,15 +216,7 @@ export async function POST(request: NextRequest) {
       imageUrl,
       imageFileId,
       expirationDate,
-    } = body;
-
-    // Validate required fields
-    if (!name || !sku || price === undefined || quantity === undefined) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 },
-      );
-    }
+    } = validationResult.data;
 
     // Check if SKU already exists
     const existingProduct = await prisma.product.findUnique({
@@ -362,6 +373,21 @@ export async function PUT(request: NextRequest) {
 
     const userId = session.id;
     const body = await request.json();
+
+    const validationResult = updateProductBodySchema.safeParse(body);
+    if (!validationResult.success) {
+      logger.warn("Invalid product update data", {
+        errors: validationResult.error.errors,
+      });
+      return NextResponse.json(
+        {
+          error: "Invalid request body",
+          details: validationResult.error.errors,
+        },
+        { status: 400 },
+      );
+    }
+
     const {
       id,
       name,
@@ -374,14 +400,7 @@ export async function PUT(request: NextRequest) {
       imageUrl,
       imageFileId,
       expirationDate,
-    } = body;
-
-    if (!id) {
-      return NextResponse.json(
-        { error: "Product ID is required" },
-        { status: 400 },
-      );
-    }
+    } = validationResult.data;
 
     // Verify product belongs to user
     const existingProduct = await prisma.product.findFirst({

@@ -4,7 +4,7 @@
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient, getErrorMessage } from "@/lib/api";
+import { apiClient, getErrorMessage, isAxiosError } from "@/lib/api";
 import {
   queryKeys,
   invalidateAfterOrderGraphChange,
@@ -90,8 +90,12 @@ export function useCreateInvoice() {
       });
     },
     onError: (error) => {
+      const isDuplicate =
+        isAxiosError(error) && error.response?.status === 409;
       toast({
-        title: "Invoice Creation Failed",
+        title: isDuplicate
+          ? "Invoice already exists"
+          : "Invoice Creation Failed",
         description:
           getErrorMessage(error) ||
           "Failed to create invoice. Please try again.",

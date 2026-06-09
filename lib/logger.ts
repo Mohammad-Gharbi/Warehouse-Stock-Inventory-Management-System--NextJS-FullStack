@@ -4,6 +4,7 @@
  * Automatically sends errors to Sentry in production when configured
  */
 
+import { isAxiosError, isExpectedClientError } from "@/lib/api/errors";
 import { captureException, captureMessage } from "@/lib/monitoring/sentry";
 
 /**
@@ -53,6 +54,21 @@ function extractError(args: unknown[]): Error | null {
 }
 
 /**
+ * Resolve the primary error/cause from logger.error arguments
+ */
+function resolvePrimaryError(args: unknown[]): unknown {
+  if (args.length > 1) {
+    if (args[1] instanceof Error) {
+      return args[1];
+    }
+    if (isAxiosError(args[1])) {
+      return args[1];
+    }
+  }
+  return extractError(args);
+}
+
+/**
  * Create a logger function for a specific level
  */
 const createLogger = (level: LogLevel): (...args: unknown[]) => void => {
@@ -60,6 +76,21 @@ const createLogger = (level: LogLevel): (...args: unknown[]) => void => {
     // In production, send errors to Sentry and suppress console logs
     if (level === "error") {
       return (...args: unknown[]) => {
+        const primary = resolvePrimaryError(args);
+        if (isExpectedClientError(primary)) {
+          return;
+        }
+
+        // Pattern: logger.error("label:", realError) — use the Error instance as primary exception
+        // so Sentry shows the real error message, not the label string
+        if (
+          args.length > 1 &&
+          args[1] instanceof Error &&
+          typeof args[0] === "string"
+        ) {
+          captureException(args[1], { label: args[0] });
+          return;
+        }
         const error = extractError(args);
         if (error) {
           // Send to Sentry if configured
@@ -71,7 +102,10 @@ const createLogger = (level: LogLevel): (...args: unknown[]) => void => {
         } else if (args.length > 0) {
           // Try to send as message if not an error
           const message = String(args[0]);
-          const context = args.length > 1 && typeof args[1] === "object" ? (args[1] as Record<string, unknown>) : undefined;
+          const context =
+            args.length > 1 && typeof args[1] === "object"
+              ? (args[1] as Record<string, unknown>)
+              : undefined;
           captureMessage(message, "error", context);
         }
       };
@@ -80,7 +114,10 @@ const createLogger = (level: LogLevel): (...args: unknown[]) => void => {
       return (...args: unknown[]) => {
         if (args.length > 0) {
           const message = String(args[0]);
-          const context = args.length > 1 && typeof args[1] === "object" ? (args[1] as Record<string, unknown>) : undefined;
+          const context =
+            args.length > 1 && typeof args[1] === "object"
+              ? (args[1] as Record<string, unknown>)
+              : undefined;
           captureMessage(message, "warning", context);
         }
       };
@@ -107,4 +144,3 @@ export const logger: Logger = {
   info: createLogger("info"),
   debug: createLogger("debug"),
 };
-

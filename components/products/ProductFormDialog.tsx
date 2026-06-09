@@ -38,6 +38,7 @@ import ExpirationDateField from "./form-fields/ExpirationDateField";
 import { Product } from "@/types";
 import {
   productSchema,
+  productFormSubmitSchema,
   calculateProductStatus,
   type ProductFormData,
 } from "@/lib/validations";
@@ -71,6 +72,9 @@ export default function AddProductDialog({
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedSupplier, setSelectedSupplier] = useState<string>("");
+  // Inline validation errors for category/supplier — outside RHF so Zod productSchema cannot cover them
+  const [categoryError, setCategoryError] = useState<string>("");
+  const [supplierError, setSupplierError] = useState<string>("");
   const dialogCloseRef = useRef<HTMLButtonElement | null>(null);
 
   // Keep UI state in Zustand (openProductDialog, selectedProduct)
@@ -127,9 +131,31 @@ export default function AddProductDialog({
       setSelectedCategory("");
       setSelectedSupplier("");
     }
+    // Clear inline validation errors on every dialog open/close or product change
+    setCategoryError("");
+    setSupplierError("");
   }, [selectedProduct, openProductDialog, reset]);
 
   const onSubmit = async (data: ProductFormData) => {
+    const submitValidation = productFormSubmitSchema.safeParse({
+      ...data,
+      categoryId: selectedCategory,
+      supplierId: selectedSupplier,
+    });
+    if (!submitValidation.success) {
+      for (const issue of submitValidation.error.errors) {
+        const field = issue.path[0];
+        if (field === "categoryId") {
+          setCategoryError(issue.message);
+        }
+        if (field === "supplierId") {
+          setSupplierError(issue.message);
+        }
+      }
+      return;
+    }
+    setCategoryError("");
+    setSupplierError("");
     // Convert empty strings to 0 for quantity and price
     const quantity =
       typeof data.quantity === "string" && data.quantity === ""
@@ -189,8 +215,7 @@ export default function AddProductDialog({
         setOpenProductDialog(false);
       }
     } catch (error) {
-      // Error toast is handled by the mutation hooks
-      // Just log for debugging
+      // Mutation onError already toasts; catch log is a dev signal (4xx skipped in prod Sentry)
       logger.error("Product operation error:", error);
     }
   };
@@ -263,7 +288,7 @@ export default function AddProductDialog({
                     <Select
                       key={selectRemountKey}
                       value={selectedCategory}
-                      onValueChange={(value) => setSelectedCategory(value)}
+                      onValueChange={(value) => { setSelectedCategory(value); setCategoryError(""); }}
                     >
                       <SelectTrigger className="h-11 w-full border-rose-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-rose-400 focus:ring-rose-500/50 shadow-[0_10px_30px_rgba(225,29,72,0.15)]">
                         <SelectValue placeholder="Select Category" />
@@ -287,6 +312,9 @@ export default function AddProductDialog({
                     </Select>
                   )}
                 </DeferredSelectGate>
+                {categoryError && (
+                  <p className="text-xs text-red-400 mt-1">{categoryError}</p>
+                )}
               </div>
               <div className="mt-5 flex flex-col gap-2">
                 <label className="text-sm font-medium text-white/80">
@@ -308,7 +336,7 @@ export default function AddProductDialog({
                     <Select
                       key={selectRemountKey}
                       value={selectedSupplier}
-                      onValueChange={(value) => setSelectedSupplier(value)}
+                      onValueChange={(value) => { setSelectedSupplier(value); setSupplierError(""); }}
                     >
                       <SelectTrigger className="h-11 w-full border-rose-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-rose-400 focus:ring-rose-500/50 shadow-[0_10px_30px_rgba(225,29,72,0.15)]">
                         <SelectValue placeholder="Select Supplier" />
@@ -332,6 +360,9 @@ export default function AddProductDialog({
                     </Select>
                   )}
                 </DeferredSelectGate>
+                {supplierError && (
+                  <p className="text-xs text-red-400 mt-1">{supplierError}</p>
+                )}
               </div>
             </div>
             <DialogFooter className="mt-9 mb-4 flex flex-col sm:flex-row items-center gap-4">

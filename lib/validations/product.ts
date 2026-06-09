@@ -1,25 +1,43 @@
 /**
  * Product validation schemas
- * Zod schemas used by product forms and API; productSchema for form, createProductSchema/updateProductSchema for API.
+ * Zod schemas used by product forms and API; productSchema for form, createProductBodySchema/updateProductBodySchema for API routes.
  * calculateProductStatus() derives "available" | "stock_low" | "stock_out" from quantity and reservedQuantity.
  */
 
 import { z } from "zod";
 import type { ProductStatus } from "@/types";
 
+const productSkuSchema = z
+  .string()
+  .min(1, "SKU is required")
+  .regex(/^[a-zA-Z0-9-_]+$/, "SKU must be alphanumeric");
+
+const productApiNameSchema = z
+  .string()
+  .min(1, "Product name is required")
+  .max(100, "Product name must be 100 characters or less");
+
+const productStatusSchema = z.enum(["Available", "Stock Low", "Stock Out"]);
+
+const optionalImageUrlSchema = z
+  .string()
+  .url("Invalid image URL")
+  .optional()
+  .or(z.literal(""));
+
+const optionalExpirationDateSchema = z
+  .string()
+  .optional()
+  .or(z.literal(""))
+  .or(z.null());
+
 /**
  * Product form validation schema
  * Used for creating and updating products
  */
 export const productSchema = z.object({
-  productName: z
-    .string()
-    .min(1, "Product Name is required")
-    .max(100, "Product Name must be 100 characters or less"),
-  sku: z
-    .string()
-    .min(1, "SKU is required")
-    .regex(/^[a-zA-Z0-9-_]+$/, "SKU must be alphanumeric"),
+  productName: productApiNameSchema,
+  sku: productSkuSchema,
   quantity: z.preprocess(
     (val) => {
       if (val === "" || val === null || val === undefined) return 0;
@@ -29,7 +47,7 @@ export const productSchema = z.object({
     z
       .number()
       .int("Quantity must be an integer")
-      .nonnegative("Quantity cannot be negative")
+      .nonnegative("Quantity cannot be negative"),
   ),
   price: z.preprocess(
     (val) => {
@@ -37,9 +55,9 @@ export const productSchema = z.object({
       const num = typeof val === "string" ? Number(val) : val;
       return isNaN(num as number) ? 0 : num;
     },
-    z.number().nonnegative("Price cannot be negative")
+    z.number().nonnegative("Price cannot be negative"),
   ),
-  imageUrl: z.string().url("Invalid image URL").optional().or(z.literal("")),
+  imageUrl: optionalImageUrlSchema,
   imageFileId: z.string().optional(),
   expirationDate: z
     .string()
@@ -54,48 +72,57 @@ export const productSchema = z.object({
 export type ProductFormData = z.infer<typeof productSchema>;
 
 /**
- * Product creation input validation schema
- * For API requests
+ * Form submit schema — RHF fields plus category/supplier from separate state
  */
-export const createProductSchema = z.object({
-  name: z.string().min(1).max(100),
-  sku: z
-    .string()
-    .min(1)
-    .regex(/^[a-zA-Z0-9-_]+$/),
-  price: z.number().nonnegative(),
-  quantity: z.number().int().nonnegative(),
-  status: z.enum(["Available", "Stock Low", "Stock Out"]),
-  categoryId: z.string().min(1),
-  supplierId: z.string().min(1),
+export const productFormSubmitSchema = productSchema.extend({
+  categoryId: z.string().min(1, "Category is required"),
+  supplierId: z.string().min(1, "Supplier is required"),
+});
+
+/**
+ * API request body for POST /api/products (userId from session only)
+ */
+export const createProductBodySchema = z.object({
+  name: productApiNameSchema,
+  sku: productSkuSchema,
+  price: z.number().nonnegative("Price cannot be negative"),
+  quantity: z.number().int().nonnegative("Quantity cannot be negative"),
+  status: productStatusSchema,
+  categoryId: z.string().min(1, "Category is required"),
+  supplierId: z.string().min(1, "Supplier is required"),
+  imageUrl: optionalImageUrlSchema.optional(),
+  imageFileId: z.string().optional(),
+  expirationDate: optionalExpirationDateSchema.optional(),
+});
+
+/**
+ * Product creation input validation schema (includes userId for import/bulk flows)
+ */
+export const createProductSchema = createProductBodySchema.extend({
   userId: z.string().min(1),
 });
 
 /**
- * Product update input validation schema
- * For API requests
+ * API request body for PUT /api/products
  */
-export const updateProductSchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1).max(100).optional(),
-  sku: z
-    .string()
-    .min(1)
-    .regex(/^[a-zA-Z0-9-_]+$/)
-    .optional(),
-  price: z.number().nonnegative().optional(),
-  quantity: z.number().int().nonnegative().optional(),
-  status: z.enum(["Available", "Stock Low", "Stock Out"]).optional(),
-  categoryId: z.string().min(1).optional(),
-  supplierId: z.string().min(1).optional(),
-  imageUrl: z.string().url("Invalid image URL").optional().or(z.literal("")),
+export const updateProductBodySchema = z.object({
+  id: z.string().min(1, "Product ID is required"),
+  name: productApiNameSchema.optional(),
+  sku: productSkuSchema.optional(),
+  price: z.number().nonnegative("Price cannot be negative").optional(),
+  quantity: z.number().int().nonnegative("Quantity cannot be negative").optional(),
+  status: productStatusSchema.optional(),
+  categoryId: z.string().min(1, "Category is required").optional(),
+  supplierId: z.string().min(1, "Supplier is required").optional(),
+  imageUrl: optionalImageUrlSchema.optional(),
   imageFileId: z.string().optional(),
-  expirationDate: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format. Use YYYY-MM-DD format")
-    .optional()
-    .or(z.literal("")),
+  expirationDate: optionalExpirationDateSchema.optional(),
 });
+
+/**
+ * Product update input validation schema (alias for API/import compatibility)
+ */
+export const updateProductSchema = updateProductBodySchema;
 
 /**
  * Calculate product status based on quantity
@@ -107,4 +134,3 @@ export const calculateProductStatus = (quantity: number): ProductStatus => {
   if (quantity > 0 && quantity <= 20) return "Stock Low";
   return "Stock Out";
 };
-

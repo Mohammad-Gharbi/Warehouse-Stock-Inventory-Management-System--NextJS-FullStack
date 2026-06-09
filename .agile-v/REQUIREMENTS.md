@@ -1,0 +1,193 @@
+# Requirements — stock-inventory (Cycle C1)
+
+Canonical REQ source. All artifacts link via `REQ-XXXX`. Status: `done` | `verify` | `planned`.
+
+---
+
+## REQ-0001 — Radix Select `removeChild` mitigation
+
+| Field | Value |
+|-------|-------|
+| **Priority** | P1 |
+| **Risk** | R2 |
+| **Status** | verify |
+
+**Intent:** Prevent `NotFoundError: removeChild` when navigating with open Radix Select portals.
+
+**Acceptance criteria**
+
+- AC1: `DeferredSelectGate` on filter toolbars, LoginPage, admin detail, dialogs (`enabled={open}`), shipping dialog
+- AC2: `PaginationSelector` + `use-deferred-radix-select` on all table footers
+- AC3: No console `removeChild` on `/products` → `/orders` with dialog open (manual)
+
+**Artifacts:** `components/shared/DeferredSelectGate.tsx`, `hooks/use-deferred-radix-select.ts`, gated components per `BUILD_MANIFEST.md`
+
+---
+
+## REQ-0002 — OpenRouter billing / upstream errors (no Sentry 502 spam)
+
+| Field | Value |
+|-------|-------|
+| **Priority** | P1 |
+| **Risk** | R2 |
+| **Status** | done |
+
+**Acceptance criteria**
+
+- AC1: Typed LLM results; 402/429/5xx → `serviceUnavailableResponse` (not uncaught 502)
+- AC2: Client shows billing toast only when all providers fail
+- AC3: `lib/ai/openrouter.test.ts` covers 402 path
+
+---
+
+## REQ-0003 — OAuth Google username P2002 recovery
+
+| Field | Value |
+|-------|-------|
+| **Priority** | P1 |
+| **Risk** | R2 |
+| **Status** | done |
+
+**Acceptance criteria**
+
+- AC1: `lib/auth/unique-username.ts` + P2002 recovery in Google callback
+- AC2: `lib/auth/unique-username.test.ts` passes
+
+---
+
+## REQ-0004 — Home route hydration (SSR-first)
+
+| Field | Value |
+|-------|-------|
+| **Priority** | P1 |
+| **Risk** | R2 |
+| **Status** | done |
+
+**Acceptance criteria**
+
+- AC1: `app/page.tsx` SSR without route `<Suspense>`; `initialOAuthSuccess` from server
+- AC2: `app/layout.tsx` `force-dynamic`
+- AC3: `CategoryList` always mounts gated filters
+
+---
+
+## REQ-0005 — Groq LLM fallback (OpenRouter primary)
+
+| Field | Value |
+|-------|-------|
+| **Priority** | P1 |
+| **Risk** | R2 |
+| **Status** | verify |
+
+**Acceptance criteria**
+
+- AC1: `createChatCompletion` tries OpenRouter then Groq on billing/rate_limit/upstream/not_configured
+- AC2: `GROQ_API_KEY` only required on Vercel; default model `llama-3.3-70b-versatile`
+- AC3: `resolveGroqModel` ignores OpenRouter slugs (`openai/*`) for forecasting fallback
+- AC4: Production POST `/api/ai/insights` returns 200 with `provider: groq` when OpenRouter fails
+- AC5: Tests in `lib/ai/*.test.ts` (9+ cases)
+
+---
+
+## REQ-0006 — DeferredSelectGate on all remaining Select surfaces
+
+| Field | Value |
+|-------|-------|
+| **Priority** | P1 |
+| **Risk** | R2 |
+| **Status** | verify |
+
+**Acceptance criteria**
+
+- AC1: All plan dialog files gated (`enabled={open}`)
+- AC2: Admin/shipping pages gated (default `enabled`)
+- AC3: `PaginationSelector` uses hook directly (by design)
+
+---
+
+## REQ-0007 — Notification bell dropdown layout
+
+| Field | Value |
+|-------|-------|
+| **Priority** | P1 |
+| **Risk** | R2 |
+| **Status** | verify |
+
+**Acceptance criteria**
+
+- AC1: Dropdown portaled via Radix `DropdownMenu` (not clipped by header `overflow-x-hidden`)
+- AC2: No extra Y scrollbar on navbar when bell opens
+- AC3: Panel visible below bell on desktop and mobile
+
+**Artifacts:** `NotificationBell.tsx`, `NotificationDropdown.tsx`, `Navbar.tsx`
+
+---
+
+## REQ-0008 — Agile V state persistence (`.agile-v/`)
+
+| Field | Value |
+|-------|-------|
+| **Priority** | P2 |
+| **Risk** | R1 |
+| **Status** | done |
+
+**Acceptance criteria**
+
+- AC1: `.agile-v/` with STATE, REQUIREMENTS, DECISION_LOG, VALIDATION_SUMMARY, BUILD_MANIFEST, ATM
+- AC2: `.cursor/rules/agile-v-core.mdc` `alwaysApply: true`
+- AC3: 24 skill stubs in `.agile-v/skills/`
+
+---
+
+## REQ-0009 — Post-deploy Sentry regression watch (planned)
+
+| Field | Value |
+|-------|-------|
+| **Priority** | P2 |
+| **Risk** | R1 |
+| **Status** | planned |
+
+**Acceptance criteria**
+
+- AC1: 24h production Sentry review after deploy
+- AC2: `SENTRY_ERRORS.md` cases 1–7 trend down or resolved
+- AC3: CAPA entry if regression
+
+---
+
+## REQ-0010 — Products API Zod validation (POST + PUT)
+
+| Field | Value |
+|-------|-------|
+| **Priority** | P1 |
+| **Risk** | R2 |
+| **Status** | done |
+
+**Acceptance criteria**
+
+- AC1: `createProductBodySchema` / `updateProductBodySchema` in `lib/validations/product.ts`
+- AC2: POST + PUT `/api/products` use `safeParse` (invoice pattern); `userId` from session only
+- AC3: Validation failures return 400 with Zod `details`; `logger.warn` not `error`
+- AC4: `lib/validations/product-api.test.ts` covers empty categoryId, invalid SKU, valid payload
+
+**Artifacts:** `app/api/products/route.ts`, `lib/validations/product.ts`
+
+---
+
+## REQ-0011 — Central 4xx-aware logging (Sentry noise reduction)
+
+| Field | Value |
+|-------|-------|
+| **Priority** | P1 |
+| **Risk** | R2 |
+| **Status** | done |
+
+**Acceptance criteria**
+
+- AC1: `getErrorHttpStatus` / `isExpectedClientError` in `lib/api/errors.ts`
+- AC2: Production `logger.error` skips Sentry for Axios 4xx (e.g. mutation catch blocks)
+- AC3: `errorResponse` uses `logger.warn` when `statusCode < 500`
+- AC4: `lib/logger.test.ts` — 400 Axios skipped, 500 reported
+- AC5: Invoice 409 toast title "Invoice already exists"; `productFormSubmitSchema` on product dialog
+
+**Artifacts:** `lib/logger.ts`, `lib/api/response-helpers.ts`, `hooks/queries/use-invoices.ts`, `components/products/ProductFormDialog.tsx`
