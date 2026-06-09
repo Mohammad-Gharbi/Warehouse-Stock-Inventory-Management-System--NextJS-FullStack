@@ -171,6 +171,13 @@ flowchart LR
 - **Security:** `Receiver.verify` with `QSTASH_CURRENT_SIGNING_KEY` / `QSTASH_NEXT_SIGNING_KEY`
 - **Retries:** webhook 500 on send failure → QStash retries; direct fallback in `queueEmailNotification` still logs-only on error
 
+## 7g. Post-deploy observability (REQ-0009)
+
+1. Confirm Vercel production = commit `3ae452c` (or later on `main`)
+2. Smoke: bell dropdown, create product w/o category (400, no Sentry), duplicate invoice (409 toast)
+3. Sentry **stock-inventory** — 24h: compare cases 1–7 vs `docs/SENTRY_ERRORS.md`
+4. Log result in `.agile-v/REVALIDATION_LOG.md`; CAPA if regression
+
 ## 8. Quality gates (audit 2026-05-19)
 
 | Check | Status |

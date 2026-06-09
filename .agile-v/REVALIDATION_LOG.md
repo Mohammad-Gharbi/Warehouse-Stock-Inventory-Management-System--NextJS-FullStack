@@ -8,7 +8,7 @@
 
 ## REQ-0009 checklist (24h after deploy)
 
-- [ ] Deploy SHA: _record on deploy_
+- [ ] Deploy SHA: `3ae452c` (catalog Zod + barrel; includes `f250980` Sentry fixes)
 - [ ] Sentry project **stock-inventory** — cases 1–7 event count vs baseline (`docs/SENTRY_ERRORS.md`)
 - [ ] Case 1 `Product operation error:` — no new 4xx events (logger guard)
 - [ ] Case 3 duplicate invoice — 409 only, no Sentry
