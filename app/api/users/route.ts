@@ -94,6 +94,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validation = createUserAdminSchema.safeParse(body);
     if (!validation.success) {
+      logger.warn("Invalid user creation data", {
+        errors: validation.error.errors,
+      });
       return NextResponse.json(
         { error: "Invalid request body", details: validation.error.errors },
         { status: 400 },

@@ -14,11 +14,8 @@ import {
 } from "@/prisma/system-config";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
 import { getCache, setCache, invalidateCache } from "@/lib/cache";
-import type {
-  SystemConfig,
-  UpdateSystemConfigInput,
-  ConfigCategory,
-} from "@/types";
+import { updateSystemConfigsBodySchema } from "@/lib/validations/system-config";
+import type { SystemConfig, ConfigCategory } from "@/types";
 import { CATEGORY_LABELS } from "@/types";
 
 const CACHE_KEY = "system-config:all";
@@ -121,24 +118,21 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { configs } = body as { configs: UpdateSystemConfigInput[] };
-
-    if (!Array.isArray(configs) || configs.length === 0) {
+    const validationResult = updateSystemConfigsBodySchema.safeParse(body);
+    if (!validationResult.success) {
+      logger.warn("Invalid system config update data", {
+        errors: validationResult.error.errors,
+      });
       return NextResponse.json(
-        { error: "No configurations to update" },
+        {
+          error: "Invalid request body",
+          details: validationResult.error.errors,
+        },
         { status: 400 },
       );
     }
 
-    // Validate each config
-    for (const config of configs) {
-      if (!config.key || typeof config.value !== "string") {
-        return NextResponse.json(
-          { error: `Invalid configuration: ${config.key}` },
-          { status: 400 },
-        );
-      }
-    }
+    const { configs } = validationResult.data;
 
     // Update configs
     const updated = await updateSystemConfigs(configs, session.id);

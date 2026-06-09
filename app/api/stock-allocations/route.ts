@@ -164,6 +164,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validation = createStockAllocationSchema.safeParse(body);
     if (!validation.success) {
+      logger.warn("Invalid stock allocation data", {
+        errors: validation.error.errors,
+      });
       return NextResponse.json(
         { error: "Invalid request body", details: validation.error.errors },
         { status: 400 },

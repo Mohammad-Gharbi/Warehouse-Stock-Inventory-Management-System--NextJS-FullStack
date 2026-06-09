@@ -11,7 +11,7 @@
 | Check | Command | Result | REQ-IDs |
 |-------|---------|--------|---------|
 | Lint | `npm run lint` | PASS | ALL |
-| Unit tests | `npm run test` | PASS (260) | REQ-0002, REQ-0003, REQ-0005, REQ-0010–0012 |
+| Unit tests | `npm run test` | PASS (284) | REQ-0002, REQ-0003, REQ-0005, REQ-0010–0013 |
 | Invalidation audit | `npm run test:invalidate` | PASS (200) | — |
 | Build | `npm run build` | PASS | ALL |
 
@@ -37,6 +37,7 @@
 | VS-003 | INFO | Regenerate insights same text = same input | ACCEPTED |
 | VS-004 | INFO | Products POST/PUT Zod + 4xx logger guard | PASS (automated) |
 | VS-005 | INFO | Catalog CRUD Zod + API barrel exports | PASS (automated) |
+| VS-006 | INFO | Remaining API Zod sweep (payment/shipping/auth/AI) | PASS (automated) |
 
 ---
 

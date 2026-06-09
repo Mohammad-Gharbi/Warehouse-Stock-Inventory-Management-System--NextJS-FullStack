@@ -128,9 +128,12 @@ Prevents `NotFoundError: removeChild` when App Router navigates between pages wh
 | Client form | `components/products/ProductFormDialog.tsx` — unified Zod submit |
 | Invoice UX | `hooks/queries/use-invoices.ts` — 409 toast |
 | OAuth deny | `app/api/auth/oauth/google/callback/route.ts` — silent `access_denied` |
-| Tests | `lib/validations/product-api.test.ts`, `lib/logger.test.ts` |
+| Payment/shipping schemas | `lib/validations/{payment,shipping}.ts` — checkout, rates, labels, tracking |
+| Notification/AI/config | `lib/validations/{notification,ai,system-config}.ts` |
+| Auth safeParse | `loginSchema` / `registerSchema` — no `.parse()` throw to 500 |
+| Tests | `lib/validations/*-api.test.ts` (284 unit tests) |
 
-**Out of scope:** no mutation invalidation / prefetch / SSR changes.
+**Out of scope:** webhooks (Stripe/Shippo/QStash), multipart product image upload.
 
 ## 7e. Sentry production fixes (2026-05-19)
 
@@ -184,7 +187,7 @@ flowchart LR
 |-------|--------|
 | `npm run lint` | pass |
 | `npm run build` | pass |
-| `npm run test` | 260 passed |
+| `npm run test` | 284 passed |
 | `npm run test:invalidate` | 200 passed |
 | Radix table Select | `useDeferredRadixSelect` + `PaginationSelector` (11 tables) |
 | Pagination clamp + page-size reset | `useClampPaginationIndex` + `PaginationSelector` pageIndex 0 |

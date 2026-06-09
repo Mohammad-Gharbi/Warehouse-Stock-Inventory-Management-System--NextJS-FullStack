@@ -211,3 +211,23 @@ Canonical REQ source. All artifacts link via `REQ-XXXX`. Status: `done` | `verif
 - AC5: Unit tests: `category-api`, `supplier-api`, `warehouse-api`, `errors.test.ts`
 
 **Artifacts:** `lib/validations/{category,supplier,warehouse}.ts`, matching API routes, `docs/SENTRY_ERRORS.md`
+
+---
+
+## REQ-0013 — Remaining API Zod consistency
+
+| Field | Value |
+|-------|-------|
+| **Priority** | P1 |
+| **Risk** | R2 |
+| **Status** | done |
+
+**Acceptance criteria**
+
+- AC1: `logger.warn` on all `safeParse` validation failures (orders, users, tickets, reviews, stock-allocations, email-preferences)
+- AC2: New schemas: payment, shipping, notification, system-config, ai; product QR + auth body aliases
+- AC3: `safeParse` on checkout, shipping (rates/labels/tracking), notifications (email + in-app), system-config, ai/insights, products/qr-code, auth login/register
+- AC4: Unit tests in `lib/validations/*-api.test.ts` (284 total)
+- AC5: Webhooks/multipart routes unchanged (Stripe, Shippo, QStash, product image)
+
+**Artifacts:** `lib/validations/{payment,shipping,notification,system-config,ai}.ts`, matching `app/api/*` routes

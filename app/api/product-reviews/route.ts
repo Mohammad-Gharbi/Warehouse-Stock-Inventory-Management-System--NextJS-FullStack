@@ -119,6 +119,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const parsed = createProductReviewSchema.safeParse(body);
     if (!parsed.success) {
+      logger.warn("Invalid product review creation data", {
+        errors: parsed.error.errors,
+      });
       return NextResponse.json(
         { error: "Invalid request body", details: parsed.error.errors },
         { status: 400 },

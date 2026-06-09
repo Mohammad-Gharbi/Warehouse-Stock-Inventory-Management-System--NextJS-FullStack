@@ -124,6 +124,11 @@ export const updateProductBodySchema = z.object({
  */
 export const updateProductSchema = updateProductBodySchema;
 
+/** POST /api/products/qr-code */
+export const generateProductQrCodeBodySchema = z.object({
+  productId: z.string().min(1, "Product ID is required"),
+});
+
 /**
  * Calculate product status based on quantity
  * @param quantity - Product quantity

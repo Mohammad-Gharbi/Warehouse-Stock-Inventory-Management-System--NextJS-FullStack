@@ -35,8 +35,14 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+/** API body alias for POST /api/auth/login */
+export const loginBodySchema = loginSchema;
+
 /**
  * User login form data type
  */
 export type LoginFormData = z.infer<typeof loginSchema>;
+
+/** API body alias for POST /api/auth/register */
+export const registerBodySchema = registerSchema;
 

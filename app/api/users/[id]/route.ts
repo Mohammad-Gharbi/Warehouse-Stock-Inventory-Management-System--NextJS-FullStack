@@ -204,6 +204,9 @@ export async function PUT(
     const body = await request.json();
     const parsed = updateUserAdminSchema.safeParse(body);
     if (!parsed.success) {
+      logger.warn("Invalid user update data", {
+        errors: parsed.error.errors,
+      });
       return NextResponse.json(
         { error: "Invalid request body", details: parsed.error.errors },
         { status: 400 },

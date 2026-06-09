@@ -31,8 +31,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate with Zod schema
-    const { email, password } = loginSchema.parse(body);
+    const validationResult = loginSchema.safeParse(body);
+    if (!validationResult.success) {
+      logger.warn("Invalid login data", {
+        errors: validationResult.error.errors,
+      });
+      return NextResponse.json(
+        {
+          error: "Invalid request body",
+          details: validationResult.error.errors,
+        },
+        { status: 400, headers: responseHeaders },
+      );
+    }
+
+    const { email, password } = validationResult.data;
 
     // Find user
     const user = await prisma.user.findUnique({ where: { email } });
@@ -108,13 +121,6 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    if (error instanceof Error && error.name === "ZodError") {
-      return NextResponse.json(
-        { error: "Invalid email or password format" },
-        { status: 400 },
-      );
-    }
-
     logger.error("Login error:", error);
     return NextResponse.json(
       { error: "Internal server error" },

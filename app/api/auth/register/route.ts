@@ -57,8 +57,21 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Validate with Zod schema
-    const { name, email, password } = registerSchema.parse(body);
+    const validationResult = registerSchema.safeParse(body);
+    if (!validationResult.success) {
+      logger.warn("Invalid registration data", {
+        errors: validationResult.error.errors,
+      });
+      return NextResponse.json(
+        {
+          error: "Invalid request body",
+          details: validationResult.error.errors,
+        },
+        { status: 400 },
+      );
+    }
+
+    const { name, email, password } = validationResult.data;
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -125,13 +138,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    if (error instanceof Error && error.name === "ZodError") {
-      return NextResponse.json(
-        { error: "Invalid registration data. Please check your inputs." },
-        { status: 400 }
-      );
-    }
-
     logger.error("Registration error:", error);
 
     const message =

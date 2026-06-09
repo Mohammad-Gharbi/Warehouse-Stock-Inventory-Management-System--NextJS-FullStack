@@ -12,7 +12,8 @@ import {
   DEFAULT_FROM_ADDRESS,
 } from "@/lib/shippo";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
-import type { GetRatesInput, GetRatesResponse, ShippingRate } from "@/types";
+import { getRatesBodySchema } from "@/lib/validations/shipping";
+import type { GetRatesResponse, ShippingRate } from "@/types";
 
 /**
  * POST /api/shipping/rates
@@ -38,21 +39,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: GetRatesInput = await request.json();
-    const { toAddress, fromAddress, parcel } = body;
-
-    if (
-      !toAddress ||
-      !toAddress.street1 ||
-      !toAddress.city ||
-      !toAddress.state ||
-      !toAddress.zip
-    ) {
+    const body = await request.json();
+    const validationResult = getRatesBodySchema.safeParse(body);
+    if (!validationResult.success) {
+      logger.warn("Invalid shipping rates request", {
+        errors: validationResult.error.errors,
+      });
       return NextResponse.json(
-        { error: "Missing required address fields" },
+        {
+          error: "Invalid request body",
+          details: validationResult.error.errors,
+        },
         { status: 400 },
       );
     }
+
+    const { toAddress, fromAddress, parcel } = validationResult.data;
 
     const shippo = getShippo();
 

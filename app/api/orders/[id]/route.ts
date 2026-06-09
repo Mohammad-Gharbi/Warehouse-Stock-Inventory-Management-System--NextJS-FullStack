@@ -213,6 +213,9 @@ export async function PUT(
     // Validate request body
     const validationResult = updateOrderSchema.safeParse(body);
     if (!validationResult.success) {
+      logger.warn("Invalid order update data", {
+        errors: validationResult.error.errors,
+      });
       return NextResponse.json(
         {
           error: "Invalid request body",

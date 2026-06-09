@@ -12,6 +12,7 @@ import {
   deleteNotification,
 } from "@/prisma/notification";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
+import { updateInAppNotificationBodySchema } from "@/lib/validations/notification";
 import type { UpdateNotificationInput } from "@/types";
 
 /**
@@ -122,10 +123,23 @@ export async function PUT(
 
     const body = await request.json();
 
-    // Validate request body
+    const validationResult = updateInAppNotificationBodySchema.safeParse(body);
+    if (!validationResult.success) {
+      logger.warn("Invalid in-app notification update data", {
+        errors: validationResult.error.errors,
+      });
+      return NextResponse.json(
+        {
+          error: "Invalid request body",
+          details: validationResult.error.errors,
+        },
+        { status: 400 },
+      );
+    }
+
     const updateData: UpdateNotificationInput = {
       id: notificationId,
-      read: body.read,
+      read: validationResult.data.read,
     };
 
     // Update notification

@@ -12,7 +12,8 @@ import { getSupplierByUserId } from "@/prisma/supplier";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
 import { sendShippingNotification } from "@/lib/email";
 import type { ShippingNotificationData } from "@/lib/email/types";
-import type { AddTrackingInput, GenerateLabelResponse } from "@/types";
+import { addTrackingBodySchema } from "@/lib/validations/shipping";
+import type { GenerateLabelResponse } from "@/types";
 
 /**
  * POST /api/shipping/tracking
@@ -31,22 +32,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body: AddTrackingInput = await request.json();
-    const { orderId, trackingNumber, trackingCarrier } = body;
-
-    if (!orderId) {
+    const body = await request.json();
+    const validationResult = addTrackingBodySchema.safeParse(body);
+    if (!validationResult.success) {
+      logger.warn("Invalid shipping tracking request", {
+        errors: validationResult.error.errors,
+      });
       return NextResponse.json(
-        { error: "Order ID is required" },
+        {
+          error: "Invalid request body",
+          details: validationResult.error.errors,
+        },
         { status: 400 },
       );
     }
 
-    if (!trackingNumber) {
-      return NextResponse.json(
-        { error: "Tracking number is required" },
-        { status: 400 },
-      );
-    }
+    const { orderId, trackingNumber, trackingCarrier } = validationResult.data;
 
     // Fetch order with items and product supplierIds for auth
     const order = await prisma.order.findUnique({

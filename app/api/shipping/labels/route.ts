@@ -18,7 +18,8 @@ import { getSupplierByUserId } from "@/prisma/supplier";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
 import { sendShippingNotification } from "@/lib/email";
 import type { ShippingNotificationData } from "@/lib/email/types";
-import type { GenerateLabelInput, GenerateLabelResponse } from "@/types";
+import { generateLabelBodySchema } from "@/lib/validations/shipping";
+import type { GenerateLabelResponse } from "@/types";
 
 /**
  * POST /api/shipping/labels
@@ -44,7 +45,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: GenerateLabelInput = await request.json();
+    const body = await request.json();
+    const validationResult = generateLabelBodySchema.safeParse(body);
+    if (!validationResult.success) {
+      logger.warn("Invalid shipping label request", {
+        errors: validationResult.error.errors,
+      });
+      return NextResponse.json(
+        {
+          error: "Invalid request body",
+          details: validationResult.error.errors,
+        },
+        { status: 400 },
+      );
+    }
+
     const {
       orderId,
       carrier,
@@ -53,14 +68,7 @@ export async function POST(request: NextRequest) {
       fromAddress,
       toAddress,
       parcel,
-    } = body;
-
-    if (!orderId) {
-      return NextResponse.json(
-        { error: "Order ID is required" },
-        { status: 400 },
-      );
-    }
+    } = validationResult.data;
 
     // Fetch order with items and product supplierIds for auth
     const order = await prisma.order.findUnique({

@@ -11,6 +11,8 @@ import {
   errorResponse,
   serviceUnavailableResponse,
 } from "@/lib/api/response-helpers";
+import { logger } from "@/lib/logger";
+import { aiInsightsBodySchema } from "@/lib/validations/ai";
 
 const SYSTEM_PROMPT = `You are a concise inventory advisor. Given a short summary of inventory metrics, reply with 2-4 brief, actionable recommendations (one short sentence each). Focus on reorder suggestions, low-stock attention, and value optimization. Keep the tone professional and direct. Do not use markdown or bullet symbols.`;
 
@@ -30,21 +32,24 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    let body: { summary?: string };
+    let body: unknown;
     try {
       body = await request.json();
     } catch {
       return errorResponse("Invalid JSON body", 400);
     }
 
-    const summary =
-      typeof body?.summary === "string" && body.summary.trim().length > 0
-        ? body.summary.trim()
-        : null;
-
-    if (!summary) {
-      return errorResponse("Missing or empty summary in body", 400);
+    const validationResult = aiInsightsBodySchema.safeParse(body);
+    if (!validationResult.success) {
+      logger.warn("Invalid AI insights request", {
+        errors: validationResult.error.errors,
+      });
+      return errorResponse("Invalid request body", 400, {
+        details: validationResult.error.errors,
+      });
     }
+
+    const { summary } = validationResult.data;
 
     const result = await createChatCompletion(
       [

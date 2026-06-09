@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { emailNotificationBodySchema } from "@/lib/validations/notification";
 import {
   sendEmailViaBrevo,
   isBrevoConfigured,
@@ -18,7 +19,6 @@ import {
   generateInventoryReportEmail,
 } from "@/lib/email/templates";
 import type {
-  EmailNotificationOptions,
   LowStockAlertData,
   StockOutNotificationData,
   InventoryReportData,
@@ -41,23 +41,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Parse request body
     const body = await request.json();
+    const validationResult = emailNotificationBodySchema.safeParse(body);
+    if (!validationResult.success) {
+      logger.warn("Invalid email notification data", {
+        errors: validationResult.error.errors,
+      });
+      return errorResponse("Invalid request body", 400, {
+        details: validationResult.error.errors,
+      });
+    }
+
     const {
       type,
       recipientEmail,
       recipientName,
       data,
       adminEmail: requestAdminEmail,
-    } = body as EmailNotificationOptions;
-
-    // Validate required fields
-    if (!type || !recipientEmail || !data) {
-      return errorResponse(
-        "Missing required fields: type, recipientEmail, and data are required",
-        400
-      );
-    }
+    } = validationResult.data;
 
     // Generate email content based on type
     let emailContent;
@@ -65,21 +66,21 @@ export async function POST(request: NextRequest) {
 
     switch (type) {
       case "low_stock_alert": {
-        const alertData = data as LowStockAlertData;
+        const alertData = data as unknown as LowStockAlertData;
         emailContent = generateLowStockAlertEmail(alertData);
         tags.push("alert", "low_stock");
         break;
       }
 
       case "stock_out_notification": {
-        const stockOutData = data as StockOutNotificationData;
+        const stockOutData = data as unknown as StockOutNotificationData;
         emailContent = generateStockOutNotificationEmail(stockOutData);
         tags.push("alert", "stock_out");
         break;
       }
 
       case "inventory_report": {
-        const reportData = data as InventoryReportData;
+        const reportData = data as unknown as InventoryReportData;
         emailContent = generateInventoryReportEmail(reportData);
         tags.push("report", reportData.reportType);
         break;

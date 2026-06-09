@@ -6,7 +6,7 @@
 | **Phase** | `phases/01-sentry-groq-select` |
 | **Infinity Loop stage** | Verify (post-build, pre Human Gate 2) |
 | **Last updated** | 2026-05-19 |
-| **Active REQ range** | REQ-0001 … REQ-0012 |
+| **Active REQ range** | REQ-0001 … REQ-0013 |
 | **Human Gate 1** | APPROVED (retroactive bootstrap) |
 | **Human Gate 2** | PENDING — post-deploy Sentry 24h + notification QA |
 | **Resume token** | — |

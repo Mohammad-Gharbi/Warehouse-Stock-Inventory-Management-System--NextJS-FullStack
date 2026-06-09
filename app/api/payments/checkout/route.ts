@@ -9,7 +9,8 @@ import { logger } from "@/lib/logger";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { prisma } from "@/prisma/client";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
-import type { CheckoutSessionResponse, CreateCheckoutInput } from "@/types";
+import { createCheckoutBodySchema } from "@/lib/validations/payment";
+import type { CheckoutSessionResponse } from "@/types";
 
 /**
  * POST /api/payments/checkout
@@ -35,15 +36,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: CreateCheckoutInput = await request.json();
-    const { type, id, successUrl, cancelUrl } = body;
-
-    if (!type || !id) {
+    const body = await request.json();
+    const validationResult = createCheckoutBodySchema.safeParse(body);
+    if (!validationResult.success) {
+      logger.warn("Invalid checkout data", {
+        errors: validationResult.error.errors,
+      });
       return NextResponse.json(
-        { error: "Missing required fields: type and id" },
+        {
+          error: "Invalid request body",
+          details: validationResult.error.errors,
+        },
         { status: 400 },
       );
     }
+
+    const { type, id, successUrl, cancelUrl } = validationResult.data;
 
     const stripe = getStripe();
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";

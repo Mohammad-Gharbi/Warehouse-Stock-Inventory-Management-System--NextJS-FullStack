@@ -202,6 +202,9 @@ export async function POST(request: NextRequest) {
     // Validate request body
     const validationResult = createOrderSchema.safeParse(body);
     if (!validationResult.success) {
+      logger.warn("Invalid order creation data", {
+        errors: validationResult.error.errors,
+      });
       return NextResponse.json(
         {
           error: "Invalid request body",

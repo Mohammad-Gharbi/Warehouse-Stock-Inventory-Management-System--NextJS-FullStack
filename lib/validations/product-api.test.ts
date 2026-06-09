@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   createProductBodySchema,
   updateProductBodySchema,
+  generateProductQrCodeBodySchema,
 } from "./product";
 
 const validCreatePayload = {
@@ -67,5 +68,19 @@ describe("updateProductBodySchema", () => {
       categoryId: "",
     });
     expect(result.success).toBe(false);
+  });
+});
+
+describe("generateProductQrCodeBodySchema", () => {
+  it("requires productId", () => {
+    expect(generateProductQrCodeBodySchema.safeParse({}).success).toBe(false);
+  });
+
+  it("accepts valid productId", () => {
+    expect(
+      generateProductQrCodeBodySchema.safeParse({
+        productId: "507f1f77bcf86cd799439011",
+      }).success,
+    ).toBe(true);
   });
 });

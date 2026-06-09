@@ -10,6 +10,7 @@ import {
   deleteQRCodeFromImageKit,
 } from "@/lib/imagekit";
 import { logger } from "@/lib/logger";
+import { generateProductQrCodeBodySchema } from "@/lib/validations/product";
 import { prisma } from "@/prisma/client";
 
 /**
@@ -25,16 +26,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Parse request body
     const body = await request.json();
-    const { productId } = body;
-
-    if (!productId || typeof productId !== "string") {
+    const validationResult = generateProductQrCodeBodySchema.safeParse(body);
+    if (!validationResult.success) {
+      logger.warn("Invalid product QR code request", {
+        errors: validationResult.error.errors,
+      });
       return NextResponse.json(
-        { error: "Product ID is required" },
-        { status: 400 }
+        {
+          error: "Invalid request body",
+          details: validationResult.error.errors,
+        },
+        { status: 400 },
       );
     }
+
+    const { productId } = validationResult.data;
 
     // Fetch product
     const product = await prisma.product.findUnique({

@@ -73,6 +73,9 @@ export async function PUT(request: NextRequest) {
     // Validate request body
     const validationResult = updateEmailPreferencesSchema.safeParse(body);
     if (!validationResult.success) {
+      logger.warn("Invalid email preferences data", {
+        errors: validationResult.error.errors,
+      });
       return NextResponse.json(
         {
           error: "Invalid request body",
