@@ -27,4 +27,11 @@ Scope: [built/verified] | Traceability: [REQ-IDs] | Findings: [PASS/FAIL]
 Commands: lint, test, test:invalidate, build
 ```
 
+## Skill activation (every prompt)
+
+1. Read `.agile-v/STATE.md` — cycle, gate, resume
+2. Map work to `REQ-XXXX` in `.agile-v/REQUIREMENTS.md`
+3. Load from `.agile-v/skills/SKILLS_INDEX.md`: **01** always; **17** for Next.js build; **19** before claiming done; **23** for Sentry
+4. Write-through: `DECISION_LOG.md`, `BUILD_MANIFEST.md`, `VALIDATION_SUMMARY.md`
+
 **Upstream skills:** https://github.com/Agile-V/agile_v_skills

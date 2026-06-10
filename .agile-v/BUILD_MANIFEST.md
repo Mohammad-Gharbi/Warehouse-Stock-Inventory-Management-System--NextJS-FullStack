@@ -26,6 +26,14 @@
 | ART-0018 | REQ-0007 | `components/layouts/Navbar.tsx` | overflow fix |
 | ART-0019 | REQ-0008 | `.agile-v/*` | Agile V state |
 | ART-0020 | REQ-0008 | `.cursor/rules/agile-v-core.mdc` | Cursor rule |
+| ART-0021 | REQ-0010 | `lib/validations/product.ts` | Product body schemas |
+| ART-0022 | REQ-0010 | `app/api/products/route.ts` | POST/PUT safeParse |
+| ART-0023 | REQ-0011 | `lib/logger.ts`, `lib/api/errors.ts` | 4xx Sentry guard |
+| ART-0024 | REQ-0011 | `lib/api/response-helpers.ts` | warn on 4xx |
+| ART-0025 | REQ-0012 | `lib/validations/{category,supplier,warehouse}.ts` | Catalog schemas |
+| ART-0026 | REQ-0012 | `docs/SENTRY_ERRORS.md` | Audit doc tracked |
+| ART-0027 | REQ-0013 | `lib/validations/{payment,shipping,notification,system-config,ai}.ts` | API Zod sweep |
+| ART-0028 | REQ-0013 | `app/api/{payments,shipping,notifications,auth,ai}/*` | safeParse routes |
 
 ## Tests
 
@@ -35,3 +43,7 @@
 | TC-0002 | REQ-0005 | `lib/ai/groq.test.ts` |
 | TC-0003 | REQ-0005 | `lib/ai/create-chat-completion.test.ts` |
 | TC-0004 | REQ-0003 | `lib/auth/unique-username.test.ts` |
+| TC-0005 | REQ-0010 | `lib/validations/product-api.test.ts` |
+| TC-0006 | REQ-0011 | `lib/logger.test.ts`, `lib/api/errors.test.ts` |
+| TC-0007 | REQ-0012 | `lib/validations/{category,supplier,warehouse}-api.test.ts` |
+| TC-0008 | REQ-0013 | `lib/validations/{payment,shipping,notification,system-config,ai,auth}-api.test.ts` |

@@ -33,7 +33,7 @@
 | ID | Severity | Finding | Status |
 |----|----------|---------|--------|
 | VS-001 | INFO | Groq fallback live in production | PASS |
-| VS-002 | MINOR | Notification fix needs deploy | OPEN |
+| VS-002 | INFO | Notification portal fix deployed | PASS |
 | VS-003 | INFO | Regenerate insights same text = same input | ACCEPTED |
 | VS-004 | INFO | Products POST/PUT Zod + 4xx logger guard | PASS (automated) |
 | VS-005 | INFO | Catalog CRUD Zod + API barrel exports | PASS (automated) |
@@ -43,10 +43,11 @@
 
 ## Human Gate 2 checklist
 
-- [ ] Deploy notification fix
-- [ ] Bell dropdown QA
+- [x] Deploy REQ-0010–0013 (`9a2e37c`)
+- [ ] Confirm Vercel prod SHA
+- [ ] Bell dropdown QA (post-deploy)
 - [ ] Dialog nav smoke (OrderDialog)
-- [ ] Sentry 24h review
+- [ ] Sentry 24h review (`.agile-v/REVALIDATION_LOG.md`)
 
 **Approver:** _pending_  
 **Date:** _pending_
