@@ -4,8 +4,9 @@
  */
 
 import { prisma } from "@/prisma/client";
+import { Prisma } from "@prisma/client";
 import type { UpdateUserAdminInput, CreateUserAdminInput } from "@/types";
-import bcrypt from "bcryptjs";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 const USER_SELECT = {
   id: true,
@@ -34,10 +35,9 @@ export async function getUserById(id: string) {
 }
 
 export async function updateUserAdmin(id: string, data: UpdateUserAdminInput) {
-  const payload: { role?: string | null; name?: string; updatedAt: Date } = {
-    updatedAt: new Date(),
-  };
-  if (data.role !== undefined) payload.role = data.role as string | null;
+  const payload: Prisma.UserUpdateInput = { updatedAt: new Date() };
+  if (data.role !== undefined)
+    payload.role = data.role as Prisma.UserUpdateInput["role"];
   if (data.name !== undefined) payload.name = data.name;
 
   return prisma.user.update({
@@ -48,19 +48,30 @@ export async function updateUserAdmin(id: string, data: UpdateUserAdminInput) {
 }
 
 /**
- * Create a new user (admin action)
+ * Create a new user (admin action).
+ * Credentials live in Supabase Auth, so the account is created there (which
+ * fires the trigger that inserts the "User" profile); we then set the profile's
+ * username/role.
  */
 export async function createUserAdmin(data: CreateUserAdminInput) {
-  const hashedPassword = await bcrypt.hash(data.password, 10);
+  const admin = createSupabaseAdminClient();
+  const { data: created, error } = await admin.auth.admin.createUser({
+    email: data.email,
+    password: data.password,
+    email_confirm: true,
+    user_metadata: { name: data.name },
+  });
 
-  return prisma.user.create({
+  if (error || !created.user) {
+    throw new Error(error?.message ?? "Failed to create user");
+  }
+
+  return prisma.user.update({
+    where: { id: created.user.id },
     data: {
-      email: data.email,
       name: data.name,
-      password: hashedPassword,
       username: data.username || null,
-      role: (data.role as string) || "user",
-      createdAt: new Date(),
+      role: (data.role as Prisma.UserUpdateInput["role"]) ?? "user",
     },
     select: USER_SELECT,
   });

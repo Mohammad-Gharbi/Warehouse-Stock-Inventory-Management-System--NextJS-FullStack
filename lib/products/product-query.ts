@@ -2,19 +2,15 @@
  * Shared Prisma where clauses for Product queries.
  * Catalog/list UIs must exclude soft-deleted products (deletedAt set).
  *
- * MongoDB: legacy rows may omit `deletedAt` entirely (pre-migration).
- * `deletedAt: null` alone does NOT match missing fields — use OR + isSet: false.
+ * Postgres: a missing value is simply NULL, so `deletedAt: null` matches every
+ * active product (the Mongo-only `isSet` filter is no longer needed).
  */
 
 import type { Prisma } from "@prisma/client";
 
-/**
- * Active catalog products: not archived.
- * - deletedAt is null (explicit)
- * - deletedAt field absent (legacy documents before soft-delete migration)
- */
+/** Active catalog products: not archived (deletedAt is null). */
 export const productNotDeletedWhere = {
-  OR: [{ deletedAt: null }, { deletedAt: { isSet: false } }],
+  deletedAt: null,
 } satisfies Prisma.ProductWhereInput;
 
 /**

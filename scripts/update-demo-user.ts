@@ -22,9 +22,17 @@
  */
 
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
+import { createClient } from "@supabase/supabase-js";
 
 const prisma = new PrismaClient();
+
+// Email + password live in Supabase Auth; update them there, profile via Prisma.
+// Run with: npx tsx --env-file=.env scripts/update-demo-user.ts --to admin
+const admin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  { auth: { autoRefreshToken: false, persistSession: false } },
+);
 
 const DEMO_EMAILS = [
   "test@user.com",
@@ -116,15 +124,24 @@ async function main() {
     process.exit(1);
   }
 
-  const hashedPassword = await bcrypt.hash(PASSWORD_PLAIN, 10);
+  // Update auth credentials (email + password) in Supabase Auth...
+  const { error: authErr } = await admin.auth.admin.updateUserById(existing.id, {
+    email: target.email,
+    password: PASSWORD_PLAIN,
+    email_confirm: true,
+  });
+  if (authErr) {
+    console.error(`❌ Failed to update auth user: ${authErr.message}`);
+    process.exit(1);
+  }
 
+  // ...and the profile mirror (email/name/role).
   await prisma.user.update({
     where: { id: existing.id },
     data: {
       email: target.email,
       name: target.name,
       role: target.role,
-      password: hashedPassword,
       updatedAt: new Date(),
     },
   });

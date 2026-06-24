@@ -5,7 +5,7 @@
 
 import { prisma } from "@/prisma/client";
 import { createStripeRefund } from "@/lib/stripe";
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import type { CreateOrderInput, UpdateOrderInput } from "@/types/order";
 import { invalidateCache, cacheKeys } from "@/lib/cache";
 
@@ -117,12 +117,12 @@ export async function createOrder(data: CreateOrderInput, userId: string) {
         ? (JSON.parse(
             JSON.stringify(data.shippingAddress),
           ) as Prisma.InputJsonValue)
-        : null,
+        : Prisma.DbNull,
       billingAddress: data.billingAddress
         ? (JSON.parse(
             JSON.stringify(data.billingAddress),
           ) as Prisma.InputJsonValue)
-        : null,
+        : Prisma.DbNull,
       notes: data.notes || null,
       createdBy: userId,
       items: {

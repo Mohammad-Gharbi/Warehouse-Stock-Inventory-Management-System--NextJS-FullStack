@@ -4,7 +4,7 @@
  */
 
 import { prisma } from "@/prisma/client";
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import type { CreateInvoiceInput, UpdateInvoiceInput, InvoiceFilters } from "@/types/invoice";
 import { logger } from "@/lib/logger";
 
@@ -86,7 +86,7 @@ export async function createInvoice(
   // Get billing address from order if available
   const billingAddress = order.billingAddress
     ? (JSON.parse(JSON.stringify(order.billingAddress)) as Prisma.InputJsonValue)
-    : null;
+    : Prisma.DbNull;
 
   const invoice = await prisma.invoice.create({
     data: {
@@ -196,7 +196,7 @@ export async function ensureInvoiceForPaidOrder(
   const discount = order.discount ?? 0;
   const billingAddress = order.billingAddress
     ? (JSON.parse(JSON.stringify(order.billingAddress)) as Prisma.InputJsonValue)
-    : null;
+    : Prisma.DbNull;
 
   const invoice = await prisma.invoice.create({
     data: {

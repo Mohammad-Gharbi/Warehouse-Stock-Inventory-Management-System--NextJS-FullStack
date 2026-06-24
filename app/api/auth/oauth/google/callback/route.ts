@@ -1,6 +1,13 @@
 /**
  * Google OAuth Callback Route
- * Handles OAuth callback from Google and creates/authenticates user
+ * Handles OAuth callback from Google and creates/authenticates user.
+ *
+ * TODO(supabase-auth): This is the LEGACY custom Google OAuth flow. It still
+ * mints a JWT `session_id` cookie, which `getSessionFromRequest` no longer reads
+ * (it now reads the Supabase session cookies). So Google sign-in is effectively
+ * non-functional until this is migrated to `supabase.auth.signInWithOAuth`
+ * (client-side) + a Supabase `/auth/callback` handler. The code below compiles
+ * against the Postgres model but should be replaced as its own slice.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -14,7 +21,6 @@ import { logger } from "@/lib/logger";
 import { generateUniqueUsername } from "@/lib/auth/unique-username";
 import { prisma } from "@/prisma/client";
 import { Prisma } from "@prisma/client";
-import bcrypt from "bcryptjs";
 import type { User } from "@prisma/client";
 
 type GoogleOAuthProfile = {
@@ -28,11 +34,7 @@ type GoogleOAuthProfile = {
 async function createGoogleOAuthUser(
   profile: GoogleOAuthProfile,
 ): Promise<User> {
-  const { email, name, googleId, userImage } = profile;
-  const randomPassword = Buffer.from(Math.random().toString(36)).toString(
-    "base64",
-  );
-  const hashedPassword = await bcrypt.hash(randomPassword, 10);
+  const { email, name, userImage } = profile;
   const username = await generateUniqueUsername(
     email.split("@")[0] || name || "user",
   );
@@ -42,10 +44,8 @@ async function createGoogleOAuthUser(
   const createData = {
     email,
     name: displayName,
-    password: hashedPassword,
-    googleId,
     image: userImage,
-    role: "admin",
+    role: "admin" as Prisma.UserCreateInput["role"],
     username,
     createdAt: new Date(),
   };
@@ -77,24 +77,16 @@ async function updateGoogleOAuthUser(
   user: User,
   profile: GoogleOAuthProfile,
 ): Promise<User> {
-  const { googleId, userImage, name } = profile;
-  const updateData: {
-    googleId?: string;
-    image?: string | null;
-    name?: string;
-    role?: string;
-  } = {};
+  const { userImage, name } = profile;
+  const updateData: Prisma.UserUpdateInput = {};
 
-  if (!user.googleId) {
-    updateData.googleId = googleId;
-  }
   if (userImage && userImage !== user.image) {
     updateData.image = userImage;
   }
   if (name && name !== user.name && !user.name) {
     updateData.name = name;
   }
-  if (!user.role || (typeof user.role === "string" && user.role.trim() === "")) {
+  if (!user.role) {
     updateData.role = "admin";
   }
 

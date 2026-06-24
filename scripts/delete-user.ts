@@ -47,7 +47,6 @@ async function deleteUser(email?: string) {
         email: true,
         name: true,
         username: true,
-        googleId: true,
         createdAt: true,
       },
     });
@@ -63,7 +62,6 @@ async function deleteUser(email?: string) {
     console.log(`   - Email: ${user.email}`);
     console.log(`   - Name: ${user.name}`);
     console.log(`   - Username: ${user.username || "N/A"}`);
-    console.log(`   - Google ID: ${user.googleId || "N/A"}`);
     console.log(`   - Created At: ${user.createdAt}`);
     console.log();
 

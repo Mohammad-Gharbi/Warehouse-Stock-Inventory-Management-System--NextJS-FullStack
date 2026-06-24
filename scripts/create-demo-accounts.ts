@@ -12,14 +12,21 @@
  * For the supplier portal to work, links the first existing Supplier to
  * test@supplier.com (or creates a "Demo Supplier" if none exist).
  *
- * Usage (from project root, same DB as app/VPS):
- *   npx tsx scripts/create-demo-accounts.ts
+ * Usage (from project root, same DB as app/VPS). Loads .env for Supabase keys:
+ *   npx tsx --env-file=.env scripts/create-demo-accounts.ts
  */
 
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
+import { createClient } from "@supabase/supabase-js";
 
 const prisma = new PrismaClient();
+
+// Credentials live in Supabase Auth; create accounts there, then set profile role.
+const admin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  { auth: { autoRefreshToken: false, persistSession: false } },
+);
 
 const PASSWORD_PLAIN = "12345678";
 
@@ -29,21 +36,17 @@ const DEMO_USERS = [
     name: "Test Client",
     username: "testclient",
     role: "client",
-    googleId: "demo-client", // unique placeholder so User_googleId_key is not violated
   },
   {
     email: "test@supplier.com",
     name: "Test Supplier",
     username: "testsupplier",
     role: "supplier",
-    googleId: "demo-supplier",
   },
 ] as const;
 
 async function main() {
   console.log("\n📦 Create demo accounts (client + supplier)\n");
-
-  const hashedPassword = await bcrypt.hash(PASSWORD_PLAIN, 10);
 
   for (const u of DEMO_USERS) {
     const existing = await prisma.user.findUnique({
@@ -56,16 +59,23 @@ async function main() {
       continue;
     }
 
-    await prisma.user.create({
-      data: {
-        email: u.email,
-        name: u.name,
-        username: u.username,
-        password: hashedPassword,
-        role: u.role,
-        googleId: u.googleId,
-        createdAt: new Date(),
-      },
+    // Create the auth user (the trigger inserts the "User" profile)...
+    const { data: created, error } = await admin.auth.admin.createUser({
+      email: u.email,
+      password: PASSWORD_PLAIN,
+      email_confirm: true,
+      user_metadata: { name: u.name },
+    });
+
+    if (error || !created.user) {
+      console.log(`   ❌ ${u.email} failed: ${error?.message ?? "unknown"}`);
+      continue;
+    }
+
+    // ...then set username + role on the profile.
+    await prisma.user.update({
+      where: { id: created.user.id },
+      data: { username: u.username, role: u.role },
     });
     console.log(`   ✅ Created ${u.email} (${u.name}, role: ${u.role})`);
   }

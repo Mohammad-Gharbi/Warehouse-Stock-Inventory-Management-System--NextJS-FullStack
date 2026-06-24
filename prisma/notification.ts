@@ -30,7 +30,7 @@ export async function createNotification(
       link: data.link || null,
       metadata: data.metadata
         ? (JSON.parse(JSON.stringify(data.metadata)) as Prisma.InputJsonValue)
-        : null,
+        : Prisma.DbNull,
       read: false,
       createdAt: new Date(),
       readAt: null,
