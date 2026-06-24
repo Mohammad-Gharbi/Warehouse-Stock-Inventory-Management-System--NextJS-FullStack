@@ -29,7 +29,9 @@ const geistMono = localFont({
 const poppins = Poppins({
   subsets: ["latin"],
   variable: "--font-poppins",
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  // Only the weights actually used by Tailwind font-* utilities in the app
+  // (normal/medium/semibold/bold). Loading all 9 weights shipped ~5 unused files.
+  weight: ["400", "500", "600", "700"],
 });
 
 /** Force dynamic rendering for all routes so useSearchParams etc. work without Suspense and pages render instantly. */

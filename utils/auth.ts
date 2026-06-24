@@ -9,6 +9,7 @@ import Cookies from "js-cookie"; // Import js-cookie
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/prisma/client";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getCache, setCache, cacheKeys } from "@/lib/cache";
 
 /** Secret for signing/verifying JWT; must match across server and be set in production. */
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
@@ -61,29 +62,62 @@ export const verifyToken = (token: string): { userId: string } | null => {
  * Supabase Auth while many data routes still query Mongo via Prisma. Those data
  * reads are part of a later migration slice.
  */
+/** Profile row shape cached for resolveSupabaseUser (public."User" columns we read). */
+type CachedProfile = {
+  email?: string | null;
+  name?: string | null;
+  image?: string | null;
+  role?: string | null;
+  username?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+  emailPreferences?: unknown;
+};
+
+/** Short TTL (seconds) for the cached profile row. Busted by invalidateAllCaches() on mutations. */
+const SESSION_PROFILE_TTL = 60;
+
 export const resolveSupabaseUser = async (): Promise<User | null> => {
   const supabase = await createSupabaseServerClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  // Verify the access token locally via its claims instead of a network round-trip
+  // to the Supabase auth server. With asymmetric JWT signing keys this is fully
+  // local (cached JWKS); for legacy HS256 projects getClaims() falls back to
+  // getUser() internally, so this is never slower than before.
+  const { data: claimsData, error: claimsError } =
+    await supabase.auth.getClaims();
+  const claims = claimsData?.claims;
+  if (claimsError || !claims?.sub) {
     return null;
   }
 
-  const { data: profile } = await supabase
-    .from("User")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  const userId = claims.sub;
+  const authEmail = typeof claims.email === "string" ? claims.email : "";
+
+  // The app-level profile (name/role/image/...) lives in public."User". Cache it
+  // briefly so the many auth resolutions per page load (SSR + every API call)
+  // don't each hit the database. The sessions:* namespace is already cleared by
+  // invalidateAllCaches() after mutations, so role/profile edits propagate fast.
+  const profileCacheKey = cacheKeys.sessions.user(userId);
+  let profile = await getCache<CachedProfile>(profileCacheKey);
+  if (!profile) {
+    const { data } = await supabase
+      .from("User")
+      .select("*")
+      .eq("id", userId)
+      .single();
+    profile = (data as CachedProfile | null) ?? null;
+    if (profile) {
+      await setCache(profileCacheKey, profile, SESSION_PROFILE_TTL);
+    }
+  }
 
   // Shape a User-compatible object from the profile (+ auth email fallback).
   // Cast through unknown because the Postgres profile omits Mongo-only fields
   // (password, googleId) that the Prisma User type still declares.
   return {
-    id: user.id,
-    email: user.email ?? profile?.email ?? "",
+    id: userId,
+    email: authEmail || profile?.email || "",
     name: profile?.name ?? "",
     image: profile?.image ?? null,
     role: profile?.role ?? "user",

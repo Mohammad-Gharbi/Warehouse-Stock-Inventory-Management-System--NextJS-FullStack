@@ -60,10 +60,15 @@ export async function createOrder(data: CreateOrderInput, userId: string) {
   // Fetch products and calculate line items
   const productsToReserve: { id: string; qty: number }[] = [];
 
+  // Batch-fetch all referenced products once instead of one query per item (N+1).
+  const uniqueProductIds = [...new Set(data.items.map((i) => i.productId))];
+  const products = await prisma.product.findMany({
+    where: { id: { in: uniqueProductIds } },
+  });
+  const productById = new Map(products.map((p) => [p.id, p]));
+
   for (const item of data.items) {
-    const product = await prisma.product.findUnique({
-      where: { id: item.productId },
-    });
+    const product = productById.get(item.productId);
 
     if (!product || product.deletedAt != null) {
       throw new Error(`Product not found: ${item.productId}`);
@@ -134,16 +139,22 @@ export async function createOrder(data: CreateOrderInput, userId: string) {
     },
   });
 
-  // Reserve stock for pending orders (increment reservedQuantity)
-  // Stock will be deducted (quantity reduced, reserved released) when order is confirmed/paid
+  // Reserve stock for pending orders (increment reservedQuantity).
+  // Stock will be deducted (quantity reduced, reserved released) when order is confirmed/paid.
+  // Aggregate per product (an order may list the same product twice), then apply the
+  // increments in a single transaction instead of sequential awaits.
+  const reserveByProduct = new Map<string, number>();
   for (const p of productsToReserve) {
-    await prisma.product.update({
-      where: { id: p.id },
-      data: {
-        reservedQuantity: { increment: p.qty },
-      },
-    });
+    reserveByProduct.set(p.id, (reserveByProduct.get(p.id) ?? 0) + p.qty);
   }
+  await prisma.$transaction(
+    [...reserveByProduct].map(([id, qty]) =>
+      prisma.product.update({
+        where: { id },
+        data: { reservedQuantity: { increment: qty } },
+      }),
+    ),
+  );
 
   // Invalidate product cache so UI shows updated reserved stock
   await invalidateCache(cacheKeys.products.pattern).catch((error) => {

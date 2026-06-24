@@ -39,6 +39,8 @@ model Category {
   updatedAt   DateTime? @db.Timestamptz(6)
   createdBy   String    @db.Uuid
   updatedBy   String?   @db.Uuid
+
+  @@index([userId])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -60,6 +62,8 @@ model ImportHistory {
   status      String    @default("completed")
   createdAt   DateTime  @default(now()) @db.Timestamptz(6)
   completedAt DateTime? @db.Timestamptz(6)
+
+  @@index([userId])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -143,6 +147,9 @@ model Order {
   updatedBy             String?     @db.Uuid
   invoice               Invoice?
   items                 OrderItem[]
+
+  @@index([userId, status, createdAt])
+  @@index([clientId])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -198,6 +205,9 @@ model Product {
   orderItems       OrderItem[]
 
   @@index([deletedAt])
+  @@index([userId, deletedAt, createdAt])
+  @@index([categoryId])
+  @@index([supplierId])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -282,6 +292,8 @@ model Supplier {
   updatedAt   DateTime? @db.Timestamptz(6)
   createdBy   String    @db.Uuid
   updatedBy   String?   @db.Uuid
+
+  @@index([userId])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.

@@ -19,15 +19,19 @@ const defaultQueryOptions = {
     staleTime: 1000 * 60 * 5, // 5 minutes
     // Cache time: unused data stays in cache for 10 minutes
     gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
-    // Retry failed requests 3 times
-    retry: 3,
+    // Retry once: 3 retries with exponential backoff (up to 30s) made transient
+    // failures feel like multi-second hangs on load.
+    retry: 1,
     // Retry delay increases exponentially
     retryDelay: (attemptIndex: number) =>
       Math.min(1000 * 2 ** attemptIndex, 30000),
-    // Refetch on window focus so returning to the tab gets fresh data
-    refetchOnWindowFocus: true,
+    // Don't refetch on mount/focus: server components fetch + hydrate the cache,
+    // and mutations call invalidateAllRelatedQueries() to force fresh data. Without
+    // this, every list remount and tab focus re-ran the same queries over HTTP,
+    // throwing away the SSR work and causing a request burst on each page load.
+    refetchOnWindowFocus: false,
     refetchOnReconnect: true,
-    refetchOnMount: true,
+    refetchOnMount: false,
   },
   mutations: {
     // Retry failed mutations once
