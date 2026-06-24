@@ -2,6 +2,7 @@
  * Authentication utilities: JWT session tokens, password hashing, and session resolution.
  * Used by API routes (getSessionFromRequest) and client (getSessionClient via /api/auth/session).
  */
+import { cache } from "react";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User as PrismaUser } from "@prisma/client";
@@ -77,13 +78,14 @@ type CachedProfile = {
 /** Short TTL (seconds) for the cached profile row. Busted by invalidateAllCaches() on mutations. */
 const SESSION_PROFILE_TTL = 60;
 
-export const resolveSupabaseUser = async (): Promise<User | null> => {
+export const resolveSupabaseUser = cache(async (): Promise<User | null> => {
   const supabase = await createSupabaseServerClient();
 
-  // Verify the access token locally via its claims instead of a network round-trip
-  // to the Supabase auth server. With asymmetric JWT signing keys this is fully
-  // local (cached JWKS); for legacy HS256 projects getClaims() falls back to
-  // getUser() internally, so this is never slower than before.
+  // Verify the access token locally from its claims instead of a network
+  // round-trip to the Supabase auth server. This project uses asymmetric
+  // (ES256) JWT signing keys, so getClaims() verifies the signature locally via
+  // WebCrypto against the JWKS, which auth-js caches process-globally for 10
+  // minutes — so only the first resolution per process touches the network.
   const { data: claimsData, error: claimsError } =
     await supabase.auth.getClaims();
   const claims = claimsData?.claims;
@@ -98,12 +100,18 @@ export const resolveSupabaseUser = async (): Promise<User | null> => {
   // briefly so the many auth resolutions per page load (SSR + every API call)
   // don't each hit the database. The sessions:* namespace is already cleared by
   // invalidateAllCaches() after mutations, so role/profile edits propagate fast.
+  // NOTE: when Redis is not configured (getCache returns null) this query runs
+  // on every resolution, so it's the dominant per-request cost — the React
+  // cache() wrapper above still collapses repeat calls within a single request.
   const profileCacheKey = cacheKeys.sessions.user(userId);
   let profile = await getCache<CachedProfile>(profileCacheKey);
   if (!profile) {
     const { data } = await supabase
       .from("User")
-      .select("*")
+      // Only the columns shaped into the User object below; avoids select("*").
+      .select(
+        "email, name, image, role, username, createdAt, updatedAt, emailPreferences",
+      )
       .eq("id", userId)
       .single();
     profile = (data as CachedProfile | null) ?? null;
@@ -126,7 +134,7 @@ export const resolveSupabaseUser = async (): Promise<User | null> => {
     updatedAt: profile?.updatedAt ?? null,
     emailPreferences: profile?.emailPreferences ?? null,
   } as unknown as User;
-};
+});
 
 /**
  * Get session from Pages API request
