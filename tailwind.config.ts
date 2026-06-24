@@ -64,6 +64,12 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        // Tie the larger steps to --radius too so the many hardcoded
+        // rounded-xl/2xl/3xl usages sharpen with the rest of the app instead of
+        // keeping Tailwind's rounder defaults (12px/16px/24px).
+        xl: "calc(var(--radius) + 2px)",
+        "2xl": "calc(var(--radius) + 4px)",
+        "3xl": "calc(var(--radius) + 8px)",
       },
     },
   },
