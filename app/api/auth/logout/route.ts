@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createCorsHeaders, handleCorsPreflight } from "@/lib/api/cors";
 import { logger } from "@/lib/logger";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 /**
  * POST /api/auth/logout
@@ -22,13 +23,17 @@ export async function POST(request: NextRequest) {
       request.headers.get("x-forwarded-proto") === "https" ||
       process.env.NODE_ENV !== "development";
 
+    // Revoke the Supabase session; this clears the sb-* auth cookies.
+    const supabase = await createSupabaseServerClient();
+    await supabase.auth.signOut();
+
     // Create response
     const response = NextResponse.json(
       { success: true },
       { status: 200, headers: responseHeaders }
     );
 
-    // Clear session cookie. Use sameSite "lax" so cookie clears reliably on same-origin (matches login).
+    // Also clear the legacy JWT cookie from the old auth system (if present).
     response.cookies.set("session_id", "", {
       httpOnly: true,
       secure: isSecure,

@@ -1,59 +1,23 @@
 /**
  * Register API Route Handler
- * App Router route handler for user registration
- * Migrated from Pages API to App Router
+ * POST /api/auth/register: validates input with Zod, then creates the user in
+ * Supabase Auth (auth.users). The on_auth_user_created trigger inserts the
+ * matching public."User" profile row; we then promote the role.
+ *
+ * Uses the service-role admin client with email_confirm: true so accounts are
+ * usable immediately (matching the old flow, which had no email confirmation).
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { MongoClient } from "mongodb";
 import { registerSchema } from "@/lib/validations";
 import { logger } from "@/lib/logger";
-import { prisma } from "@/prisma/client";
-
-/**
- * Attempt to insert a user document. If a non-sparse unique index on
- * `googleId` blocks the insert (E11000 dup key: { googleId: null }),
- * drop that index and retry once so the registration self-heals.
- */
-async function insertUserWithRetry(
-  userCollection: ReturnType<ReturnType<MongoClient["db"]>["collection"]>,
-  doc: Record<string, unknown>,
-) {
-  try {
-    await userCollection.insertOne(doc);
-  } catch (err: unknown) {
-    const mongoErr = err as { code?: number; message?: string };
-    if (
-      mongoErr.code === 11000 &&
-      typeof mongoErr.message === "string" &&
-      mongoErr.message.includes("googleId")
-    ) {
-      logger.warn(
-        "Non-sparse googleId unique index detected — dropping and recreating as sparse",
-      );
-      try {
-        await userCollection.dropIndex("User_googleId_key");
-      } catch {
-        // Index may already have been dropped; ignore
-      }
-      await userCollection.createIndex(
-        { googleId: 1 },
-        { unique: true, sparse: true, name: "User_googleId_key" },
-      );
-      await userCollection.insertOne(doc);
-      return;
-    }
-    throw err;
-  }
-}
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 /**
  * POST /api/auth/register
  * Register a new user
  */
 export async function POST(request: NextRequest) {
-  let mongoClient: MongoClient | null = null;
   try {
     const body = await request.json();
 
@@ -73,57 +37,58 @@ export async function POST(request: NextRequest) {
 
     const { name, email, password } = validationResult.data;
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) {
+    const admin = createSupabaseAdminClient();
+
+    // Create the auth user (auto-confirmed). The on_auth_user_created trigger
+    // creates the public."User" profile from email + raw_user_meta_data.name.
+    const { data, error } = await admin.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: { name },
+    });
+
+    if (error) {
+      // Supabase returns 422 "email address has already been registered" on dupes.
+      const isDuplicate =
+        error.status === 422 || /already.*registered/i.test(error.message);
       return NextResponse.json(
-        { error: "A user with this email already exists. Please sign in instead." },
-        { status: 409 }
+        {
+          error: isDuplicate
+            ? "A user with this email already exists. Please sign in instead."
+            : error.message,
+        },
+        { status: isDuplicate ? 409 : (error.status ?? 500) },
       );
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    mongoClient = new MongoClient(process.env.DATABASE_URL!);
-    await mongoClient.connect();
-
-    const db = mongoClient.db();
-    const userCollection = db.collection("User");
-
-    // Generate a unique username
-    const baseUsername = email.split("@")[0];
-    let username = baseUsername;
-    let counter = 1;
-
-    while (await userCollection.findOne({ username })) {
-      username = `${baseUsername}${counter}`;
-      counter++;
-    }
-
-    // Insert user (new signups get admin role for full manipulation power)
-    await insertUserWithRetry(userCollection, {
-      name,
-      email,
-      password: hashedPassword,
-      username,
-      role: "admin",
-      createdAt: new Date(),
-    });
-
-    await mongoClient.close();
-    mongoClient = null;
-
-    // Get the created user from Prisma
-    const createdUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!createdUser) {
+    const user = data.user;
+    if (!user) {
       return NextResponse.json(
         { error: "Failed to create user" },
-        { status: 500 }
+        { status: 500 },
       );
+    }
+
+    // Bootstrap the first account as admin; everyone after is a regular user.
+    // The signup trigger already inserted this profile with role "user", so a
+    // total count of exactly 1 means this is the very first user.
+    const { count, error: countError } = await admin
+      .from("User")
+      .select("id", { count: "exact", head: true });
+
+    if (countError) {
+      logger.error("Failed to count users for admin bootstrap", countError);
+    } else if ((count ?? 0) <= 1) {
+      const { error: roleError } = await admin
+        .from("User")
+        .update({ role: "admin" })
+        .eq("id", user.id);
+
+      if (roleError) {
+        logger.error("Failed to promote first user to admin", roleError);
+        // The account exists; surface a soft error rather than failing signup.
+      }
     }
 
     const { invalidateAllServerCaches } = await import("@/lib/cache");
@@ -131,11 +96,11 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        id: createdUser.id,
-        name: createdUser.name,
-        email: createdUser.email,
+        id: user.id,
+        name,
+        email: user.email,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     logger.error("Registration error:", error);
@@ -145,11 +110,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: `Registration failed: ${message}` },
-      { status: 500 }
+      { status: 500 },
     );
-  } finally {
-    if (mongoClient) {
-      try { await mongoClient.close(); } catch { /* ignore */ }
-    }
   }
 }

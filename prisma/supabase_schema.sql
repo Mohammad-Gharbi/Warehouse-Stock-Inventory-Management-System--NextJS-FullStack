@@ -38,6 +38,44 @@ create table if not exists "User" (
   "emailPreferences" jsonb
 );
 
+-- Reconcile an EXISTING "User" table to the shape above.
+--   `create table if not exists` is a no-op when the table already exists, so a
+--   table left over from an older version of this script keeps its old columns
+--   (e.g. a NOT NULL `password`, which breaks the signup trigger). This block is
+--   idempotent and safe to re-run; it migrates a stale table into line.
+do $$
+begin
+  -- Drop columns that moved to Supabase Auth.
+  alter table public."User" drop column if exists password;
+  alter table public."User" drop column if exists "googleId";
+
+  -- Ensure name has the empty-string default the trigger relies on.
+  alter table public."User" alter column name set default '';
+
+  -- Convert role text -> user_role enum, not null default 'user'.
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'User'
+      and column_name = 'role' and data_type <> 'USER-DEFINED'
+  ) then
+    alter table public."User" alter column role drop default;
+    alter table public."User"
+      alter column role type user_role using coalesce(role, 'user')::user_role;
+    alter table public."User" alter column role set default 'user';
+    alter table public."User" alter column role set not null;
+  end if;
+
+  -- Ensure id is a FK to auth.users (older versions defaulted to gen_random_uuid).
+  if not exists (
+    select 1 from pg_constraint where conname = 'User_id_fkey'
+  ) then
+    alter table public."User"
+      add constraint "User_id_fkey"
+      foreign key (id) references auth.users (id) on delete cascade;
+  end if;
+end
+$$;
+
 -- Auto-create a profile row whenever a new auth user signs up.
 create or replace function public.handle_new_user()
 returns trigger

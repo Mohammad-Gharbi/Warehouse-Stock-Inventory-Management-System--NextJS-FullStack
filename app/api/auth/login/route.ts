@@ -1,16 +1,16 @@
 /**
  * Login API Route Handler
- * POST /api/auth/login: validates email/password with Zod, checks user in DB, compares password
- * with bcrypt, then issues a JWT and sets it in a cookie (session_id) for subsequent requests.
+ * POST /api/auth/login: validates email/password with Zod, then signs in via
+ * Supabase Auth. The Supabase server client writes the session cookies (sb-*)
+ * onto the response automatically; we return the same JSON shape the client
+ * auth context already expects (userId, userName, userEmail, userRole, sessionId).
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { generateToken } from "@/utils/auth";
 import { loginSchema } from "@/lib/validations";
 import { createCorsHeaders, handleCorsPreflight } from "@/lib/api/cors";
 import { logger } from "@/lib/logger";
-import { prisma } from "@/prisma/client";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 /**
  * POST /api/auth/login
@@ -18,12 +18,9 @@ import { prisma } from "@/prisma/client";
  */
 export async function POST(request: NextRequest) {
   try {
-    // Handle CORS
     const responseHeaders = createCorsHeaders(request);
 
-    // Parse and validate request body
     const body = await request.json();
-
     if (!body || typeof body !== "object") {
       return NextResponse.json(
         { error: "Invalid request body" },
@@ -47,79 +44,44 @@ export async function POST(request: NextRequest) {
 
     const { email, password } = validationResult.data;
 
-    // Find user
-    const user = await prisma.user.findUnique({ where: { email } });
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    if (!user) {
+    if (error || !data.user || !data.session) {
+      // Supabase returns 400 with "Invalid login credentials" for both bad
+      // password and unknown email — keep the message generic.
       return NextResponse.json(
         { error: "Invalid email or password" },
         { status: 401, headers: responseHeaders },
       );
     }
 
-    if (!user.password) {
-      return NextResponse.json(
-        { error: "User data corrupted: password missing" },
-        { status: 500, headers: responseHeaders },
-      );
-    }
+    // Pull display fields from the profile table (role drives access control).
+    const { data: profile } = await supabase
+      .from("User")
+      .select("name, role")
+      .eq("id", data.user.id)
+      .single();
 
-    // Verify password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const userRole = profile?.role ?? "user";
+    const userName =
+      profile?.name ?? (data.user.user_metadata?.name as string) ?? "";
 
-    if (!isPasswordValid) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401, headers: responseHeaders },
-      );
-    }
-
-    if (!user.id) {
-      return NextResponse.json(
-        { error: "User data corrupted: id missing" },
-        { status: 500, headers: responseHeaders },
-      );
-    }
-
-    // Generate token
-    const token = generateToken(user.id);
-
-    if (!token) {
-      return NextResponse.json(
-        { error: "Failed to generate session token" },
-        { status: 500, headers: responseHeaders },
-      );
-    }
-
-    // Determine if connection is secure
-    const isSecure =
-      request.headers.get("x-forwarded-proto") === "https" ||
-      process.env.NODE_ENV !== "development";
-
-    // Role for access control; existing users without role default to "user"
-    const userRole = user.role ?? "user";
-
-    // Create response
-    const response = NextResponse.json(
+    return NextResponse.json(
       {
-        userId: user.id,
-        userName: user.name,
-        userEmail: user.email,
+        userId: data.user.id,
+        userName,
+        userEmail: data.user.email,
         userRole,
-        sessionId: token,
+        // Returned for backward-compat with the client auth context's
+        // localStorage "token"; the authoritative session is the sb-* cookies.
+        sessionId: data.session.access_token,
       },
       { status: 200, headers: responseHeaders },
     );
-
-    response.cookies.set("session_id", token, {
-      httpOnly: true,
-      secure: isSecure,
-      sameSite: "lax",
-      maxAge: 60 * 60, // 1 hour (in seconds)
-      path: "/",
-    });
-
-    return response;
   } catch (error) {
     logger.error("Login error:", error);
     return NextResponse.json(
@@ -129,10 +91,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-/**
- * OPTIONS /api/auth/login
- * Handle CORS preflight requests
- */
 /**
  * OPTIONS /api/auth/login
  * Handle CORS preflight requests

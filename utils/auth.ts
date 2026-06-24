@@ -8,6 +8,7 @@ import { User as PrismaUser } from "@prisma/client";
 import Cookies from "js-cookie"; // Import js-cookie
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/prisma/client";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 /** Secret for signing/verifying JWT; must match across server and be set in production. */
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
@@ -49,48 +50,70 @@ export const verifyToken = (token: string): { userId: string } | null => {
 };
 
 /**
+ * Resolve the current user from the Supabase session.
+ *
+ * Reads the sb-* auth cookies (via the Supabase server client), validates them
+ * with Supabase, then loads the matching public."User" profile row. Returns a
+ * User-shaped object so existing callers (which read id/email/name/role/image)
+ * keep working unchanged.
+ *
+ * NOTE: during the Mongo -> Supabase migration this resolves identity against
+ * Supabase Auth while many data routes still query Mongo via Prisma. Those data
+ * reads are part of a later migration slice.
+ */
+export const resolveSupabaseUser = async (): Promise<User | null> => {
+  const supabase = await createSupabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const { data: profile } = await supabase
+    .from("User")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  // Shape a User-compatible object from the profile (+ auth email fallback).
+  // Cast through unknown because the Postgres profile omits Mongo-only fields
+  // (password, googleId) that the Prisma User type still declares.
+  return {
+    id: user.id,
+    email: user.email ?? profile?.email ?? "",
+    name: profile?.name ?? "",
+    image: profile?.image ?? null,
+    role: profile?.role ?? "user",
+    username: profile?.username ?? null,
+    createdAt: profile?.createdAt ?? null,
+    updatedAt: profile?.updatedAt ?? null,
+    emailPreferences: profile?.emailPreferences ?? null,
+  } as unknown as User;
+};
+
+/**
  * Get session from Pages API request
  * @deprecated Use getSessionFromRequest for App Router compatibility
  */
 export const getSessionServer = async (
-  req: NextApiRequest,
-  res: NextApiResponse
+  _req: NextApiRequest,
+  _res: NextApiResponse
 ): Promise<User | null> => {
-  const token = req.cookies["session_id"];
-  if (!token) {
-    return null;
-  }
-
-  const decoded = verifyToken(token);
-  if (!decoded) {
-    return null;
-  }
-
-  const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
-  return user;
+  return resolveSupabaseUser();
 };
 
 /**
- * Get session from App Router NextRequest
- * Works with App Router route handlers
+ * Get session from App Router NextRequest.
+ * The `request` argument is kept for signature compatibility; the session is
+ * read from the Supabase auth cookies via next/headers, not from `request`.
  */
-export const getSessionFromRequest = async (request: {
+export const getSessionFromRequest = async (_request: {
   cookies: { get: (name: string) => { value: string } | undefined };
 }): Promise<User | null> => {
-  const cookie = request.cookies.get("session_id");
-  const token = cookie?.value;
-
-  if (!token) {
-    return null;
-  }
-
-  const decoded = verifyToken(token);
-  if (!decoded) {
-    return null;
-  }
-
-  const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
-  return user;
+  return resolveSupabaseUser();
 };
 
 /** Client-side: fetches /api/auth/session with cookies to get current user (avoids using JWT on client). */
