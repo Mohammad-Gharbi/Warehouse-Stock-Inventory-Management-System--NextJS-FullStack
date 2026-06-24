@@ -142,8 +142,8 @@ export default function AdminSidebar({ collapsed = false }: { collapsed?: boolea
       isSub && !collapsed ? "pl-8" : "",
       collapsed ? "justify-center px-0 w-9 h-9 mx-auto" : "",
       pathname === href || (href !== "/admin" && pathname.startsWith(href))
-        ? "bg-sky-500/15 dark:bg-sky-500/20 text-sky-700 dark:text-sky-300"
-        : "hover:bg-gray-100 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300",
+        ? "bg-primary/10 text-primary"
+        : "text-muted-foreground hover:bg-accent hover:text-foreground",
     );
 
   const getCount = (key: NavItem["countKey"]): number | undefined => {
@@ -184,11 +184,11 @@ export default function AdminSidebar({ collapsed = false }: { collapsed?: boolea
     return (
       <nav className="flex min-h-0 flex-col items-center py-3 gap-1" aria-label="Admin navigation">
         {renderNavItems(MY_STORE_ITEMS)}
-        <div className="w-6 border-t border-gray-200/50 dark:border-white/10 my-1" />
+        <div className="w-6 border-t my-1" />
         {renderNavItems(MANAGEMENT_ITEMS)}
-        <div className="w-6 border-t border-gray-200/50 dark:border-white/10 my-1" />
+        <div className="w-6 border-t my-1" />
         {renderNavItems(MY_ACTIVITY_ITEMS)}
-        <div className="w-6 border-t border-gray-200/50 dark:border-white/10 my-1" />
+        <div className="w-6 border-t my-1" />
         <Link
           href="/admin/settings/email-preferences"
           className={linkClass("/admin/settings/email-preferences", true)}

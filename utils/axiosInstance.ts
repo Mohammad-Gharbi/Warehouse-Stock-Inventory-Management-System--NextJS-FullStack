@@ -2,10 +2,11 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const axiosInstance = axios.create({
-  baseURL:
-    process.env.NODE_ENV === "production"
-      ? "https://techmaster-store.vercel.app/api" // Production URL
-      : "http://localhost:3000/api", // Localhost for development
+  // Relative baseURL keeps every request same-origin as the app, so the Supabase
+  // sb-* session cookies stay first-party and no CORS handling is needed. A
+  // hardcoded absolute URL breaks login on any other host (custom domain, www,
+  // preview/canonical Vercel URLs) because the cookies land on the wrong domain.
+  baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
   },

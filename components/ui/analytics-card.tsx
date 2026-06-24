@@ -29,80 +29,18 @@ interface AnalyticsCardProps {
 }
 
 /**
- * Color configuration for each variant - glassmorphic style
+ * Subtle per-variant icon tint. The card itself is a flat, token-driven
+ * shadcn card; only the icon keeps a hint of color for at-a-glance scanning.
  */
-const variantConfig: Record<
-  CardVariant,
-  {
-    border: string;
-    gradient: string;
-    shadow: string;
-    hoverBorder: string;
-  }
-> = {
-  sky: {
-    border: "border-sky-400/30",
-    gradient: "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-sky-300/50",
-  },
-  emerald: {
-    border: "border-emerald-400/30",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-emerald-300/50",
-  },
-  amber: {
-    border: "border-amber-400/30",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-amber-300/60",
-  },
-  rose: {
-    border: "border-rose-400/30",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-rose-300/50",
-  },
-  violet: {
-    border: "border-violet-400/30",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-violet-300/50",
-  },
-  blue: {
-    border: "border-blue-400/30",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-blue-300/50",
-  },
-  orange: {
-    border: "border-orange-400/30",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-orange-300/50",
-  },
-  teal: {
-    border: "border-teal-400/30",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-teal-300/50",
-  },
+const iconColorByVariant: Record<CardVariant, string> = {
+  sky: "text-sky-600 dark:text-sky-400",
+  emerald: "text-emerald-600 dark:text-emerald-400",
+  amber: "text-amber-600 dark:text-amber-400",
+  rose: "text-rose-600 dark:text-rose-400",
+  violet: "text-violet-600 dark:text-violet-400",
+  blue: "text-blue-600 dark:text-blue-400",
+  orange: "text-orange-600 dark:text-orange-400",
+  teal: "text-teal-600 dark:text-teal-400",
 };
 
 export function AnalyticsCard({
@@ -112,51 +50,43 @@ export function AnalyticsCard({
   icon: Icon,
   trend,
   className,
-  iconColor = "text-gray-900 dark:text-white",
+  iconColor,
   variant = "blue",
 }: AnalyticsCardProps) {
-  const config = variantConfig[variant];
-
   return (
     <article
       className={cn(
-        "group rounded-[20px] border min-h-[140px] h-full p-4 sm:p-5 backdrop-blur-sm transition",
-        config.border,
-        config.gradient,
-        config.shadow,
-        config.hoverBorder,
+        "group flex h-full min-h-[140px] flex-col rounded-xl border bg-card p-4 text-card-foreground shadow-sm transition-colors hover:border-foreground/20 sm:p-5",
         className,
       )}
     >
       <div className="flex flex-col w-full">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-xs uppercase tracking-[0.3em] text-gray-700 dark:text-white/60 font-medium shrink-0">
+          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground font-medium shrink-0">
             {title}
           </p>
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-300/30 bg-gray-100/50 shadow-inner shadow-primary/20 backdrop-blur dark:border-white/15 dark:bg-white/10">
-            <Icon className={cn("h-5 w-5", iconColor)} />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border bg-muted">
+            <Icon
+              className={cn("h-5 w-5", iconColor ?? iconColorByVariant[variant])}
+            />
           </div>
         </div>
-        <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-          {value}
-        </p>
+        <p className="text-2xl font-semibold text-foreground">{value}</p>
         {description && (
-          <p className="mt-2 text-sm text-gray-600 dark:text-white/70">
-            {description}
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{description}</p>
         )}
         {trend && (
           <div className="flex items-center mt-2">
             <span
               className={cn(
                 "text-xs font-medium",
-                trend.isPositive ? "text-emerald-600" : "text-rose-600",
+                trend.isPositive ? "text-success" : "text-destructive",
               )}
             >
               {trend.isPositive ? "+" : ""}
               {trend.value}%
             </span>
-            <span className="text-xs text-gray-500 dark:text-white/60 ml-1">
+            <span className="text-xs text-muted-foreground ml-1">
               from last month
             </span>
           </div>

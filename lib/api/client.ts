@@ -97,10 +97,10 @@ export interface ApiResponse<T> {
 /** Builds Axios instance with baseURL (/api), credentials, and request/response interceptors. */
 function createAxiosInstance(): AxiosInstance {
   const instance = axios.create({
-    baseURL:
-      process.env.NODE_ENV === "production"
-        ? "https://techmaster-store.vercel.app/api"
-        : "http://localhost:3000/api",
+    // Relative baseURL keeps requests same-origin as the app so Supabase sb-*
+    // session cookies stay first-party. A hardcoded absolute URL breaks auth on
+    // any other host (custom domain, www, preview/canonical Vercel URLs).
+    baseURL: "/api",
     headers: {
       "Content-Type": "application/json",
     },

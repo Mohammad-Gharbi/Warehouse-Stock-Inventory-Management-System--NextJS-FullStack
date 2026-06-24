@@ -1,7 +1,7 @@
 /**
  * Statistics Card Component
- * Glassmorphism card component for displaying warehouse statistics
- * Supports light/dark mode with colored variants (sky, emerald, amber, rose)
+ * Flat, token-driven shadcn card for displaying warehouse statistics.
+ * The `variant` prop is kept for API compatibility and now only tints the icon.
  */
 
 import React from "react";
@@ -52,7 +52,7 @@ interface StatisticsCardProps {
    */
   icon: LucideIcon;
   /**
-   * Color variant for the card
+   * Color variant for the card (tints the icon only)
    */
   variant?: CardVariant;
   /**
@@ -66,85 +66,22 @@ interface StatisticsCardProps {
 }
 
 /**
- * Color configuration for each variant
+ * Subtle per-variant icon tint. The card itself stays flat and neutral.
  */
-const variantConfig: Record<
-  CardVariant,
-  {
-    border: string;
-    gradient: string;
-    shadow: string;
-    hoverBorder: string;
-  }
-> = {
-  sky: {
-    border: "border-sky-400/30",
-    gradient: "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-sky-300/50",
-  },
-  emerald: {
-    border: "border-emerald-400/30",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-emerald-300/50",
-  },
-  amber: {
-    border: "border-amber-400/30",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-amber-300/60",
-  },
-  rose: {
-    border: "border-rose-400/30",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-rose-300/50",
-  },
-  violet: {
-    border: "border-violet-400/30",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-violet-300/50",
-  },
-  blue: {
-    border: "border-blue-400/30",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-blue-300/50",
-  },
-  orange: {
-    border: "border-orange-400/30",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-orange-300/50",
-  },
-  teal: {
-    border: "border-teal-400/30",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
-    hoverBorder: "hover:border-teal-300/50",
-  },
+const iconColorByVariant: Record<CardVariant, string> = {
+  sky: "text-sky-600 dark:text-sky-400",
+  emerald: "text-emerald-600 dark:text-emerald-400",
+  amber: "text-amber-600 dark:text-amber-400",
+  rose: "text-rose-600 dark:text-rose-400",
+  violet: "text-violet-600 dark:text-violet-400",
+  blue: "text-blue-600 dark:text-blue-400",
+  orange: "text-orange-600 dark:text-orange-400",
+  teal: "text-teal-600 dark:text-teal-400",
 };
 
 /**
  * StatisticsCard component
- * Displays a glassmorphism card with statistics, icon, and badges
+ * Displays a flat card with statistics, icon, and badges
  */
 export function StatisticsCard({
   title,
@@ -155,44 +92,34 @@ export function StatisticsCard({
   badges = [],
   className,
 }: StatisticsCardProps) {
-  const config = variantConfig[variant];
-
   return (
     <article
       className={cn(
-        "group rounded-[28px] border min-h-[210px] h-full flex flex-col p-4 sm:p-6 backdrop-blur-sm transition min-w-0 overflow-visible",
-        config.border,
-        config.gradient,
-        config.shadow,
-        config.hoverBorder,
+        "group flex h-full min-h-[210px] min-w-0 flex-col rounded-xl border bg-card p-4 text-card-foreground shadow-sm transition-colors hover:border-foreground/20 sm:p-6",
         className,
       )}
     >
-      <div className="flex flex-1 flex-col min-h-0 min-w-0 w-full overflow-visible">
+      <div className="flex flex-1 flex-col min-h-0 min-w-0 w-full">
         {/* Title and icon inline so badges get full width below */}
         <div className="flex items-center justify-between gap-2 shrink-0">
-          <p className="text-xs uppercase tracking-[0.45em] text-gray-700 dark:text-white/60 min-w-0">
+          <p className="text-xs uppercase tracking-[0.45em] text-muted-foreground min-w-0">
             {title}
           </p>
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-300/30 bg-gray-100/50 shadow-inner shadow-primary/30 backdrop-blur dark:border-white/15 dark:bg-white/10">
-            <Icon className="h-5 w-5 text-gray-900 dark:text-white" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border bg-muted">
+            <Icon className={cn("h-5 w-5", iconColorByVariant[variant])} />
           </div>
         </div>
-        <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-          {value}
-        </p>
+        <p className="text-2xl font-semibold text-foreground">{value}</p>
         {description && (
-          <p className="mt-2 text-sm text-gray-600 dark:text-white/70">
-            {description}
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{description}</p>
         )}
         {badges.length > 0 && (
-          <div className="mt-3 flex w-full min-w-0 flex-wrap gap-2 overflow-visible">
+          <div className="mt-3 flex w-full min-w-0 flex-wrap gap-2">
             {badges.map((badge, index) => (
               <Badge
                 key={index}
-                variant={badge.variant || "outline"}
-                className="text-xs border-gray-300/50 bg-gray-100/80 text-gray-800 backdrop-blur-sm shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-white/80"
+                variant={badge.variant || "secondary"}
+                className="text-xs font-normal"
               >
                 <span className="font-medium">{badge.label}:</span>{" "}
                 <span className="ml-1">{badge.value}</span>

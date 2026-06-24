@@ -24,7 +24,7 @@ export default function PageWithSidebar({
       {/* Collapsed sidebar — phone only */}
       {sidebarCollapsed && (
         <aside
-          className="sm:hidden sticky top-0 z-10 flex h-[calc(100vh-3.5rem)] w-12 flex-shrink-0 flex-col overflow-y-auto overflow-x-hidden border-r border-gray-200/50 dark:border-white/10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl"
+          className="sm:hidden sticky top-0 z-10 flex h-[calc(100vh-3.5rem)] w-12 flex-shrink-0 flex-col overflow-y-auto overflow-x-hidden border-r bg-background"
           aria-label="Page navigation"
         >
           {sidebarCollapsed}
@@ -32,7 +32,7 @@ export default function PageWithSidebar({
       )}
       {/* Full sidebar — sm and up */}
       <aside
-        className={`sticky top-0 z-10 flex h-[calc(100vh-4.5rem)] w-64 flex-shrink-0 flex-col overflow-y-auto rounded-lg border border-gray-200/50 dark:border-white/10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl ${sidebarCollapsed ? "hidden sm:flex" : "hidden sm:flex"}`}
+        className={`sticky top-0 z-10 flex h-[calc(100vh-4.5rem)] w-64 flex-shrink-0 flex-col overflow-y-auto rounded-lg border bg-background ${sidebarCollapsed ? "hidden sm:flex" : "hidden sm:flex"}`}
         aria-label="Page navigation"
       >
         {sidebarContent}
@@ -40,7 +40,7 @@ export default function PageWithSidebar({
       {/* When no collapsed sidebar provided, show full sidebar always (legacy) */}
       {!sidebarCollapsed && (
         <aside
-          className="sm:hidden sticky top-0 z-10 flex h-[calc(100vh-3.5rem)] w-64 flex-shrink-0 flex-col overflow-y-auto border-r border-gray-200/50 dark:border-white/10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl"
+          className="sm:hidden sticky top-0 z-10 flex h-[calc(100vh-3.5rem)] w-64 flex-shrink-0 flex-col overflow-y-auto border-r bg-background"
           aria-label="Page navigation"
         >
           {sidebarContent}

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth-server";
 import HomePage from "@/components/Pages/HomePage";
@@ -9,8 +10,9 @@ import {
 
 /**
  * Home route — server component.
- * No route-level Suspense: root layout uses force-dynamic so useSearchParams works
- * without a fallback skeleton. SSR fetch here; client HomePage handles OAuth + RQ hydrate.
+ * Reads the session cookie (dynamic). The client HomePage uses useSearchParams,
+ * so it is wrapped in a Suspense boundary. SSR fetch here; client HomePage
+ * handles OAuth + RQ hydrate.
  */
 export default async function HomeRoute({
   searchParams,
@@ -38,11 +40,13 @@ export default async function HomeRoute({
   ]);
 
   return (
-    <HomePage
-      initialProducts={products}
-      initialCategories={categories}
-      initialSuppliers={suppliers}
-      initialOAuthSuccess={initialOAuthSuccess}
-    />
+    <Suspense fallback={null}>
+      <HomePage
+        initialProducts={products}
+        initialCategories={categories}
+        initialSuppliers={suppliers}
+        initialOAuthSuccess={initialOAuthSuccess}
+      />
+    </Suspense>
   );
 }

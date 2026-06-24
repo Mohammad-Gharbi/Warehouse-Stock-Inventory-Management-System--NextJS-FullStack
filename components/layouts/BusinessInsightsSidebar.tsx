@@ -53,8 +53,8 @@ export default function BusinessInsightsSidebar({
               className={cn(
                 "flex items-center justify-center rounded-lg w-9 h-9 transition-colors",
                 isActive
-                  ? "bg-sky-500/15 dark:bg-sky-500/20 text-sky-700 dark:text-sky-300"
-                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10",
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-accent hover:text-foreground",
               )}
             >
               <Icon className="h-4 w-4 flex-shrink-0" />

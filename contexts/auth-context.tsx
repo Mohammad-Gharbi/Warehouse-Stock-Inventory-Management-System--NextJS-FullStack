@@ -11,6 +11,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useMemo,
 } from "react";
 import Cookies from "js-cookie";
 import { useQueryClient } from "@tanstack/react-query";
@@ -191,66 +192,70 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
    * Login function - authenticates user and sets session
    * @returns User data from login response
    */
-  const login = async (email: string, password: string) => {
-    try {
-      const response = await axiosInstance.post("/auth/login", {
-        email,
-        password,
-      });
+  const login = useCallback(
+    async (email: string, password: string) => {
+      try {
+        const response = await axiosInstance.post("/auth/login", {
+          email,
+          password,
+        });
 
-      const result = response.data;
-      const userData = {
-        id: result.userId,
-        name: result.userName,
-        email: result.userEmail,
-        role: result.userRole ?? "user",
-      };
+        const result = response.data;
+        const userData = {
+          id: result.userId,
+          name: result.userName,
+          email: result.userEmail,
+          role: result.userRole ?? "user",
+        };
 
-      // Wipe all cached queries from the previous session so the new user
-      // never sees stale orders, invoices, products, dashboard cards, etc.
-      queryClient.clear();
+        // Wipe all cached queries from the previous session so the new user
+        // never sees stale orders, invoices, products, dashboard cards, etc.
+        queryClient.clear();
 
-      setIsLoggedIn(true);
-      setUser(userData);
-      Cookies.set("session_id", result.sessionId);
+        setIsLoggedIn(true);
+        setUser(userData);
+        Cookies.set("session_id", result.sessionId);
 
-      localStorage.setItem("isAuth", "true");
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("token", result.sessionId);
-      localStorage.setItem("getSession", JSON.stringify(result));
+        localStorage.setItem("isAuth", "true");
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("token", result.sessionId);
+        localStorage.setItem("getSession", JSON.stringify(result));
 
-      return userData;
-    } catch (error) {
-      throw error;
-    }
-  };
+        return userData;
+      } catch (error) {
+        throw error;
+      }
+    },
+    [queryClient],
+  );
 
   /**
    * Logout function - clears session and user data
    */
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await axiosInstance.post("/auth/logout");
       clearAuthData();
     } catch (error) {
       throw error;
     }
-  };
+  }, [clearAuthData]);
 
-  return (
-    <AuthContext.Provider
-      value={{
-        isLoggedIn,
-        user,
-        login,
-        logout,
-        isCheckingAuth,
-        refreshSession,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+  // Memoize the context value so consumers only re-render when auth state
+  // actually changes (not on every AuthProvider render).
+  const value = useMemo(
+    () => ({
+      isLoggedIn,
+      user,
+      login,
+      logout,
+      isCheckingAuth,
+      refreshSession,
+    }),
+    [isLoggedIn, user, login, logout, isCheckingAuth, refreshSession],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 /**

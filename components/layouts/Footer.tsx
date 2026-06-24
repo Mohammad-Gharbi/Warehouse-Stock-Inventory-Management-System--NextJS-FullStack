@@ -21,12 +21,12 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="w-full border-t border-gray-200/50 dark:border-white/10 bg-card backdrop-blur-2xl shadow-sm ">
+    <footer className="w-full border-t bg-background">
       <div className="mx-auto w-full max-w-9xl px-2 sm:px-4 lg:px-6 py-4 sm:py-6">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           {/* Left Section - Copyright and Brand */}
-          <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-sm text-gray-700 dark:text-muted-foreground">
-            <span className="font-medium text-gray-900 dark:text-foreground text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-sm text-muted-foreground">
+            <span className="font-medium text-foreground text-center sm:text-left">
               Techmaster Store
             </span>
             <span className="hidden sm:inline">•</span>
@@ -39,7 +39,7 @@ export default function Footer() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-sm font-medium text-gray-700 dark:text-muted-foreground hover:text-sky-600 dark:hover:text-foreground transition-colors duration-300 ease-in-out"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                 onClick={(e) => {
                   // Prevent navigation for showcase links
                   e.preventDefault();

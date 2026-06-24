@@ -17,6 +17,7 @@ import OrderDialog from "@/components/orders/OrderDialog";
 import InvoiceDialog from "@/components/invoices/InvoiceDialog";
 import WarehouseDialog from "@/components/warehouses/WarehouseDialog";
 import { Product } from "@/types";
+import { cn } from "@/lib/utils";
 
 export type FloatingActionButtonsVariant =
   | "home"
@@ -37,6 +38,27 @@ interface FloatingActionButtonsProps {
   selectedOwnerId?: string;
 }
 
+/** Outer wrapper width (animates as the stack expands on hover). */
+const fabWrapClass = (expanded: boolean) =>
+  cn(
+    "relative flex justify-end transition-all duration-300",
+    expanded ? "w-[160px]" : "w-14",
+  );
+
+/** Round FAB → expands to a pill on hover. Solid primary, token-driven. */
+const fabClass = (expanded: boolean) =>
+  cn(
+    "h-14 rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-300 hover:bg-primary/90 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed",
+    expanded ? "w-auto px-4" : "w-14 px-0",
+  );
+
+/** Reveals the FAB label as the stack expands. */
+const fabLabelClass = (expanded: boolean) =>
+  cn(
+    "overflow-hidden whitespace-nowrap transition-all duration-300",
+    expanded ? "max-w-[120px] opacity-100" : "max-w-0 opacity-0",
+  );
+
 export default function FloatingActionButtons({
   variant = "home",
   allProducts = [],
@@ -45,296 +67,96 @@ export default function FloatingActionButtons({
 }: FloatingActionButtonsProps) {
   const [isAnyHovered, setIsAnyHovered] = useState(false);
 
-  const handleMouseEnter = () => {
-    setIsAnyHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsAnyHovered(false);
-  };
+  const showProduct = variant === "home" || variant === "products";
+  const showCategory = variant === "home" || variant === "categories";
+  const showSupplier = variant === "home" || variant === "suppliers";
+  const showOrder = variant === "home" || variant === "orders";
 
   return (
     <div
       className="fixed right-4 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={() => setIsAnyHovered(true)}
+      onMouseLeave={() => setIsAnyHovered(false)}
     >
-      {/* Add Product Button - home only */}
-      {variant === "home" && (
-        <div
-          className={`relative flex justify-end transition-all duration-300 ${
-            isAnyHovered ? "w-[160px]" : "w-14"
-          }`}
-        >
+      {/* Add Product - home + products */}
+      {showProduct && (
+        <div className={fabWrapClass(isAnyHovered)}>
           <AddProductDialog allProducts={allProducts} userId={userId}>
-            <Button
-              className={`h-14 rounded-full border border-rose-400/30 dark:border-rose-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-rose-300/40 flex items-center justify-center gap-2 ${
-                isAnyHovered ? "w-auto px-4" : "w-14 px-0"
-              }`}
-            >
+            <Button className={fabClass(isAnyHovered)}>
               <Package className="h-5 w-5 flex-shrink-0" />
-              <span
-                className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
-                  isAnyHovered
-                    ? "max-w-[120px] opacity-100"
-                    : "max-w-0 opacity-0"
-                }`}
-              >
-                Add Product
-              </span>
+              <span className={fabLabelClass(isAnyHovered)}>Add Product</span>
             </Button>
           </AddProductDialog>
         </div>
       )}
 
-      {/* Add Product Button - products page only */}
-      {variant === "products" && (
-        <div
-          className={`relative flex justify-end transition-all duration-300 ${
-            isAnyHovered ? "w-[160px]" : "w-14"
-          }`}
-        >
-          <AddProductDialog allProducts={allProducts} userId={userId}>
-            <Button
-              className={`h-14 rounded-full border border-rose-400/30 dark:border-rose-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-rose-300/40 flex items-center justify-center gap-2 ${
-                isAnyHovered ? "w-auto px-4" : "w-14 px-0"
-              }`}
-            >
-              <Package className="h-5 w-5 flex-shrink-0" />
-              <span
-                className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
-                  isAnyHovered
-                    ? "max-w-[120px] opacity-100"
-                    : "max-w-0 opacity-0"
-                }`}
-              >
-                Add Product
-              </span>
-            </Button>
-          </AddProductDialog>
-        </div>
-      )}
-
-      {/* Add Category Button - home only */}
-      {variant === "home" && (
-        <div
-          className={`relative flex justify-end transition-all duration-300 ${
-            isAnyHovered ? "w-[160px]" : "w-14"
-          }`}
-        >
+      {/* Add Category - home + categories */}
+      {showCategory && (
+        <div className={fabWrapClass(isAnyHovered)}>
           <AddCategoryDialog>
-            <Button
-              className={`h-14 rounded-full border border-sky-400/30 dark:border-sky-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-sky-300/40 flex items-center justify-center gap-2 ${
-                isAnyHovered ? "w-auto px-4" : "w-14 px-0"
-              }`}
-            >
+            <Button className={fabClass(isAnyHovered)}>
               <Tag className="h-5 w-5 flex-shrink-0" />
-              <span
-                className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
-                  isAnyHovered
-                    ? "max-w-[120px] opacity-100"
-                    : "max-w-0 opacity-0"
-                }`}
-              >
-                Add Category
-              </span>
+              <span className={fabLabelClass(isAnyHovered)}>Add Category</span>
             </Button>
           </AddCategoryDialog>
         </div>
       )}
 
-      {/* Add Category Button - categories page only */}
-      {variant === "categories" && (
-        <div
-          className={`relative flex justify-end transition-all duration-300 ${
-            isAnyHovered ? "w-[160px]" : "w-14"
-          }`}
-        >
-          <AddCategoryDialog>
-            <Button
-              className={`h-14 rounded-full border border-sky-400/30 dark:border-sky-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-sky-300/40 flex items-center justify-center gap-2 ${
-                isAnyHovered ? "w-auto px-4" : "w-14 px-0"
-              }`}
-            >
-              <Tag className="h-5 w-5 flex-shrink-0" />
-              <span
-                className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
-                  isAnyHovered
-                    ? "max-w-[120px] opacity-100"
-                    : "max-w-0 opacity-0"
-                }`}
-              >
-                Add Category
-              </span>
-            </Button>
-          </AddCategoryDialog>
-        </div>
-      )}
-
-      {/* Add Supplier Button - home only */}
-      {variant === "home" && (
-        <div
-          className={`relative flex justify-end transition-all duration-300 ${
-            isAnyHovered ? "w-[160px]" : "w-14"
-          }`}
-        >
+      {/* Add Supplier - home + suppliers */}
+      {showSupplier && (
+        <div className={fabWrapClass(isAnyHovered)}>
           <AddSupplierDialog>
-            <Button
-              className={`h-14 rounded-full border border-emerald-400/30 dark:border-emerald-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-emerald-300/40 flex items-center justify-center gap-2 ${
-                isAnyHovered ? "w-auto px-4" : "w-14 px-0"
-              }`}
-            >
+            <Button className={fabClass(isAnyHovered)}>
               <Truck className="h-5 w-5 flex-shrink-0" />
-              <span
-                className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
-                  isAnyHovered
-                    ? "max-w-[120px] opacity-100"
-                    : "max-w-0 opacity-0"
-                }`}
-              >
-                Add Supplier
-              </span>
+              <span className={fabLabelClass(isAnyHovered)}>Add Supplier</span>
             </Button>
           </AddSupplierDialog>
         </div>
       )}
 
-      {/* Create Order Button - home and orders */}
-      {(variant === "home" || variant === "orders") && (
-        <div
-          className={`relative flex justify-end transition-all duration-300 ${
-            isAnyHovered ? "w-[160px]" : "w-14"
-          }`}
-        >
+      {/* Create Order - home + orders */}
+      {showOrder && (
+        <div className={fabWrapClass(isAnyHovered)}>
           <OrderDialog>
-            <Button
-              className={`h-14 rounded-full border border-violet-400/30 dark:border-violet-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-violet-300/40 flex items-center justify-center gap-2 ${
-                isAnyHovered ? "w-auto px-4" : "w-14 px-0"
-              }`}
-            >
+            <Button className={fabClass(isAnyHovered)}>
               <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-              <span
-                className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
-                  isAnyHovered
-                    ? "max-w-[120px] opacity-100"
-                    : "max-w-0 opacity-0"
-                }`}
-              >
-                Create Order
-              </span>
+              <span className={fabLabelClass(isAnyHovered)}>Create Order</span>
             </Button>
           </OrderDialog>
         </div>
       )}
 
-      {/* Create Order Button - products page for client (depends on product owner select) */}
+      {/* Create Order - products page for client (depends on product owner select) */}
       {variant === "products-client" && (
-        <div
-          className={`relative flex justify-end transition-all duration-300 ${
-            isAnyHovered ? "w-[160px]" : "w-14"
-          }`}
-        >
+        <div className={fabWrapClass(isAnyHovered)}>
           <OrderDialog defaultOwnerId={selectedOwnerId || undefined}>
-            <Button
-              disabled={!selectedOwnerId}
-              className={`h-14 rounded-full border border-violet-400/30 dark:border-violet-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-violet-300/40 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-                isAnyHovered ? "w-auto px-4" : "w-14 px-0"
-              }`}
-            >
+            <Button disabled={!selectedOwnerId} className={fabClass(isAnyHovered)}>
               <ShoppingCart className="h-5 w-5 flex-shrink-0" />
-              <span
-                className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
-                  isAnyHovered
-                    ? "max-w-[120px] opacity-100"
-                    : "max-w-0 opacity-0"
-                }`}
-              >
-                Create Order
-              </span>
+              <span className={fabLabelClass(isAnyHovered)}>Create Order</span>
             </Button>
           </OrderDialog>
         </div>
       )}
 
-      {/* Add Supplier Button - suppliers only */}
-      {variant === "suppliers" && (
-        <div
-          className={`relative flex justify-end transition-all duration-300 ${
-            isAnyHovered ? "w-[160px]" : "w-14"
-          }`}
-        >
-          <AddSupplierDialog>
-            <Button
-              className={`h-14 rounded-full border border-emerald-400/30 dark:border-emerald-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-emerald-300/40 flex items-center justify-center gap-2 ${
-                isAnyHovered ? "w-auto px-4" : "w-14 px-0"
-              }`}
-            >
-              <Truck className="h-5 w-5 flex-shrink-0" />
-              <span
-                className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
-                  isAnyHovered
-                    ? "max-w-[120px] opacity-100"
-                    : "max-w-0 opacity-0"
-                }`}
-              >
-                Add Supplier
-              </span>
-            </Button>
-          </AddSupplierDialog>
-        </div>
-      )}
-
-      {/* Add Warehouse Button - warehouses only */}
+      {/* Add Warehouse - warehouses only */}
       {variant === "warehouses" && (
-        <div
-          className={`relative flex justify-end transition-all duration-300 ${
-            isAnyHovered ? "w-[160px]" : "w-14"
-          }`}
-        >
+        <div className={fabWrapClass(isAnyHovered)}>
           <WarehouseDialog>
-            <Button
-              className={`h-14 rounded-full border border-amber-400/30 dark:border-amber-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-amber-300/40 flex items-center justify-center gap-2 ${
-                isAnyHovered ? "w-auto px-4" : "w-14 px-0"
-              }`}
-            >
+            <Button className={fabClass(isAnyHovered)}>
               <Warehouse className="h-5 w-5 flex-shrink-0" />
-              <span
-                className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
-                  isAnyHovered
-                    ? "max-w-[120px] opacity-100"
-                    : "max-w-0 opacity-0"
-                }`}
-              >
-                Add Warehouse
-              </span>
+              <span className={fabLabelClass(isAnyHovered)}>Add Warehouse</span>
             </Button>
           </WarehouseDialog>
         </div>
       )}
 
-      {/* Generate Invoice Button - invoices only */}
+      {/* Generate Invoice - invoices only */}
       {variant === "invoices" && (
-        <div
-          className={`relative flex justify-end transition-all duration-300 ${
-            isAnyHovered ? "w-[160px]" : "w-14"
-          }`}
-        >
+        <div className={fabWrapClass(isAnyHovered)}>
           <InvoiceDialog>
-            <Button
-              className={`h-14 rounded-full border border-indigo-400/30 dark:border-indigo-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-indigo-300/40 flex items-center justify-center gap-2 ${
-                isAnyHovered ? "w-auto px-4" : "w-14 px-0"
-              }`}
-            >
+            <Button className={fabClass(isAnyHovered)}>
               <FileText className="h-5 w-5 flex-shrink-0" />
-              <span
-                className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
-                  isAnyHovered
-                    ? "max-w-[120px] opacity-100"
-                    : "max-w-0 opacity-0"
-                }`}
-              >
-                Generate Invoice
-              </span>
+              <span className={fabLabelClass(isAnyHovered)}>Generate Invoice</span>
             </Button>
           </InvoiceDialog>
         </div>
