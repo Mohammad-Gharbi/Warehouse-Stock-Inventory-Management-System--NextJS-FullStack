@@ -667,13 +667,13 @@ export default function OrderDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children || (
-          <Button className="h-10 font-semibold inline-flex items-center justify-center rounded-xl border border-violet-400/30 dark:border-violet-400/30 bg-gradient-to-r from-violet-500/40 via-violet-500/30 to-violet-500/20 dark:from-violet-500/40 dark:via-violet-500/30 dark:to-violet-500/20 text-white shadow-[0_15px_35px_rgba(139,92,246,0.35)] backdrop-blur-sm transition duration-200 hover:border-violet-300/50 hover:from-violet-500/50 hover:via-violet-500/40 hover:to-violet-500/30 dark:hover:border-violet-300/50 dark:hover:from-violet-500/50 dark:hover:via-violet-500/40 dark:hover:to-violet-500/30">
+          <Button className="h-10 font-semibold inline-flex items-center justify-center rounded-xl border border-violet-400/30 dark:border-violet-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-violet-300/50 dark:hover:border-violet-300/50 ">
             + Create Order
           </Button>
         )}
       </DialogTrigger>
       <DialogContent
-        className="p-4 sm:p-7 sm:px-8 poppins max-h-[90vh] overflow-y-auto border-violet-400/30 dark:border-violet-400/30 shadow-[0_30px_80px_rgba(139,92,246,0.45)] dark:shadow-[0_30px_80px_rgba(139,92,246,0.25)]"
+        className="p-4 sm:p-7 sm:px-8 poppins max-h-[90vh] overflow-y-auto border-violet-400/30 dark:border-violet-400/30 shadow-sm "
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader>
@@ -729,7 +729,7 @@ export default function OrderDialog({
                           )
                         }
                       >
-                        <SelectTrigger className="h-11 w-full border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]">
+                        <SelectTrigger className="h-11 w-full border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-sm">
                           <SelectValue placeholder="Select Status" />
                         </SelectTrigger>
                         <SelectContent
@@ -788,7 +788,7 @@ export default function OrderDialog({
                           )
                         }
                       >
-                        <SelectTrigger className="h-11 w-full border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]">
+                        <SelectTrigger className="h-11 w-full border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-sm">
                           <SelectValue placeholder="Select Payment Status" />
                         </SelectTrigger>
                         <SelectContent
@@ -818,7 +818,7 @@ export default function OrderDialog({
                   label="Tracking Number"
                   placeholder="Enter tracking number"
                   labelClassName="text-white/80"
-                  inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                  inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                 />
 
                 {/* Tracking URL */}
@@ -828,7 +828,7 @@ export default function OrderDialog({
                   placeholder="https://tracking.example.com/..."
                   type="url"
                   labelClassName="text-white/80"
-                  inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                  inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                 />
 
                 {/* Estimated Delivery */}
@@ -837,7 +837,7 @@ export default function OrderDialog({
                   label="Estimated Delivery"
                   type="date"
                   labelClassName="text-white/80"
-                  inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                  inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                 />
 
                 {/* Shipped At */}
@@ -850,7 +850,7 @@ export default function OrderDialog({
                     <input
                       {...editFormMethods.register("shippedAt")}
                       type="date"
-                      className="h-11 w-full rounded-md border border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 px-3 py-2 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                      className="h-11 w-full rounded-md border border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 px-3 py-2 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-sm"
                       defaultValue={
                         editingOrder.shippedAt
                           ? new Date(editingOrder.shippedAt)
@@ -871,7 +871,7 @@ export default function OrderDialog({
                     <input
                       {...editFormMethods.register("deliveredAt")}
                       type="date"
-                      className="h-11 w-full rounded-md border border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 px-3 py-2 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                      className="h-11 w-full rounded-md border border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 px-3 py-2 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-sm"
                       defaultValue={
                         editingOrder.deliveredAt
                           ? new Date(editingOrder.deliveredAt)
@@ -892,7 +892,7 @@ export default function OrderDialog({
                     <input
                       {...editFormMethods.register("cancelledAt")}
                       type="date"
-                      className="h-11 w-full rounded-md border border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 px-3 py-2 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                      className="h-11 w-full rounded-md border border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 px-3 py-2 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-sm"
                       defaultValue={
                         editingOrder.cancelledAt
                           ? new Date(editingOrder.cancelledAt)
@@ -911,7 +911,7 @@ export default function OrderDialog({
                     label="Notes"
                     placeholder="Enter order notes..."
                     labelClassName="text-white/80"
-                    inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                    inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                   />
                 </div>
               </div>
@@ -920,13 +920,13 @@ export default function OrderDialog({
                 <Button
                   onClick={handleCancelEdit}
                   variant="secondary"
-                  className="h-11 w-full sm:w-auto px-11 inline-flex items-center justify-center rounded-xl border border-white/10 bg-gradient-to-r from-gray-400/40 via-gray-300/30 to-gray-400/40 dark:bg-background/50 backdrop-blur-sm shadow-[0_15px_35px_rgba(0,0,0,0.3)] dark:shadow-[0_15px_35px_rgba(255,255,255,0.25)] transition duration-200 hover:bg-gradient-to-r hover:from-gray-400/60 hover:via-gray-300/50 hover:to-gray-400/60 dark:hover:bg-accent/50 hover:border-white/20 dark:hover:border-white/20 hover:shadow-[0_20px_45px_rgba(0,0,0,0.5)] dark:hover:shadow-[0_20px_45px_rgba(255,255,255,0.4)]"
+                  className="h-11 w-full sm:w-auto px-11 inline-flex items-center justify-center rounded-xl border border-white/10 bg-card dark:bg-background/50 backdrop-blur-sm shadow-sm transition duration-200 hover:bg-accent dark:hover:bg-accent/50 hover:border-white/20 dark:hover:border-white/20 "
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  className="h-11 w-full sm:w-auto px-11 inline-flex items-center justify-center rounded-xl border border-violet-400/30 dark:border-violet-400/30 bg-gradient-to-r from-violet-500/70 via-violet-500/50 to-violet-500/30 dark:from-violet-500/70 dark:via-violet-500/50 dark:to-violet-500/30 text-white shadow-[0_15px_35px_rgba(139,92,246,0.45)] backdrop-blur-sm transition duration-200 hover:border-violet-300/40 hover:from-violet-500/80 hover:via-violet-500/60 hover:to-violet-500/40 dark:hover:border-violet-300/40 dark:hover:from-violet-500/80 dark:hover:via-violet-500/60 dark:hover:to-violet-500/40 hover:shadow-[0_20px_45px_rgba(139,92,246,0.6)]"
+                  className="h-11 w-full sm:w-auto px-11 inline-flex items-center justify-center rounded-xl border border-violet-400/30 dark:border-violet-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-violet-300/40 dark:hover:border-violet-300/40 "
                   disabled={isUpdating}
                 >
                   {isUpdating ? "Updating..." : "Update Order"}
@@ -1016,7 +1016,7 @@ export default function OrderDialog({
                       type="button"
                       onClick={handleAddItem}
                       variant="secondary"
-                      className="h-10 rounded-[28px] border border-violet-400/30 dark:border-violet-400/30 bg-gradient-to-r from-violet-500/30 via-violet-500/15 to-violet-500/5 dark:from-violet-500/30 dark:via-violet-500/15 dark:to-violet-500/5 text-gray-700 dark:text-white shadow-[0_10px_30px_rgba(139,92,246,0.2)] backdrop-blur-sm transition duration-200 hover:border-violet-300/60 hover:from-violet-500/35 hover:via-violet-500/25 hover:to-violet-500/15 dark:hover:border-violet-300/60 dark:hover:from-violet-500/35 dark:hover:via-violet-500/25 dark:hover:to-violet-500/15"
+                      className="h-10 rounded-[28px] border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-violet-300/60 dark:hover:border-violet-300/60 "
                     >
                       <Plus className="h-4 w-4 mr-1" />
                       Add Item
@@ -1091,7 +1091,7 @@ export default function OrderDialog({
                                       availableProducts.length === 0
                                     }
                                   >
-                                    <SelectTrigger className="h-11 w-full border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]">
+                                    <SelectTrigger className="h-11 w-full border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-sm">
                                       <SelectValue
                                         placeholder={productSelectPlaceholder}
                                       />
@@ -1187,7 +1187,7 @@ export default function OrderDialog({
                                   }
                                 }}
                                 placeholder="Enter quantity"
-                                className="h-11 border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus-visible:border-violet-400 focus:ring-violet-500/50 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)] [&:invalid]:border-violet-400/30 [&:invalid]:focus:border-violet-400 [&:invalid]:focus-visible:border-violet-400"
+                                className="h-11 border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus-visible:border-violet-400 focus:ring-violet-500/50 focus-visible:ring-violet-500/50 shadow-sm [&:invalid]:border-violet-400/30 [&:invalid]:focus:border-violet-400 [&:invalid]:focus-visible:border-violet-400"
                               />
                               {createErrors.items?.[index]?.quantity && (
                                 <p className="text-red-500 text-xs">
@@ -1260,28 +1260,28 @@ export default function OrderDialog({
                       label="Street Address"
                       placeholder="123 Main St"
                       labelClassName="text-white/80"
-                      inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                      inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                     />
                     <FormField
                       name="shippingAddress.city"
                       label="City"
                       placeholder="New York"
                       labelClassName="text-white/80"
-                      inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                      inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                     />
                     <FormField
                       name="shippingAddress.state"
                       label="State/Province"
                       placeholder="NY"
                       labelClassName="text-white/80"
-                      inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                      inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                     />
                     <FormField
                       name="shippingAddress.zipCode"
                       label="Zip Code"
                       placeholder="10001"
                       labelClassName="text-white/80"
-                      inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                      inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                     />
                     <FormField
                       name="shippingAddress.country"
@@ -1289,7 +1289,7 @@ export default function OrderDialog({
                       placeholder="United States"
                       labelClassName="text-white/80"
                       className="sm:col-span-2"
-                      inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                      inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                     />
                   </div>
 
@@ -1324,28 +1324,28 @@ export default function OrderDialog({
                           label="Street Address"
                           placeholder="123 Main St"
                           labelClassName="text-white/80"
-                          inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                          inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                         />
                         <FormField
                           name="billingAddress.city"
                           label="City"
                           placeholder="New York"
                           labelClassName="text-white/80"
-                          inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                          inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                         />
                         <FormField
                           name="billingAddress.state"
                           label="State/Province"
                           placeholder="NY"
                           labelClassName="text-white/80"
-                          inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                          inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                         />
                         <FormField
                           name="billingAddress.zipCode"
                           label="Zip Code"
                           placeholder="10001"
                           labelClassName="text-white/80"
-                          inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                          inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                         />
                         <FormField
                           name="billingAddress.country"
@@ -1353,7 +1353,7 @@ export default function OrderDialog({
                           placeholder="United States"
                           labelClassName="text-white/80"
                           className="sm:col-span-2"
-                          inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                          inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                         />
                       </div>
                     </div>
@@ -1398,7 +1398,7 @@ export default function OrderDialog({
                     label="Order Notes"
                     placeholder="Additional notes or instructions..."
                     labelClassName="text-white/80"
-                    inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
+                    inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                   />
                 </div>
               </div>
@@ -1408,14 +1408,14 @@ export default function OrderDialog({
                   <Button
                     ref={dialogCloseRef}
                     variant="secondary"
-                    className="h-11 w-full sm:w-auto px-11 inline-flex items-center justify-center rounded-xl border border-white/10 bg-gradient-to-r from-gray-400/40 via-gray-300/30 to-gray-400/40 dark:bg-background/50 backdrop-blur-sm shadow-[0_15px_35px_rgba(0,0,0,0.3)] dark:shadow-[0_15px_35px_rgba(255,255,255,0.25)] transition duration-200 hover:bg-gradient-to-r hover:from-gray-400/60 hover:via-gray-300/50 hover:to-gray-400/60 dark:hover:bg-accent/50 hover:border-white/20 dark:hover:border-white/20 hover:shadow-[0_20px_45px_rgba(0,0,0,0.5)] dark:hover:shadow-[0_20px_45px_rgba(255,255,255,0.4)]"
+                    className="h-11 w-full sm:w-auto px-11 inline-flex items-center justify-center rounded-xl border border-white/10 bg-card dark:bg-background/50 backdrop-blur-sm shadow-sm transition duration-200 hover:bg-accent dark:hover:bg-accent/50 hover:border-white/20 dark:hover:border-white/20 "
                   >
                     Cancel
                   </Button>
                 </DialogClose>
                 <Button
                   type="submit"
-                  className="h-11 w-full sm:w-auto px-11 inline-flex items-center justify-center rounded-xl border border-violet-400/30 dark:border-violet-400/30 bg-gradient-to-r from-violet-500/70 via-violet-500/50 to-violet-500/30 dark:from-violet-500/70 dark:via-violet-500/50 dark:to-violet-500/30 text-white shadow-[0_15px_35px_rgba(139,92,246,0.45)] backdrop-blur-sm transition duration-200 hover:border-violet-300/40 hover:from-violet-500/80 hover:via-violet-500/60 hover:to-violet-500/40 dark:hover:border-violet-300/40 dark:hover:from-violet-500/80 dark:hover:via-violet-500/60 dark:hover:to-violet-500/40 hover:shadow-[0_20px_45px_rgba(139,92,246,0.6)]"
+                  className="h-11 w-full sm:w-auto px-11 inline-flex items-center justify-center rounded-xl border border-violet-400/30 dark:border-violet-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-violet-300/40 dark:hover:border-violet-300/40 "
                   disabled={
                     isCreating ||
                     watchedItems.length === 0 ||

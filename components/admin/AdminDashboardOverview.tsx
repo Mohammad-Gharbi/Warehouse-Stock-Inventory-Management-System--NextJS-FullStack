@@ -187,7 +187,7 @@ export default function AdminDashboardOverview({
 
         {/* KPI cards — same style as codebook-ecommerce dashboard */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
-          <Card className="border border-white/10 dark:border-white/10 bg-gradient-to-br from-white/80 to-white/60 dark:from-white/10 dark:to-white/5">
+          <Card className="border border-white/10 dark:border-white/10 bg-card ">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Total Orders
@@ -199,7 +199,7 @@ export default function AdminDashboardOverview({
               <p className="text-xs text-muted-foreground">All time orders</p>
             </CardContent>
           </Card>
-          <Card className="border border-white/10 dark:border-white/10 bg-gradient-to-br from-white/80 to-white/60 dark:from-white/10 dark:to-white/5">
+          <Card className="border border-white/10 dark:border-white/10 bg-card ">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Total Revenue
@@ -217,7 +217,7 @@ export default function AdminDashboardOverview({
               <p className="text-xs text-muted-foreground">Total sales</p>
             </CardContent>
           </Card>
-          <Card className="border border-white/10 dark:border-white/10 bg-gradient-to-br from-white/80 to-white/60 dark:from-white/10 dark:to-white/5">
+          <Card className="border border-white/10 dark:border-white/10 bg-card ">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Total Products
@@ -231,7 +231,7 @@ export default function AdminDashboardOverview({
               <p className="text-xs text-muted-foreground">Active products</p>
             </CardContent>
           </Card>
-          <Card className="border border-white/10 dark:border-white/10 bg-gradient-to-br from-white/80 to-white/60 dark:from-white/10 dark:to-white/5">
+          <Card className="border border-white/10 dark:border-white/10 bg-card ">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Total Users
@@ -243,7 +243,7 @@ export default function AdminDashboardOverview({
               <p className="text-xs text-muted-foreground">From orders</p>
             </CardContent>
           </Card>
-          <Card className="border border-white/10 dark:border-white/10 bg-gradient-to-br from-white/80 to-white/60 dark:from-white/10 dark:to-white/5">
+          <Card className="border border-white/10 dark:border-white/10 bg-card ">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Total Suppliers
@@ -257,7 +257,7 @@ export default function AdminDashboardOverview({
               <p className="text-xs text-muted-foreground">Suppliers</p>
             </CardContent>
           </Card>
-          <Card className="border border-white/10 dark:border-white/10 bg-gradient-to-br from-white/80 to-white/60 dark:from-white/10 dark:to-white/5">
+          <Card className="border border-white/10 dark:border-white/10 bg-card ">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Total Warehouses
@@ -275,7 +275,7 @@ export default function AdminDashboardOverview({
 
         {/* Second row: Average Order Value + Orders by Status */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <Card className="border border-white/10 dark:border-white/10 bg-gradient-to-br from-white/80 to-white/60 dark:from-white/10 dark:to-white/5">
+          <Card className="border border-white/10 dark:border-white/10 bg-card ">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Average Order Value
@@ -293,7 +293,7 @@ export default function AdminDashboardOverview({
               <p className="text-xs text-muted-foreground">Per order average</p>
             </CardContent>
           </Card>
-          <Card className="border border-white/10 dark:border-white/10 bg-gradient-to-br from-white/80 to-white/60 dark:from-white/10 dark:to-white/5">
+          <Card className="border border-white/10 dark:border-white/10 bg-card ">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Orders by Status

@@ -54,65 +54,65 @@ const variantConfig: Record<
 > = {
   sky: {
     border: "border-sky-400/20",
-    gradient: "bg-gradient-to-br from-sky-500/15 via-sky-500/5 to-transparent",
+    gradient: "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(2,132,199,0.15)] dark:shadow-[0_15px_40px_rgba(2,132,199,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-sky-300/40",
   },
   emerald: {
     border: "border-emerald-400/20",
     gradient:
-      "bg-gradient-to-br from-emerald-500/15 via-emerald-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(16,185,129,0.15)] dark:shadow-[0_15px_40px_rgba(16,185,129,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-emerald-300/40",
   },
   amber: {
     border: "border-amber-400/20",
     gradient:
-      "bg-gradient-to-br from-amber-500/15 via-amber-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_40px_rgba(245,158,11,0.08)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-amber-300/40",
   },
   rose: {
     border: "border-rose-400/20",
     gradient:
-      "bg-gradient-to-br from-rose-500/15 via-rose-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(225,29,72,0.15)] dark:shadow-[0_15px_40px_rgba(225,29,72,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-rose-300/40",
   },
   violet: {
     border: "border-violet-400/20",
     gradient:
-      "bg-gradient-to-br from-violet-500/15 via-violet-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(139,92,246,0.15)] dark:shadow-[0_15px_40px_rgba(139,92,246,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-violet-300/40",
   },
   blue: {
     border: "border-blue-400/20",
     gradient:
-      "bg-gradient-to-br from-blue-500/15 via-blue-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(59,130,246,0.15)] dark:shadow-[0_15px_40px_rgba(59,130,246,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-blue-300/40",
   },
   orange: {
     border: "border-orange-400/20",
     gradient:
-      "bg-gradient-to-br from-orange-500/15 via-orange-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(249,115,22,0.15)] dark:shadow-[0_15px_40px_rgba(249,115,22,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-orange-300/40",
   },
   teal: {
     border: "border-teal-400/20",
     gradient:
-      "bg-gradient-to-br from-teal-500/15 via-teal-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(20,184,166,0.15)] dark:shadow-[0_15px_40px_rgba(20,184,166,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-teal-300/40",
   },
 };
@@ -1219,7 +1219,7 @@ export default function ApiDocsPage() {
                 {[1, 2, 3, 4].map((i) => (
                   <article
                     key={i}
-                    className="rounded-[20px] border border-gray-300/30 dark:border-white/10 bg-gradient-to-br from-gray-100/50 via-gray-100/30 to-gray-100/20 dark:from-white/5 dark:via-white/5 dark:to-white/5 min-h-[120px] p-4 sm:p-5 animate-pulse"
+                    className="rounded-[20px] border border-gray-300/30 dark:border-white/10 bg-card min-h-[120px] p-4 sm:p-5 animate-pulse"
                   >
                     <Skeleton className="h-9 w-9 rounded-xl mb-3" />
                     <Skeleton className="h-5 w-24 mb-2" />
@@ -1530,13 +1530,13 @@ export default function ApiDocsPage() {
                           className={cn(
                             "rounded-xl border p-4 backdrop-blur-sm",
                             typeVariant === "emerald" &&
-                              "border-emerald-400/20 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent",
+                              "border-emerald-400/20 bg-card ",
                             typeVariant === "violet" &&
-                              "border-violet-400/20 bg-gradient-to-br from-violet-500/10 via-violet-500/5 to-transparent",
+                              "border-violet-400/20 bg-card ",
                             typeVariant === "orange" &&
-                              "border-orange-400/20 bg-gradient-to-br from-orange-500/10 via-orange-500/5 to-transparent",
+                              "border-orange-400/20 bg-card ",
                             typeVariant === "teal" &&
-                              "border-teal-400/20 bg-gradient-to-br from-teal-500/10 via-teal-500/5 to-transparent",
+                              "border-teal-400/20 bg-card ",
                           )}
                         >
                           <h4 className="font-semibold mb-3 text-gray-900 dark:text-white">
@@ -1590,7 +1590,7 @@ export default function ApiDocsPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Success Codes */}
-                    <div className="rounded-xl border border-emerald-400/20 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent p-4 backdrop-blur-sm space-y-3">
+                    <div className="rounded-xl border border-emerald-400/20 bg-card p-4 backdrop-blur-sm space-y-3">
                       <h4 className="font-medium text-emerald-700 dark:text-emerald-300 text-sm">
                         Success Codes
                       </h4>
@@ -1615,7 +1615,7 @@ export default function ApiDocsPage() {
                     </div>
 
                     {/* Error Codes */}
-                    <div className="rounded-xl border border-rose-400/20 bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent p-4 backdrop-blur-sm space-y-3">
+                    <div className="rounded-xl border border-rose-400/20 bg-card p-4 backdrop-blur-sm space-y-3">
                       <h4 className="font-medium text-rose-700 dark:text-rose-300 text-sm">
                         Error Codes
                       </h4>

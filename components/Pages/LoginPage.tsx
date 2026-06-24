@@ -224,7 +224,7 @@ export default function LoginPage() {
             <div className="absolute inset-0 opacity-25 dark:opacity-20">
               <Image
                 src="/stock_inventory.svg"
-                alt="Stock Inventory Illustration"
+                alt="Techmaster Store Illustration"
                 fill
                 className="object-contain"
                 priority
@@ -232,7 +232,7 @@ export default function LoginPage() {
             </div>
             <div className="relative z-10 max-w-2xl w-full space-y-6">
               {/* Main Welcome Card - Demo guide */}
-              <div className="rounded-[28px] border border-sky-400/30 dark:border-white/10 bg-gradient-to-br from-sky-500/25 via-sky-500/10 to-sky-500/5 dark:from-white/5 dark:via-white/5 dark:to-white/5 backdrop-blur-sm shadow-[0_30px_80px_rgba(2,132,199,0.35)] dark:shadow-lg p-4 sm:p-8">
+              <div className="rounded-[28px] border border-sky-400/30 dark:border-white/10 bg-card backdrop-blur-sm shadow-sm dark:shadow-lg p-4 sm:p-8">
                 <h1 className="text-xl lg:text-2xl font-semibold text-gray-900 dark:text-white mb-3 tracking-tight text-center">
                   Demo Accounts Guide
                 </h1>
@@ -245,7 +245,7 @@ export default function LoginPage() {
               {/* Demo role cards */}
               <div className="grid grid-cols-2 gap-4">
                 {/* Admin */}
-                <div className="rounded-[20px] border border-sky-400/30 dark:border-white/10 bg-gradient-to-br from-sky-500/25 via-sky-500/10 to-sky-500/5 dark:from-white/5 dark:via-white/5 dark:to-white/5 backdrop-blur-sm shadow-[0_20px_60px_rgba(2,132,199,0.3)] dark:shadow-lg p-4 transition-all hover:shadow-[0_25px_70px_rgba(2,132,199,0.4)] hover:border-sky-300/50 dark:hover:border-sky-300/40">
+                <div className="rounded-[20px] border border-sky-400/30 dark:border-white/10 bg-card backdrop-blur-sm shadow-sm dark:shadow-lg p-4 transition-all hover:border-sky-300/50 dark:hover:border-sky-300/40">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="rounded-xl border border-sky-400/30 dark:border-sky-400/20 bg-sky-500/20 dark:bg-sky-500/10 backdrop-blur-sm p-2">
                       <Shield className="h-5 w-5 text-sky-600 dark:text-sky-400" />
@@ -261,7 +261,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Client */}
-                <div className="rounded-[20px] border border-emerald-400/30 dark:border-white/10 bg-gradient-to-br from-emerald-500/25 via-emerald-500/10 to-emerald-500/5 dark:from-white/5 dark:via-white/5 dark:to-white/5 backdrop-blur-sm shadow-[0_20px_60px_rgba(16,185,129,0.3)] dark:shadow-lg p-4 transition-all hover:shadow-[0_25px_70px_rgba(16,185,129,0.4)] hover:border-emerald-300/50 dark:hover:border-emerald-300/40">
+                <div className="rounded-[20px] border border-emerald-400/30 dark:border-white/10 bg-card backdrop-blur-sm shadow-sm dark:shadow-lg p-4 transition-all hover:border-emerald-300/50 dark:hover:border-emerald-300/40">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="rounded-xl border border-emerald-400/30 dark:border-emerald-400/20 bg-emerald-500/20 dark:bg-emerald-500/10 backdrop-blur-sm p-2">
                       <ShoppingBag className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
@@ -277,7 +277,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Supplier */}
-                <div className="rounded-[20px] border border-amber-400/30 dark:border-white/10 bg-gradient-to-br from-amber-500/30 via-amber-500/15 to-amber-500/5 dark:from-white/5 dark:via-white/5 dark:to-white/5 backdrop-blur-sm shadow-[0_20px_60px_rgba(245,158,11,0.25)] dark:shadow-lg p-4 transition-all hover:shadow-[0_25px_70px_rgba(245,158,11,0.35)] hover:border-amber-300/60 dark:hover:border-amber-300/40">
+                <div className="rounded-[20px] border border-amber-400/30 dark:border-white/10 bg-card backdrop-blur-sm shadow-sm dark:shadow-lg p-4 transition-all hover:border-amber-300/60 dark:hover:border-amber-300/40">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="rounded-xl border border-amber-400/30 dark:border-amber-400/20 bg-amber-500/20 dark:bg-amber-500/10 backdrop-blur-sm p-2">
                       <Store className="h-5 w-5 text-amber-600 dark:text-amber-400" />
@@ -293,7 +293,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* New accounts & roles */}
-                <div className="rounded-[20px] border border-violet-400/30 dark:border-white/10 bg-gradient-to-br from-violet-500/25 via-violet-500/10 to-violet-500/5 dark:from-white/5 dark:via-white/5 dark:to-white/5 backdrop-blur-sm shadow-[0_20px_60px_rgba(139,92,246,0.35)] dark:shadow-lg p-4 transition-all hover:shadow-[0_25px_70px_rgba(139,92,246,0.45)] hover:border-violet-300/50 dark:hover:border-violet-300/40">
+                <div className="rounded-[20px] border border-violet-400/30 dark:border-white/10 bg-card backdrop-blur-sm shadow-sm dark:shadow-lg p-4 transition-all hover:border-violet-300/50 dark:hover:border-violet-300/40">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="rounded-xl border border-violet-400/30 dark:border-violet-400/20 bg-violet-500/20 dark:bg-violet-500/10 backdrop-blur-sm p-2">
                       <Users className="h-5 w-5 text-violet-600 dark:text-violet-400" />
@@ -314,7 +314,7 @@ export default function LoginPage() {
 
           {/* Right Side - Login Form */}
           <div className="w-full lg:w-1/2 flex items-center justify-center p-0 sm:p-8 lg:p-12">
-            <div className="w-full max-w-md rounded-[28px] border border-sky-400/30 dark:border-white/10 bg-gradient-to-br from-sky-500/25 via-sky-500/10 to-sky-500/5 dark:from-white/5 dark:via-white/5 dark:to-white/5 backdrop-blur-sm shadow-[0_30px_80px_rgba(2,132,199,0.35)] dark:shadow-lg p-4 sm:p-8 transition-all duration-300 hover:shadow-[0_40px_100px_rgba(2,132,199,0.5)] dark:hover:shadow-[0_40px_100px_rgba(2,132,199,0.4)] hover:border-sky-300/50 dark:hover:border-sky-300/30">
+            <div className="w-full max-w-md rounded-[28px] border border-sky-400/30 dark:border-white/10 bg-card backdrop-blur-sm shadow-sm dark:shadow-lg p-4 sm:p-8 transition-all duration-300 hover:border-sky-300/50 dark:hover:border-sky-300/30">
               <div className="space-y-2 mb-6">
                 <h2 className="text-2xl sm:text-2xl font-semibold text-gray-900 dark:text-white text-center">
                   Welcome Back
@@ -402,7 +402,7 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
                     required
-                    className="w-full bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-[0_10px_30px_rgba(2,132,199,0.15)]"
+                    className="w-full bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-sm"
                   />
                 </div>
 
@@ -421,14 +421,14 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
                     required
-                    className="w-full bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-[0_10px_30px_rgba(2,132,199,0.15)]"
+                    className="w-full bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-sm"
                   />
                 </div>
 
                 {/* Sign In Button — Loader2 inside button until homepage displays (no overlay) */}
                 <Button
                   type="submit"
-                  className="w-full rounded-xl border border-sky-400/30 dark:border-sky-400/40 bg-gradient-to-r from-sky-500/70 via-sky-500/50 to-sky-500/30 dark:from-sky-500/80 dark:via-sky-500/60 dark:to-sky-500/40 text-white shadow-[0_15px_35px_rgba(2,132,199,0.45)] backdrop-blur-sm transition duration-200 hover:border-sky-300/60 dark:hover:border-sky-300/60 hover:from-sky-500/90 hover:via-sky-500/70 hover:to-sky-500/50 dark:hover:from-sky-500/90 dark:hover:via-sky-500/70 dark:hover:to-sky-500/50 hover:shadow-[0_20px_45px_rgba(2,132,199,0.6)]"
+                  className="w-full rounded-xl border border-sky-400/30 dark:border-sky-400/40 bg-card text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-sky-300/60 dark:hover:border-sky-300/60 "
                   disabled={isLoading || isNavigatingToHome}
                 >
                   {isNavigatingToHome ? (

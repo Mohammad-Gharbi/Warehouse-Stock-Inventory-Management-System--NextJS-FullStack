@@ -26,10 +26,10 @@ export const DIALOG_TABLE_SECTION = "mt-6 min-w-0";
  * Table frame for category dialog — ring + shadow-sm only (large box-shadow clips inside overflow).
  */
 export const DIALOG_TABLE_FRAME_SKY =
-  "rounded-md border border-white/10 bg-gradient-to-br from-white/20 via-white/15 to-white/10 dark:from-white/5 dark:via-white/5 dark:to-white/5 backdrop-blur-sm ring-1 ring-sky-400/25 shadow-sm";
+  "rounded-md border border-white/10 bg-card backdrop-blur-sm ring-1 ring-sky-400/25 shadow-sm";
 
 /**
  * Table frame for supplier dialog — ring + shadow-sm only (large box-shadow clips inside overflow).
  */
 export const DIALOG_TABLE_FRAME_EMERALD =
-  "rounded-md border border-white/10 bg-gradient-to-br from-white/20 via-white/15 to-white/10 dark:from-white/5 dark:via-white/5 dark:to-white/5 backdrop-blur-sm ring-1 ring-emerald-400/25 shadow-sm";
+  "rounded-md border border-white/10 bg-card backdrop-blur-sm ring-1 ring-emerald-400/25 shadow-sm";

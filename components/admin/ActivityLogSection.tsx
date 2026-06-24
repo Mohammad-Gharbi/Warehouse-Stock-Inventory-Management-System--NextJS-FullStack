@@ -69,9 +69,9 @@ const actionColors: Record<AuditAction, string> = {
 const variantConfig = {
   border: "border-violet-400/20",
   gradient:
-    "bg-gradient-to-br from-violet-500/15 via-violet-500/5 to-transparent",
+    "bg-card ",
   shadow:
-    "shadow-[0_15px_40px_rgba(139,92,246,0.15)] dark:shadow-[0_15px_40px_rgba(139,92,246,0.1)]",
+    "shadow-sm ",
   iconBg:
     "border-violet-300/30 bg-violet-100/50 dark:border-violet-400/30 dark:bg-violet-500/20",
 };
@@ -377,7 +377,7 @@ export default function ActivityLogSection({
               placeholder="Search by user, action, entity..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="h-10 pl-9 pr-10 w-full rounded-[28px] bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-[0_10px_30px_rgba(2,132,199,0.15)]"
+              className="h-10 pl-9 pr-10 w-full rounded-[28px] bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-sm"
             />
             {searchTerm && (
               <Button
@@ -395,8 +395,8 @@ export default function ActivityLogSection({
               <div
                 className={cn(
                   "w-full sm:w-[180px] h-10 rounded-[28px] border border-sky-400/30 dark:border-sky-400/30",
-                  "bg-gradient-to-r from-sky-500/25 via-sky-500/15 to-sky-500/10 dark:from-sky-500/25 dark:via-sky-500/15 dark:to-sky-500/10",
-                  "text-gray-700 dark:text-white shadow-[0_10px_30px_rgba(2,132,199,0.2)] backdrop-blur-sm",
+                  "bg-card ",
+                  "text-gray-700 dark:text-white shadow-sm backdrop-blur-sm",
                   "flex items-center px-3 text-sm",
                 )}
                 aria-hidden
@@ -414,16 +414,16 @@ export default function ActivityLogSection({
                 <SelectTrigger
                   className={cn(
                     "w-full sm:w-[180px] h-10 rounded-[28px] border border-sky-400/30 dark:border-sky-400/30",
-                    "bg-gradient-to-r from-sky-500/25 via-sky-500/15 to-sky-500/10 dark:from-sky-500/25 dark:via-sky-500/15 dark:to-sky-500/10",
-                    "text-gray-700 dark:text-white shadow-[0_10px_30px_rgba(2,132,199,0.2)] backdrop-blur-sm",
-                    "transition duration-200 hover:border-sky-300/40 hover:from-sky-500/35 hover:via-sky-500/25 hover:to-sky-500/15",
-                    "dark:hover:border-sky-300/40 dark:hover:from-sky-500/35 dark:hover:via-sky-500/25 dark:hover:to-sky-500/15",
+                    "bg-card ",
+                    "text-gray-700 dark:text-white shadow-sm backdrop-blur-sm",
+                    "transition duration-200 hover:border-sky-300/40 ",
+                    "dark:hover:border-sky-300/40 ",
                   )}
                 >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent
-                  className="rounded-xl border-sky-400/20 bg-white/95 dark:bg-popover/95 shadow-[0_10px_30px_rgba(2,132,199,0.15)]"
+                  className="rounded-xl border-sky-400/20 bg-white/95 dark:bg-popover/95 shadow-sm"
                   position="popper"
                 >
                   {PERIODS.map((p) => (

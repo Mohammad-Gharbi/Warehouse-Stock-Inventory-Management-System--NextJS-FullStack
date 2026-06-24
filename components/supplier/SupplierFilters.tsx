@@ -241,7 +241,7 @@ export default function SupplierFilters({
             placeholder="Search by Supplier Name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-10 pl-9 pr-10 w-full rounded-[28px] bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-[0_10px_30px_rgba(2,132,199,0.15)]"
+            className="h-10 pl-9 pr-10 w-full rounded-[28px] bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-sm"
           />
           {searchTerm && (
             <Button
@@ -260,7 +260,7 @@ export default function SupplierFilters({
           <DeferredSelectGate
             placeholder={
               <div
-                className="h-10 w-full sm:w-[180px] rounded-[28px] border border-emerald-400/30 bg-gradient-to-r from-emerald-500/25 via-emerald-500/15 to-emerald-500/10 text-gray-700 dark:text-white shadow-[0_10px_30px_rgba(16,185,129,0.2)] font-medium flex items-center justify-between px-3 py-2.5 text-sm"
+                className="h-10 w-full sm:w-[180px] rounded-[28px] border border-emerald-400/30 bg-card text-gray-700 dark:text-white shadow-sm font-medium flex items-center justify-between px-3 py-2.5 text-sm"
                 aria-hidden
               >
                 <span>
@@ -282,10 +282,10 @@ export default function SupplierFilters({
                   setStatusFilter(value as StatusFilter)
                 }
               >
-                <SelectTrigger className="h-10 w-full sm:w-[180px] rounded-[28px] border border-emerald-400/30 dark:border-emerald-400/30 bg-gradient-to-r from-emerald-500/25 via-emerald-500/15 to-emerald-500/10 dark:from-emerald-500/25 dark:via-emerald-500/15 dark:to-emerald-500/10 text-gray-700 dark:text-white shadow-[0_10px_30px_rgba(16,185,129,0.2)] backdrop-blur-sm transition duration-200 hover:border-emerald-300/40 hover:from-emerald-500/35 hover:via-emerald-500/25 hover:to-emerald-500/15 dark:hover:border-emerald-300/40 dark:hover:from-emerald-500/35 dark:hover:via-emerald-500/25 dark:hover:to-emerald-500/15 font-medium">
+                <SelectTrigger className="h-10 w-full sm:w-[180px] rounded-[28px] border border-emerald-400/30 dark:border-emerald-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-emerald-300/40 dark:hover:border-emerald-300/40 font-medium">
                   <SelectValue placeholder="All Suppliers" />
                 </SelectTrigger>
-                <SelectContent className="rounded-[28px] border border-emerald-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm shadow-[0_10px_30px_rgba(16,185,129,0.15)]">
+                <SelectContent className="rounded-[28px] border border-emerald-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm shadow-sm">
                   <SelectItem
                     value="all"
                     className="text-gray-700 dark:text-white/80 focus:bg-emerald-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
@@ -316,7 +316,7 @@ export default function SupplierFilters({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="h-10 w-full sm:w-auto flex items-center gap-2 rounded-[28px] border border-violet-400/30 dark:border-violet-400/30 bg-gradient-to-r from-violet-500/25 via-violet-500/15 to-violet-500/10 dark:from-violet-500/25 dark:via-violet-500/15 dark:to-violet-500/10 text-gray-700 dark:text-white shadow-[0_10px_30px_rgba(139,92,246,0.2)] backdrop-blur-sm transition duration-200 hover:border-violet-300/40 hover:from-violet-500/35 hover:via-violet-500/25 hover:to-violet-500/15 dark:hover:border-violet-300/40 dark:hover:from-violet-500/35 dark:hover:via-violet-500/25 dark:hover:to-violet-500/15"
+                className="h-10 w-full sm:w-auto flex items-center gap-2 rounded-[28px] border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-violet-300/40 dark:hover:border-violet-300/40 "
               >
                 <Download className="h-4 w-4" />
                 Export Suppliers
@@ -372,10 +372,10 @@ function FilterArea({
     <div className="flex flex-col sm:flex-row gap-3 poppins">
       {/* Status Filter */}
       {hasActiveFilter && (
-        <div className="inline-flex items-center gap-1 px-2 py-1 text-xs border border-emerald-400/30 bg-gradient-to-r from-emerald-500/25 via-emerald-500/10 to-emerald-500/5 text-gray-700 dark:text-white rounded-md backdrop-blur-sm shadow-[0_10px_30px_rgba(16,185,129,0.2)]">
+        <div className="inline-flex items-center gap-1 px-2 py-1 text-xs border border-emerald-400/30 bg-card text-gray-700 dark:text-white rounded-md backdrop-blur-sm shadow-sm">
           <span className="text-gray-700 dark:text-white/80">Status:</span>
           <div className="flex gap-1 items-center">
-            <Badge className="border border-emerald-400/30 bg-gradient-to-r from-emerald-500/25 via-emerald-500/10 to-emerald-500/5 text-white backdrop-blur-sm">
+            <Badge className="border border-emerald-400/30 bg-card text-white backdrop-blur-sm">
               {statusFilter === "active" ? "Active" : "Inactive"}
             </Badge>
           </div>

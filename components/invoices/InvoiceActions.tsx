@@ -83,7 +83,7 @@ export default function InvoiceActions({ invoice, onEdit, detailHrefBase }: Invo
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="border border-white/10 bg-gradient-to-br from-white/5 via-white/5 to-white/5 backdrop-blur-sm shadow-lg"
+        className="border border-white/10 bg-card backdrop-blur-sm shadow-lg"
       >
         <DropdownMenuItem asChild>
           <Link href={detailHrefBase ? `${detailHrefBase}/${invoice.id}` : `/invoices/${invoice.id}`} className="flex items-center gap-2">

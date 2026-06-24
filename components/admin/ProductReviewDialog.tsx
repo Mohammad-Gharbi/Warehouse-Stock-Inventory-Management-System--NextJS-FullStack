@@ -93,7 +93,7 @@ export default function ProductReviewDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent
-        className="p-4 sm:p-7 sm:px-8 poppins max-h-[90vh] overflow-y-auto border-amber-400/30 dark:border-amber-400/30 shadow-[0_30px_80px_rgba(245,158,11,0.35)] dark:shadow-[0_30px_80px_rgba(245,158,11,0.25)]"
+        className="p-4 sm:p-7 sm:px-8 poppins max-h-[90vh] overflow-y-auto border-amber-400/30 dark:border-amber-400/30 shadow-sm "
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader>
@@ -137,7 +137,7 @@ export default function ProductReviewDialog({
                 >
                   <SelectTrigger
                     id="product-review-product"
-                    className="h-11 w-full border-amber-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-amber-400 focus:ring-amber-500/50 shadow-[0_10px_30px_rgba(245,158,11,0.15)]"
+                    className="h-11 w-full border-amber-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-amber-400 focus:ring-amber-500/50 shadow-sm"
                   >
                     <SelectValue placeholder="Select product to review" />
                   </SelectTrigger>
@@ -188,7 +188,7 @@ export default function ProductReviewDialog({
                 >
                   <SelectTrigger
                     id="product-review-rating"
-                    className="h-11 w-full border-amber-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-amber-400 focus:ring-amber-500/50 shadow-[0_10px_30px_rgba(245,158,11,0.15)]"
+                    className="h-11 w-full border-amber-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-amber-400 focus:ring-amber-500/50 shadow-sm"
                   >
                     <SelectValue>
                       <span className="flex items-center gap-2">
@@ -237,7 +237,7 @@ export default function ProductReviewDialog({
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               disabled={isPending}
-              className="min-h-[120px] border-amber-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-amber-400 focus:ring-amber-500/50 shadow-[0_10px_30px_rgba(245,158,11,0.15)] resize-none"
+              className="min-h-[120px] border-amber-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-amber-400 focus:ring-amber-500/50 shadow-sm resize-none"
               maxLength={2000}
             />
             <p className="text-xs text-white/50 text-right">
@@ -249,7 +249,7 @@ export default function ProductReviewDialog({
               <Button
                 type="button"
                 variant="secondary"
-                className="h-11 w-full sm:w-auto px-8 inline-flex items-center justify-center rounded-xl border border-white/10 bg-gradient-to-r from-gray-400/40 via-gray-300/30 to-gray-400/40 dark:bg-background/50 backdrop-blur-sm shadow-[0_15px_35px_rgba(0,0,0,0.3)] dark:shadow-[0_15px_35px_rgba(255,255,255,0.25)] transition duration-200 hover:bg-gradient-to-r hover:from-gray-400/60 hover:via-gray-300/50 hover:to-gray-400/60 dark:hover:bg-accent/50 hover:border-white/20 dark:hover:border-white/20"
+                className="h-11 w-full sm:w-auto px-8 inline-flex items-center justify-center rounded-xl border border-white/10 bg-card dark:bg-background/50 backdrop-blur-sm shadow-sm transition duration-200 hover:bg-accent dark:hover:bg-accent/50 hover:border-white/20 dark:hover:border-white/20"
                 disabled={isPending}
               >
                 Cancel
@@ -258,7 +258,7 @@ export default function ProductReviewDialog({
             <Button
               type="submit"
               disabled={isPending || !productId.trim() || !comment.trim()}
-              className="h-11 w-full sm:w-auto px-8 inline-flex items-center justify-center rounded-xl border border-amber-400/30 dark:border-amber-400/30 bg-gradient-to-r from-amber-500/70 via-amber-500/50 to-amber-500/30 dark:from-amber-500/70 dark:via-amber-500/50 dark:to-amber-500/30 text-white shadow-[0_15px_35px_rgba(245,158,11,0.45)] backdrop-blur-sm transition duration-200 hover:border-amber-300/40 hover:from-amber-500/80 hover:via-amber-500/60 hover:to-amber-500/40 dark:hover:border-amber-300/40 dark:hover:from-amber-500/80 dark:hover:via-amber-500/60 dark:hover:to-amber-500/40 hover:shadow-[0_20px_45px_rgba(245,158,11,0.6)] disabled:opacity-50"
+              className="h-11 w-full sm:w-auto px-8 inline-flex items-center justify-center rounded-xl border border-amber-400/30 dark:border-amber-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-amber-300/40 dark:hover:border-amber-300/40 disabled:opacity-50"
             >
               {isPending ? (
                 <>

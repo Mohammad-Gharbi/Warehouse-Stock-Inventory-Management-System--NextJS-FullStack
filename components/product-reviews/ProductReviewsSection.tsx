@@ -53,30 +53,30 @@ const variantConfig = {
   amber: {
     border: "border-amber-400/20",
     gradient:
-      "bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_40px_rgba(245,158,11,0.08)]",
+      "shadow-sm ",
     iconBg:
       "border-amber-300/30 bg-amber-100/50 dark:border-amber-400/30 dark:bg-amber-500/20",
-    button: "border-amber-400/30 from-amber-500/50 to-amber-500/30 text-white",
+    button: "border-amber-400/30 text-white",
   },
   violet: {
     border: "border-violet-400/20",
     gradient:
-      "bg-gradient-to-br from-violet-500/10 via-violet-500/5 to-transparent",
-    shadow: "shadow-[0_15px_40px_rgba(139,92,246,0.12)]",
+      "bg-card ",
+    shadow: "shadow-sm",
     iconBg:
       "border-violet-300/30 bg-violet-100/50 dark:border-violet-400/30 dark:bg-violet-500/20",
     button:
-      "border-violet-400/30 from-violet-500/50 to-violet-500/30 text-white",
+      "border-violet-400/30 text-white",
   },
   sky: {
     border: "border-sky-400/20",
-    gradient: "bg-gradient-to-br from-sky-500/10 via-sky-500/5 to-transparent",
-    shadow: "shadow-[0_15px_40px_rgba(2,132,199,0.12)]",
+    gradient: "bg-card ",
+    shadow: "shadow-sm",
     iconBg:
       "border-sky-300/30 bg-sky-100/50 dark:border-sky-400/30 dark:bg-sky-500/20",
-    button: "border-sky-400/30 from-sky-500/50 to-sky-500/30 text-white",
+    button: "border-sky-400/30 text-white",
   },
 };
 
@@ -218,7 +218,7 @@ export default function ProductReviewsSection({
                 onClick={handleWriteNew}
                 size="sm"
                 className={cn(
-                  "rounded-xl border bg-gradient-to-r shadow-sm",
+                  "rounded-xl border bg-card shadow-sm",
                   config.button,
                 )}
               >

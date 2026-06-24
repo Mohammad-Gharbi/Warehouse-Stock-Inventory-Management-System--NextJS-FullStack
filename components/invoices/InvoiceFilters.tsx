@@ -116,7 +116,7 @@ export default function InvoiceFilters({
         { header: "Due Date", key: "Due Date" },
       ];
 
-      exportToCSV(csvData, columns, "stockly-invoices");
+      exportToCSV(csvData, columns, "techmaster-store-invoices");
 
       toast({
         title: "CSV Export Successful!",
@@ -162,7 +162,7 @@ export default function InvoiceFilters({
 
       await exportToExcel({
         sheetName: "Invoices",
-        fileName: "stockly-invoices",
+        fileName: "techmaster-store-invoices",
         columns: [
           { header: "Invoice Number", key: "Invoice Number", width: 20 },
           { header: "Invoice Date", key: "Invoice Date", width: 12 },
@@ -202,7 +202,7 @@ export default function InvoiceFilters({
             placeholder="Search by Invoice #..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-10 pl-9 pr-10 w-full rounded-[28px] bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-[0_10px_30px_rgba(2,132,199,0.15)]"
+            className="h-10 pl-9 pr-10 w-full rounded-[28px] bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-sm"
           />
           {searchTerm && (
             <Button
@@ -237,7 +237,7 @@ export default function InvoiceFilters({
               <Button
                 variant="outline"
                 disabled={filteredInvoices.length === 0}
-                className="h-10 w-full sm:w-auto flex items-center gap-2 rounded-[28px] border border-violet-400/30 dark:border-violet-400/30 bg-gradient-to-r from-violet-500/25 via-violet-500/15 to-violet-500/10 dark:from-violet-500/25 dark:via-violet-500/15 dark:to-violet-500/10 text-gray-700 dark:text-white shadow-[0_10px_30px_rgba(139,92,246,0.2)] backdrop-blur-sm transition duration-200 hover:border-violet-300/40 hover:from-violet-500/35 hover:via-violet-500/25 hover:to-violet-500/15 dark:hover:border-violet-300/40 dark:hover:from-violet-500/35 dark:hover:via-violet-500/25 dark:hover:to-violet-500/15 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-10 w-full sm:w-auto flex items-center gap-2 rounded-[28px] border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-violet-300/40 dark:hover:border-violet-300/40 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Download className="h-4 w-4" />
                 Export Invoices

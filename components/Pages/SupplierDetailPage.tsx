@@ -73,72 +73,72 @@ const variantConfig: Record<
 > = {
   sky: {
     border: "border-sky-400/20",
-    gradient: "bg-gradient-to-br from-sky-500/15 via-sky-500/5 to-transparent",
+    gradient: "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(2,132,199,0.15)] dark:shadow-[0_15px_40px_rgba(2,132,199,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-sky-300/40",
     iconBg: "border-sky-300/30 bg-sky-100/50",
   },
   emerald: {
     border: "border-emerald-400/20",
     gradient:
-      "bg-gradient-to-br from-emerald-500/15 via-emerald-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(16,185,129,0.15)] dark:shadow-[0_15px_40px_rgba(16,185,129,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-emerald-300/40",
     iconBg: "border-emerald-300/30 bg-emerald-100/50",
   },
   amber: {
     border: "border-amber-400/20",
     gradient:
-      "bg-gradient-to-br from-amber-500/15 via-amber-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_40px_rgba(245,158,11,0.08)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-amber-300/40",
     iconBg: "border-amber-300/30 bg-amber-100/50",
   },
   rose: {
     border: "border-rose-400/20",
     gradient:
-      "bg-gradient-to-br from-rose-500/15 via-rose-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(225,29,72,0.15)] dark:shadow-[0_15px_40px_rgba(225,29,72,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-rose-300/40",
     iconBg: "border-rose-300/30 bg-rose-100/50",
   },
   violet: {
     border: "border-violet-400/20",
     gradient:
-      "bg-gradient-to-br from-violet-500/15 via-violet-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(139,92,246,0.15)] dark:shadow-[0_15px_40px_rgba(139,92,246,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-violet-300/40",
     iconBg: "border-violet-300/30 bg-violet-100/50",
   },
   blue: {
     border: "border-blue-400/20",
     gradient:
-      "bg-gradient-to-br from-blue-500/15 via-blue-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(59,130,246,0.15)] dark:shadow-[0_15px_40px_rgba(59,130,246,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-blue-300/40",
     iconBg: "border-blue-300/30 bg-blue-100/50",
   },
   orange: {
     border: "border-orange-400/20",
     gradient:
-      "bg-gradient-to-br from-orange-500/15 via-orange-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(249,115,22,0.15)] dark:shadow-[0_15px_40px_rgba(249,115,22,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-orange-300/40",
     iconBg: "border-orange-300/30 bg-orange-100/50",
   },
   teal: {
     border: "border-teal-400/20",
     gradient:
-      "bg-gradient-to-br from-teal-500/15 via-teal-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(20,184,166,0.15)] dark:shadow-[0_15px_40px_rgba(20,184,166,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-teal-300/40",
     iconBg: "border-teal-300/30 bg-teal-100/50",
   },
@@ -535,7 +535,7 @@ export default function SupplierDetailPage({
                   </div>
                 </div>
                 <div className="space-y-3 mt-4">
-                  <div className="flex justify-between items-center p-3 rounded-xl border border-violet-400/20 bg-gradient-to-r from-violet-500/10 to-transparent">
+                  <div className="flex justify-between items-center p-3 rounded-xl border border-violet-400/20 bg-card ">
                     <span className="text-sm text-gray-600 dark:text-white/70">
                       Total Products:
                     </span>
@@ -544,7 +544,7 @@ export default function SupplierDetailPage({
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center p-3 rounded-xl border border-sky-400/20 bg-gradient-to-r from-sky-500/10 to-transparent">
+                  <div className="flex justify-between items-center p-3 rounded-xl border border-sky-400/20 bg-card ">
                     <span className="text-sm text-gray-600 dark:text-white/70">
                       Total Quantity Sold:
                     </span>
@@ -553,7 +553,7 @@ export default function SupplierDetailPage({
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center p-3 rounded-xl border border-emerald-400/20 bg-gradient-to-r from-emerald-500/10 to-transparent">
+                  <div className="flex justify-between items-center p-3 rounded-xl border border-emerald-400/20 bg-card ">
                     <span className="text-sm text-gray-600 dark:text-white/70">
                       Total Revenue:
                     </span>
@@ -562,7 +562,7 @@ export default function SupplierDetailPage({
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center p-3 rounded-xl border border-amber-400/20 bg-gradient-to-r from-amber-500/10 to-transparent">
+                  <div className="flex justify-between items-center p-3 rounded-xl border border-amber-400/20 bg-card ">
                     <span className="text-sm text-gray-600 dark:text-white/70">
                       Orders Containing Products:
                     </span>
@@ -571,7 +571,7 @@ export default function SupplierDetailPage({
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center p-3 rounded-xl border border-blue-400/20 bg-gradient-to-r from-blue-500/10 to-transparent">
+                  <div className="flex justify-between items-center p-3 rounded-xl border border-blue-400/20 bg-card ">
                     <span className="text-sm text-gray-600 dark:text-white/70">
                       Current Stock Value:
                     </span>
@@ -740,7 +740,7 @@ export default function SupplierDetailPage({
               variant="outline"
               onClick={handleEditSupplier}
               disabled={isGlobalDemo}
-              className="w-full sm:w-auto gap-2 rounded-xl border-blue-400/30 bg-gradient-to-r from-blue-500/20 via-blue-500/10 to-transparent hover:from-blue-500/30 shadow-[0_5px_20px_rgba(59,130,246,0.15)]"
+              className="w-full sm:w-auto gap-2 rounded-xl border-blue-400/30 bg-card shadow-sm"
             >
               <Edit className="h-4 w-4 shrink-0" />
               Edit Supplier
@@ -749,7 +749,7 @@ export default function SupplierDetailPage({
               variant="outline"
               onClick={handleDuplicateSupplier}
               disabled={isCopying || isGlobalDemo}
-              className="w-full sm:w-auto gap-2 rounded-xl border-violet-400/30 bg-gradient-to-r from-violet-500/20 via-violet-500/10 to-transparent hover:from-violet-500/30 shadow-[0_5px_20px_rgba(139,92,246,0.15)]"
+              className="w-full sm:w-auto gap-2 rounded-xl border-violet-400/30 bg-card shadow-sm"
             >
               <Copy className="h-4 w-4 shrink-0" />
               {isCopying ? "Duplicating..." : "Create Duplicate"}
@@ -757,7 +757,7 @@ export default function SupplierDetailPage({
             <Button
               onClick={() => setDeleteDialogOpen(true)}
               disabled={isDeleting || isGlobalDemo}
-              className="w-full sm:w-auto gap-2 rounded-xl border border-rose-400/30 bg-gradient-to-r from-rose-500/20 via-rose-500/10 to-transparent text-white dark:text-white0 hover:from-rose-500/30 shadow-[0_5px_20px_rgba(225,29,72,0.15)]"
+              className="w-full sm:w-auto gap-2 rounded-xl border border-rose-400/30 bg-card text-white dark:text-white0 shadow-sm"
             >
               <Trash2 className="h-4 w-4 shrink-0" />
               {isDeleting ? "Deleting..." : "Delete Supplier"}

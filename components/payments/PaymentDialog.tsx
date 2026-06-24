@@ -72,7 +72,7 @@ export default function PaymentDialog({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="poppins max-h-[90vh] flex flex-col overflow-hidden pl-4 sm:pl-8 pt-4 sm:pt-7 pb-4 sm:pb-7 pr-0 border-sky-400/30 dark:border-sky-400/30 shadow-[0_30px_80px_rgba(2,132,199,0.35)] dark:shadow-[0_30px_80px_rgba(2,132,199,0.25)]">
+      <DialogContent className="poppins max-h-[90vh] flex flex-col overflow-hidden pl-4 sm:pl-8 pt-4 sm:pt-7 pb-4 sm:pb-7 pr-0 border-sky-400/30 dark:border-sky-400/30 shadow-sm ">
         <DialogHeader className="flex-shrink-0 space-y-1.5 pr-4 sm:pr-8">
           <DialogTitle className="flex items-center gap-2 text-xl text-white  ">
             Complete Payment
@@ -86,7 +86,7 @@ export default function PaymentDialog({
         <div className="flex flex-col gap-6 overflow-y-auto min-h-0 flex-1 w-full">
           <div className="pr-4 sm:pr-8 flex flex-col gap-6">
           {/* Order/Invoice Summary */}
-          <div className="rounded-lg border border-sky-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm p-4 space-y-3 flex-shrink-0 shadow-[0_10px_30px_rgba(2,132,199,0.15)] dark:shadow-[0_10px_30px_rgba(2,132,199,0.1)]">
+          <div className="rounded-lg border border-sky-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm p-4 space-y-3 flex-shrink-0 shadow-sm ">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-white">
                 {type === "order" ? "Order" : "Invoice"} Summary
@@ -186,7 +186,7 @@ export default function PaymentDialog({
             <Button
               onClick={handlePayment}
               disabled={isLoading}
-              className="h-11 w-full sm:w-auto px-11 inline-flex items-center justify-center rounded-xl border border-sky-400/30 dark:border-sky-400/30 bg-gradient-to-r from-sky-500/70 via-sky-500/50 to-sky-500/30 dark:from-sky-500/70 dark:via-sky-500/50 dark:to-sky-500/30 text-white shadow-[0_15px_35px_rgba(2,132,199,0.45)] dark:shadow-[0_15px_35px_rgba(2,132,199,0.25)] backdrop-blur-sm transition duration-200 hover:border-sky-300/40 hover:from-sky-500/80 hover:via-sky-500/60 hover:to-sky-500/40 dark:hover:border-sky-300/40 dark:hover:from-sky-500/80 dark:hover:via-sky-500/60 dark:hover:to-sky-500/40 hover:shadow-[0_20px_45px_rgba(2,132,199,0.6)] dark:hover:shadow-[0_20px_45px_rgba(2,132,199,0.35)] focus-visible:ring-sky-500/50"
+              className="h-11 w-full sm:w-auto px-11 inline-flex items-center justify-center rounded-xl border border-sky-400/30 dark:border-sky-400/30 bg-card text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-sky-300/40 dark:hover:border-sky-300/40 focus-visible:ring-sky-500/50"
             >
               {isLoading ? (
                 <>

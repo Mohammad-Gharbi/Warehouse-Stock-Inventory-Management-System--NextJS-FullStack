@@ -296,7 +296,7 @@ export default function AdminMyActivityContent() {
             <article
               className={cn(
                 "rounded-[28px] border border-gray-300/30 dark:border-white/10",
-                "bg-gradient-to-br from-gray-100/50 via-gray-100/30 to-gray-100/20 dark:from-white/5 dark:via-white/5 dark:to-white/5",
+                "bg-card ",
                 "p-4 sm:p-6 backdrop-blur-sm overflow-hidden",
               )}
               style={{ minHeight: tableSkeletonHeight }}
@@ -457,8 +457,8 @@ export default function AdminMyActivityContent() {
             <article
               className={cn(
                 "rounded-[28px] border border-teal-400/30 dark:border-teal-400/30",
-                "bg-gradient-to-br from-teal-500/25 via-teal-500/10 to-teal-500/5 dark:from-teal-500/25 dark:via-teal-500/10 dark:to-teal-500/5",
-                "shadow-[0_30px_80px_rgba(20,184,166,0.35)] dark:shadow-[0_30px_80px_rgba(20,184,166,0.25)]",
+                "bg-card ",
+                "shadow-sm ",
                 "p-4 sm:p-6 backdrop-blur-sm overflow-hidden",
               )}
             >
@@ -484,7 +484,7 @@ export default function AdminMyActivityContent() {
                       "border border-sky-400/30 dark:border-white/20",
                       "text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40",
                       "focus-visible:border-sky-400 focus-visible:ring-sky-500/50",
-                      "shadow-[0_10px_30px_rgba(2,132,199,0.15)]",
+                      "shadow-sm",
                     )}
                   />
                 </div>

@@ -30,9 +30,9 @@ const toastVariants = cva(
     variants: {
       variant: {
         default:
-          "border border-white/20 dark:border-white/10 bg-gradient-to-br from-white/80 via-white/70 to-white/60 dark:from-white/10 dark:via-white/10 dark:to-white/5 text-foreground backdrop-blur-sm shadow-[0_10px_30px_rgba(0,0,0,0.2)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]",
+          "border border-white/20 dark:border-white/10 bg-card text-foreground backdrop-blur-sm shadow-sm ",
         destructive:
-          "destructive group border-rose-400/30 dark:border-rose-400/20 bg-gradient-to-br from-rose-500/80 via-rose-500/70 to-rose-500/60 dark:from-rose-500/25 dark:via-rose-500/15 dark:to-rose-500/10 text-destructive-foreground backdrop-blur-sm shadow-[0_10px_30px_rgba(225,29,72,0.3)] dark:shadow-[0_10px_30px_rgba(225,29,72,0.4)]",
+          "destructive group border-rose-400/30 dark:border-rose-400/20 bg-card text-destructive-foreground backdrop-blur-sm shadow-sm ",
       },
     },
     defaultVariants: {

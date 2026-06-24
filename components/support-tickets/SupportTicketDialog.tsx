@@ -102,8 +102,8 @@ export default function SupportTicketDialog({
     ? "border-violet-400/30 dark:border-violet-400/30"
     : "border-sky-400/30 dark:border-sky-400/30";
   const shadowClass = isViolet
-    ? "shadow-[0_30px_80px_rgba(139,92,246,0.35)] dark:shadow-[0_30px_80px_rgba(139,92,246,0.25)]"
-    : "shadow-[0_30px_80px_rgba(2,132,199,0.35)] dark:shadow-[0_30px_80px_rgba(2,132,199,0.25)]";
+    ? "shadow-sm "
+    : "shadow-sm ";
   const iconBorderClass = isViolet
     ? "border-violet-300/30 bg-violet-100/50 dark:border-violet-400/30 dark:bg-violet-500/20"
     : "border-sky-300/30 bg-sky-100/50 dark:border-sky-400/30 dark:bg-sky-500/20";
@@ -111,14 +111,14 @@ export default function SupportTicketDialog({
     ? "text-violet-400"
     : "text-sky-400";
   const inputClass = isViolet
-    ? "border border-violet-400/30 border-white/20 bg-white/10 text-white placeholder:text-white/40 focus-visible:outline-none focus-visible:border focus-visible:border-violet-400 focus-visible:ring-2 focus-visible:ring-violet-500/50 focus:outline-none focus:border focus:border-violet-400 focus:ring-2 focus:ring-violet-500/50 shadow-[0_10px_30px_rgba(139,92,246,0.15)]"
-    : "border border-sky-400/30 border-white/20 bg-white/10 text-white placeholder:text-white/40 focus-visible:outline-none focus-visible:border focus-visible:border-sky-400 focus-visible:ring-2 focus-visible:ring-sky-500/50 focus:outline-none focus:border focus:border-sky-400 focus:ring-2 focus:ring-sky-500/50 shadow-[0_10px_30px_rgba(2,132,199,0.15)]";
+    ? "border border-violet-400/30 border-white/20 bg-white/10 text-white placeholder:text-white/40 focus-visible:outline-none focus-visible:border focus-visible:border-violet-400 focus-visible:ring-2 focus-visible:ring-violet-500/50 focus:outline-none focus:border focus:border-violet-400 focus:ring-2 focus:ring-violet-500/50 shadow-sm"
+    : "border border-sky-400/30 border-white/20 bg-white/10 text-white placeholder:text-white/40 focus-visible:outline-none focus-visible:border focus-visible:border-sky-400 focus-visible:ring-2 focus-visible:ring-sky-500/50 focus:outline-none focus:border focus:border-sky-400 focus:ring-2 focus:ring-sky-500/50 shadow-sm";
   const labelClass = "text-white/80";
   const descClass = "text-white/50";
   const titleClass = "text-[22px] text-white";
   const submitButtonClass = isViolet
-    ? "border-violet-400/30 bg-gradient-to-r from-violet-500/70 via-violet-500/50 to-violet-500/30 text-white shadow-[0_15px_35px_rgba(139,92,246,0.45)] hover:border-violet-300/40 hover:from-violet-500/80"
-    : "border-sky-400/30 bg-gradient-to-r from-sky-500/60 via-sky-500/50 to-sky-500/40 text-white shadow-[0_10px_30px_rgba(2,132,199,0.3)] hover:from-sky-500/70";
+    ? "border-violet-400/30 bg-card text-white shadow-sm hover:border-violet-300/40 "
+    : "border-sky-400/30 bg-card text-white shadow-sm ";
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -126,7 +126,7 @@ export default function SupportTicketDialog({
       <DialogContent
         className={cn(
           "p-4 sm:p-7 sm:px-8 poppins max-h-[90vh] overflow-y-auto",
-          "bg-gradient-to-br from-slate-800/98 to-slate-900/98 dark:from-slate-800/98 dark:to-slate-900/98",
+          "bg-card ",
           borderClass,
           shadowClass,
         )}

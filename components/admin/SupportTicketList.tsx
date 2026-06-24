@@ -152,7 +152,7 @@ export default function SupportTicketList({
               productOwners={productOwners}
               variant="violet"
               trigger={
-                <Button className="h-10 rounded-[28px] border border-violet-400/30 dark:border-violet-400/30 bg-gradient-to-r from-violet-500/70 via-violet-500/50 to-violet-500/30 dark:from-violet-500/70 dark:via-violet-500/50 dark:to-violet-500/30 text-white shadow-[0_10px_30px_rgba(139,92,246,0.3)] flex items-center gap-2">
+                <Button className="h-10 rounded-[28px] border border-violet-400/30 dark:border-violet-400/30 bg-card text-white shadow-sm flex items-center gap-2">
                   <MessageSquare className="h-4 w-4" />
                   Create Ticket
                 </Button>

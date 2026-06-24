@@ -179,7 +179,7 @@ export default function ClientPortalPage() {
             </h1>
             <article
               className={cn(
-                "rounded-[28px] border border-white/10 dark:border-white/20 p-4 sm:p-6 backdrop-blur-sm bg-white/60 dark:bg-white/5 shadow-[0_15px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_30px_80px_rgba(255,255,255,0.08)]",
+                "rounded-[28px] border border-white/10 dark:border-white/20 p-4 sm:p-6 backdrop-blur-sm bg-white/60 dark:bg-white/5 shadow-sm ",
               )}
             >
               <p className="text-muted-foreground text-center">
@@ -376,8 +376,8 @@ export default function ClientPortalPage() {
               className={cn(
                 "rounded-[28px] border border-emerald-400/20 dark:border-emerald-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
                 "bg-white/60 dark:bg-white/5",
-                "bg-gradient-to-br from-emerald-500/15 via-emerald-500/5 to-transparent dark:from-emerald-500/25 dark:via-emerald-500/10 dark:to-emerald-500/5",
-                "shadow-[0_15px_40px_rgba(16,185,129,0.15)] dark:shadow-[0_30px_80px_rgba(16,185,129,0.25)]",
+                "bg-card ",
+                "shadow-sm ",
                 "hover:border-emerald-300/40",
               )}
             >
@@ -421,8 +421,8 @@ export default function ClientPortalPage() {
             className={cn(
               "rounded-[28px] border border-sky-400/20 dark:border-sky-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
               "bg-white/60 dark:bg-white/5",
-              "bg-gradient-to-br from-sky-500/15 via-sky-500/5 to-transparent dark:from-sky-500/25 dark:via-sky-500/10 dark:to-sky-500/5",
-              "shadow-[0_15px_40px_rgba(2,132,199,0.15)] dark:shadow-[0_30px_80px_rgba(2,132,199,0.25)]",
+              "bg-card ",
+              "shadow-sm ",
               "hover:border-sky-300/40",
             )}
           >
@@ -666,8 +666,8 @@ export default function ClientPortalPage() {
               className={cn(
                 "rounded-[28px] border border-sky-400/20 dark:border-sky-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
                 "bg-white/60 dark:bg-white/5",
-                "bg-gradient-to-br from-sky-500/15 via-sky-500/5 to-transparent dark:from-sky-500/25 dark:via-sky-500/10 dark:to-sky-500/5",
-                "shadow-[0_15px_40px_rgba(2,132,199,0.15)] dark:shadow-[0_30px_80px_rgba(2,132,199,0.25)]",
+                "bg-card ",
+                "shadow-sm ",
                 "hover:border-sky-300/40",
               )}
             >
@@ -739,8 +739,8 @@ export default function ClientPortalPage() {
               className={cn(
                 "rounded-[28px] border border-violet-400/20 dark:border-violet-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
                 "bg-white/60 dark:bg-white/5",
-                "bg-gradient-to-br from-violet-500/15 via-violet-500/5 to-transparent dark:from-violet-500/25 dark:via-violet-500/10 dark:to-violet-500/5",
-                "shadow-[0_15px_40px_rgba(139,92,246,0.15)] dark:shadow-[0_30px_80px_rgba(139,92,246,0.25)]",
+                "bg-card ",
+                "shadow-sm ",
                 "hover:border-violet-300/40",
               )}
             >
@@ -813,8 +813,8 @@ export default function ClientPortalPage() {
             className={cn(
               "rounded-[28px] border border-violet-400/20 dark:border-violet-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
               "bg-white/60 dark:bg-white/5",
-              "bg-gradient-to-br from-violet-500/15 via-violet-500/5 to-transparent dark:from-violet-500/25 dark:via-violet-500/10 dark:to-violet-500/5",
-              "shadow-[0_15px_40px_rgba(139,92,246,0.15)] dark:shadow-[0_30px_80px_rgba(139,92,246,0.25)]",
+              "bg-card ",
+              "shadow-sm ",
               "hover:border-violet-300/40",
             )}
           >

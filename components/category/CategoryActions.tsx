@@ -95,7 +95,7 @@ export default function CategoryActions({ row, onEdit }: CategoryActionsProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="border border-white/10 bg-gradient-to-br from-white/5 via-white/5 to-white/5 backdrop-blur-sm shadow-lg"
+          className="border border-white/10 bg-card backdrop-blur-sm shadow-lg"
         >
           <DropdownMenuItem asChild>
             <Link href={`/categories/${row.original.id}`} className="flex items-center gap-2">

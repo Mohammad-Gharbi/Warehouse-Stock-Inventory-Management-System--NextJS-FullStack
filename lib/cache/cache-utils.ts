@@ -10,7 +10,7 @@ import { trackCacheHit, trackCacheMiss } from "@/lib/monitoring/system-metrics";
 /**
  * Cache key prefix for namespacing
  */
-const CACHE_PREFIX = "stock-inventory";
+const CACHE_PREFIX = "techmaster-store";
 
 /**
  * Generate cache key with prefix

@@ -29,9 +29,9 @@ import type { SupportTicket } from "@/types";
 
 const variantConfig = {
   border: "border-sky-400/20",
-  gradient: "bg-gradient-to-br from-sky-500/15 via-sky-500/5 to-transparent",
+  gradient: "bg-card ",
   shadow:
-    "shadow-[0_15px_40px_rgba(2,132,199,0.15)] dark:shadow-[0_15px_40px_rgba(2,132,199,0.1)]",
+    "shadow-sm ",
   iconBg:
     "border-sky-300/30 bg-sky-100/50 dark:border-sky-400/30 dark:bg-sky-500/20",
 };
@@ -132,7 +132,7 @@ export default function SupportTicketDetailContent({
                 <div className="flex flex-wrap items-center gap-2 mt-2">
                   <Badge
                     className={cn(
-                      "rounded-full text-xs font-medium border border-sky-300/30 shadow-[0_4px_12px_rgba(2,132,199,0.2)]",
+                      "rounded-full text-xs font-medium border border-sky-300/30 shadow-sm",
                       statusColor(ticket.status),
                     )}
                   >
@@ -140,7 +140,7 @@ export default function SupportTicketDetailContent({
                   </Badge>
                   <Badge
                     variant="secondary"
-                    className="rounded-full text-xs border border-sky-300/30 shadow-[0_4px_12px_rgba(2,132,199,0.15)]"
+                    className="rounded-full text-xs border border-sky-300/30 shadow-sm"
                   >
                     {ticket.priority}
                   </Badge>
@@ -288,9 +288,9 @@ export default function SupportTicketDetailContent({
                 type="submit"
                 disabled={createReply.isPending || !replyBody.trim()}
                 className={cn(
-                  "rounded-xl border border-sky-400/30 bg-gradient-to-r from-sky-500/60 to-sky-500/40 text-white gap-2",
-                  "shadow-[0_10px_30px_rgba(2,132,199,0.25)]",
-                  "hover:from-sky-500/70 hover:to-sky-500/50",
+                  "rounded-xl border border-sky-400/30 bg-card text-white gap-2",
+                  "shadow-sm",
+                  " ",
                 )}
               >
                 {createReply.isPending ? (

@@ -1,5 +1,5 @@
 /**
- * OpenAPI 3.0 specification for Stockly API
+ * OpenAPI 3.0 specification for Techmaster Store API
  * Single source of truth for API documentation; consumed by GET /api/openapi and API docs page.
  */
 
@@ -8,7 +8,7 @@ export interface OpenApiSpecOptions {
 }
 
 /**
- * Build OpenAPI 3.0 spec object for the Stockly inventory API
+ * Build OpenAPI 3.0 spec object for the Techmaster Store inventory API
  */
 export function getOpenApiSpec(options: OpenApiSpecOptions): Record<string, unknown> {
   const { baseUrl } = options;
@@ -16,8 +16,8 @@ export function getOpenApiSpec(options: OpenApiSpecOptions): Record<string, unkn
   return {
     openapi: "3.0.3",
     info: {
-      title: "Stockly Inventory API",
-      description: "API for the Stockly inventory management system. All endpoints require authentication via session cookie.",
+      title: "Techmaster Store API",
+      description: "API for the Techmaster Store inventory management system. All endpoints require authentication via session cookie.",
       version: "1.0.0",
     },
     servers: [{ url: baseUrl }],

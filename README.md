@@ -1,4 +1,4 @@
-# Stock & Warehouse Inventory Management System - Next.js, TypeScript, Prisma, MongoDB FullStack Project (including Business-Insights & Admin Panel, Client, Supplier Role-based Dashboard)
+# Techmaster Store — Warehouse & Stock Inventory Management System - Next.js, TypeScript, Prisma, MongoDB FullStack Project (including Business-Insights & Admin Panel, Client, Supplier Role-based Dashboard)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
@@ -9,7 +9,7 @@
 
 A full-stack warehouse and stock inventory management system built with Next.js, React, Prisma, and MongoDB. It helps store owners, suppliers, and clients manage products, orders, invoices, warehouses, and support tickets with role-based access, analytics dashboards, QR codes, payments (Stripe), shipping (Shippo), and email (Brevo). This README is written for learning, reuse, and deployment—with project structure, API reference, environment setup, and usage walkthroughs.
 
-- **Live Demo:** [https://stockly-inventory.vercel.app/](https://stockly-inventory.vercel.app/)
+- **Live Demo:** [https://techmaster-store.vercel.app/](https://techmaster-store.vercel.app/)
 
 ![Screenshot 2026-03-07 at 12 15 24](https://github.com/user-attachments/assets/67518003-8e10-4c71-b682-911506173cdf)
 ![Screenshot 2026-03-07 at 12 16 27](https://github.com/user-attachments/assets/f00d8441-4c1c-467d-b9fa-f5505a48feb0)
@@ -60,7 +60,7 @@ A full-stack warehouse and stock inventory management system built with Next.js,
 
 ## Project Overview
 
-Stockly is a **role-based inventory and order management platform**. It supports three roles:
+Techmaster Store is a **role-based inventory and order management platform**. It supports three roles:
 
 - **Admin (store owner):** Full access to products, categories, suppliers, warehouses, orders, invoices, analytics, user management, support tickets, and client/supplier portal views.
 - **Supplier:** Own products, orders containing their products, revenue, and support tickets.
@@ -133,7 +133,7 @@ The app uses **Next.js 16 App Router**, **Prisma** with **MongoDB**, **JWT** aut
 ```bash
 # Clone the repository
 git clone <your-repo-url>
-cd stock-inventory
+cd techmaster-store
 
 # Install dependencies
 npm install
@@ -328,7 +328,7 @@ The UI is **English**. Contributors worldwide may use the browser **“Translate
 ## Project Structure
 
 ```bash
-stock-inventory/
+techmaster-store/
 ├── app/                    # Next.js App Router
 │   ├── layout.tsx          # Root layout, metadata, providers
 │   ├── page.tsx            # Home (store overview for admin)
@@ -617,7 +617,7 @@ const form = useForm<FormData>({
 
 ## Conclusion
 
-Stockly is a full-stack example of a role-based inventory and order management app with Next.js 16, React 19, Prisma, and MongoDB. It demonstrates App Router structure, API route design, JWT auth, TanStack Query, and optional third-party integrations. Use this README as a map to the codebase, env setup, APIs, and components so you can run, extend, or reuse parts of the project in your own applications.
+Techmaster Store is a full-stack example of a role-based inventory and order management app with Next.js 16, React 19, Prisma, and MongoDB. It demonstrates App Router structure, API route design, JWT auth, TanStack Query, and optional third-party integrations. Use this README as a map to the codebase, env setup, APIs, and components so you can run, extend, or reuse parts of the project in your own applications.
 
 ---
 

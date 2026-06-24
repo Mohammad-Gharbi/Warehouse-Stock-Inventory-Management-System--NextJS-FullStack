@@ -1,4 +1,4 @@
-// Prisma schema for Stockly: MongoDB models for users, products, orders, invoices,
+// Prisma schema for Techmaster Store: MongoDB models for users, products, orders, invoices,
 // categories, suppliers, warehouses, support tickets, reviews, notifications, etc.
 // Run: npx prisma generate (after schema changes); use prisma/client for DB access.
 

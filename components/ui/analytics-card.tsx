@@ -42,65 +42,65 @@ const variantConfig: Record<
 > = {
   sky: {
     border: "border-sky-400/30",
-    gradient: "bg-gradient-to-br from-sky-500/25 via-sky-500/10 to-sky-500/5",
+    gradient: "bg-card ",
     shadow:
-      "shadow-[0_20px_50px_rgba(2,132,199,0.25)] dark:shadow-[0_20px_50px_rgba(2,132,199,0.15)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-sky-300/50",
   },
   emerald: {
     border: "border-emerald-400/30",
     gradient:
-      "bg-gradient-to-br from-emerald-500/25 via-emerald-500/10 to-emerald-500/5",
+      "bg-card ",
     shadow:
-      "shadow-[0_20px_50px_rgba(16,185,129,0.25)] dark:shadow-[0_20px_50px_rgba(16,185,129,0.15)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-emerald-300/50",
   },
   amber: {
     border: "border-amber-400/30",
     gradient:
-      "bg-gradient-to-br from-amber-500/30 via-amber-500/15 to-amber-500/5",
+      "bg-card ",
     shadow:
-      "shadow-[0_20px_50px_rgba(245,158,11,0.2)] dark:shadow-[0_20px_50px_rgba(245,158,11,0.12)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-amber-300/60",
   },
   rose: {
     border: "border-rose-400/30",
     gradient:
-      "bg-gradient-to-br from-rose-500/25 via-rose-500/10 to-rose-500/5",
+      "bg-card ",
     shadow:
-      "shadow-[0_20px_50px_rgba(225,29,72,0.25)] dark:shadow-[0_20px_50px_rgba(225,29,72,0.15)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-rose-300/50",
   },
   violet: {
     border: "border-violet-400/30",
     gradient:
-      "bg-gradient-to-br from-violet-500/25 via-violet-500/10 to-violet-500/5",
+      "bg-card ",
     shadow:
-      "shadow-[0_20px_50px_rgba(139,92,246,0.25)] dark:shadow-[0_20px_50px_rgba(139,92,246,0.15)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-violet-300/50",
   },
   blue: {
     border: "border-blue-400/30",
     gradient:
-      "bg-gradient-to-br from-blue-500/25 via-blue-500/10 to-blue-500/5",
+      "bg-card ",
     shadow:
-      "shadow-[0_20px_50px_rgba(59,130,246,0.25)] dark:shadow-[0_20px_50px_rgba(59,130,246,0.15)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-blue-300/50",
   },
   orange: {
     border: "border-orange-400/30",
     gradient:
-      "bg-gradient-to-br from-orange-500/25 via-orange-500/10 to-orange-500/5",
+      "bg-card ",
     shadow:
-      "shadow-[0_20px_50px_rgba(249,115,22,0.25)] dark:shadow-[0_20px_50px_rgba(249,115,22,0.15)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-orange-300/50",
   },
   teal: {
     border: "border-teal-400/30",
     gradient:
-      "bg-gradient-to-br from-teal-500/25 via-teal-500/10 to-teal-500/5",
+      "bg-card ",
     shadow:
-      "shadow-[0_20px_50px_rgba(20,184,166,0.25)] dark:shadow-[0_20px_50px_rgba(20,184,166,0.15)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-teal-300/50",
   },
 };

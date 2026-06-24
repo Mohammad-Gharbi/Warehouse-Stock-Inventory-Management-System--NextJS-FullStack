@@ -68,81 +68,81 @@ const variantConfig: Record<
 > = {
   sky: {
     border: "border-sky-400/20",
-    gradient: "bg-gradient-to-br from-sky-500/15 via-sky-500/5 to-transparent",
+    gradient: "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(2,132,199,0.15)] dark:shadow-[0_15px_40px_rgba(2,132,199,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-sky-300/40",
     iconBg: "border-sky-300/30 bg-sky-100/50",
   },
   emerald: {
     border: "border-emerald-400/20",
     gradient:
-      "bg-gradient-to-br from-emerald-500/15 via-emerald-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(16,185,129,0.15)] dark:shadow-[0_15px_40px_rgba(16,185,129,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-emerald-300/40",
     iconBg: "border-emerald-300/30 bg-emerald-100/50",
   },
   amber: {
     border: "border-amber-400/20",
     gradient:
-      "bg-gradient-to-br from-amber-500/15 via-amber-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_40px_rgba(245,158,11,0.08)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-amber-300/40",
     iconBg: "border-amber-300/30 bg-amber-100/50",
   },
   rose: {
     border: "border-rose-400/20",
     gradient:
-      "bg-gradient-to-br from-rose-500/15 via-rose-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(225,29,72,0.15)] dark:shadow-[0_15px_40px_rgba(225,29,72,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-rose-300/40",
     iconBg: "border-rose-300/30 bg-rose-100/50",
   },
   violet: {
     border: "border-violet-400/20",
     gradient:
-      "bg-gradient-to-br from-violet-500/15 via-violet-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(139,92,246,0.15)] dark:shadow-[0_15px_40px_rgba(139,92,246,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-violet-300/40",
     iconBg: "border-violet-300/30 bg-violet-100/50",
   },
   blue: {
     border: "border-blue-400/20",
     gradient:
-      "bg-gradient-to-br from-blue-500/15 via-blue-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(59,130,246,0.15)] dark:shadow-[0_15px_40px_rgba(59,130,246,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-blue-300/40",
     iconBg: "border-blue-300/30 bg-blue-100/50",
   },
   orange: {
     border: "border-orange-400/20",
     gradient:
-      "bg-gradient-to-br from-orange-500/15 via-orange-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(249,115,22,0.15)] dark:shadow-[0_15px_40px_rgba(249,115,22,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-orange-300/40",
     iconBg: "border-orange-300/30 bg-orange-100/50",
   },
   teal: {
     border: "border-teal-400/20",
     gradient:
-      "bg-gradient-to-br from-teal-500/15 via-teal-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(20,184,166,0.15)] dark:shadow-[0_15px_40px_rgba(20,184,166,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-teal-300/40",
     iconBg: "border-teal-300/30 bg-teal-100/50",
   },
   cyan: {
     border: "border-cyan-400/20",
     gradient:
-      "bg-gradient-to-br from-cyan-500/15 via-cyan-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(6,182,212,0.15)] dark:shadow-[0_15px_40px_rgba(6,182,212,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-cyan-300/40",
     iconBg: "border-cyan-300/30 bg-cyan-100/50",
   },
@@ -524,7 +524,7 @@ export default function WarehouseDetailPage({
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-start gap-2 text-sm p-3 rounded-xl bg-gradient-to-r from-cyan-100/50 via-cyan-50/30 to-transparent dark:from-cyan-500/10 dark:via-cyan-500/5 dark:to-transparent border border-cyan-200/30 dark:border-cyan-400/10">
+                <div className="flex items-start gap-2 text-sm p-3 rounded-xl bg-card border border-cyan-200/30 dark:border-cyan-400/10">
                   <Warehouse className="h-4 w-4 text-cyan-500 dark:text-cyan-400 mt-0.5 shrink-0" />
                   <div className="flex-1">
                     <span className="text-gray-600 dark:text-gray-400">
@@ -537,7 +537,7 @@ export default function WarehouseDetailPage({
                 </div>
 
                 {warehouse.address && (
-                  <div className="flex items-start gap-2 text-sm p-3 rounded-xl bg-gradient-to-r from-teal-100/50 via-teal-50/30 to-transparent dark:from-teal-500/10 dark:via-teal-500/5 dark:to-transparent border border-teal-200/30 dark:border-teal-400/10">
+                  <div className="flex items-start gap-2 text-sm p-3 rounded-xl bg-card border border-teal-200/30 dark:border-teal-400/10">
                     <MapPin className="h-4 w-4 text-teal-500 dark:text-teal-400 mt-0.5 shrink-0" />
                     <div className="flex-1">
                       <span className="text-gray-600 dark:text-gray-400">
@@ -551,7 +551,7 @@ export default function WarehouseDetailPage({
                 )}
 
                 {warehouse.type && (
-                  <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-gradient-to-r from-blue-100/50 via-blue-50/30 to-transparent dark:from-blue-500/10 dark:via-blue-500/5 dark:to-transparent border border-blue-200/30 dark:border-blue-400/10">
+                  <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-card border border-blue-200/30 dark:border-blue-400/10">
                     <Tag className="h-4 w-4 text-blue-500 dark:text-blue-400 shrink-0" />
                     <span className="text-gray-600 dark:text-gray-400">
                       Type:
@@ -568,7 +568,7 @@ export default function WarehouseDetailPage({
                   </div>
                 )}
 
-                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-gradient-to-r from-orange-100/50 via-orange-50/30 to-transparent dark:from-orange-500/10 dark:via-orange-500/5 dark:to-transparent border border-orange-200/30 dark:border-orange-400/10">
+                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-card border border-orange-200/30 dark:border-orange-400/10">
                   <Calendar className="h-4 w-4 text-orange-500 dark:text-orange-400 shrink-0" />
                   <span className="text-gray-600 dark:text-gray-400">
                     Created:
@@ -579,7 +579,7 @@ export default function WarehouseDetailPage({
                 </div>
 
                 {updatedAt && (
-                  <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-gradient-to-r from-violet-100/50 via-violet-50/30 to-transparent dark:from-violet-500/10 dark:via-violet-500/5 dark:to-transparent border border-violet-200/30 dark:border-violet-400/10">
+                  <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-card border border-violet-200/30 dark:border-violet-400/10">
                     <Clock className="h-4 w-4 text-violet-500 dark:text-violet-400 shrink-0" />
                     <span className="text-gray-600 dark:text-gray-400">
                       Updated:
@@ -640,7 +640,7 @@ export default function WarehouseDetailPage({
                           key={allocation.id}
                           className={cn(
                             "flex items-center justify-between p-3 rounded-xl border transition-all duration-200 hover:scale-[1.02]",
-                            `bg-gradient-to-r from-${colorVariant}-100/50 via-${colorVariant}-50/30 to-transparent dark:from-${colorVariant}-500/10 dark:via-${colorVariant}-500/5 dark:to-transparent`,
+                            `bg-card from-${colorVariant}-100/50 via-${colorVariant}-50/30 dark:from-${colorVariant}-500/10 dark:via-${colorVariant}-500/5 `,
                             `border-${colorVariant}-200/30 dark:border-${colorVariant}-400/10`,
                           )}
                           style={{
@@ -710,7 +710,7 @@ export default function WarehouseDetailPage({
             </Button>
             <Button
               onClick={handleEdit}
-              className="w-full sm:w-auto gap-2 rounded-xl border border-blue-400/30 bg-gradient-to-r from-blue-500/70 via-blue-500/50 to-blue-500/30 text-white shadow-[0_10px_25px_rgba(59,130,246,0.35)] backdrop-blur-sm hover:border-blue-300/50 hover:from-blue-500/80 hover:via-blue-500/60 hover:to-blue-500/40 transition-all duration-300"
+              className="w-full sm:w-auto gap-2 rounded-xl border border-blue-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-blue-300/50 transition-all duration-300"
             >
               <Edit className="h-4 w-4 shrink-0" />
               Edit Warehouse
@@ -718,7 +718,7 @@ export default function WarehouseDetailPage({
             <Button
               onClick={() => setDeleteDialogOpen(true)}
               disabled={isDeleting}
-              className="w-full sm:w-auto gap-2 rounded-xl border border-rose-400/30 bg-gradient-to-r from-rose-500/70 via-rose-500/50 to-rose-500/30 text-white shadow-[0_10px_25px_rgba(225,29,72,0.35)] backdrop-blur-sm hover:border-rose-300/50 hover:from-rose-500/80 hover:via-rose-500/60 hover:to-rose-500/40 transition-all duration-300 disabled:opacity-50"
+              className="w-full sm:w-auto gap-2 rounded-xl border border-rose-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-rose-300/50 transition-all duration-300 disabled:opacity-50"
             >
               <Trash2 className="h-4 w-4 shrink-0" />
               {isDeleting ? "Deleting..." : "Delete Warehouse"}

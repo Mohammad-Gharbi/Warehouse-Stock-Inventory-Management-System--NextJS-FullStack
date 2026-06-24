@@ -73,72 +73,72 @@ const variantConfig: Record<
 > = {
   sky: {
     border: "border-sky-400/20",
-    gradient: "bg-gradient-to-br from-sky-500/15 via-sky-500/5 to-transparent",
+    gradient: "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(2,132,199,0.15)] dark:shadow-[0_15px_40px_rgba(2,132,199,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-sky-300/40",
     iconBg: "border-sky-300/30 bg-sky-100/50",
   },
   emerald: {
     border: "border-emerald-400/20",
     gradient:
-      "bg-gradient-to-br from-emerald-500/15 via-emerald-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(16,185,129,0.15)] dark:shadow-[0_15px_40px_rgba(16,185,129,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-emerald-300/40",
     iconBg: "border-emerald-300/30 bg-emerald-100/50",
   },
   amber: {
     border: "border-amber-400/20",
     gradient:
-      "bg-gradient-to-br from-amber-500/15 via-amber-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_40px_rgba(245,158,11,0.08)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-amber-300/40",
     iconBg: "border-amber-300/30 bg-amber-100/50",
   },
   rose: {
     border: "border-rose-400/20",
     gradient:
-      "bg-gradient-to-br from-rose-500/15 via-rose-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(225,29,72,0.15)] dark:shadow-[0_15px_40px_rgba(225,29,72,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-rose-300/40",
     iconBg: "border-rose-300/30 bg-rose-100/50",
   },
   violet: {
     border: "border-violet-400/20",
     gradient:
-      "bg-gradient-to-br from-violet-500/15 via-violet-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(139,92,246,0.15)] dark:shadow-[0_15px_40px_rgba(139,92,246,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-violet-300/40",
     iconBg: "border-violet-300/30 bg-violet-100/50",
   },
   blue: {
     border: "border-blue-400/20",
     gradient:
-      "bg-gradient-to-br from-blue-500/15 via-blue-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(59,130,246,0.15)] dark:shadow-[0_15px_40px_rgba(59,130,246,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-blue-300/40",
     iconBg: "border-blue-300/30 bg-blue-100/50",
   },
   orange: {
     border: "border-orange-400/20",
     gradient:
-      "bg-gradient-to-br from-orange-500/15 via-orange-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(249,115,22,0.15)] dark:shadow-[0_15px_40px_rgba(249,115,22,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-orange-300/40",
     iconBg: "border-orange-300/30 bg-orange-100/50",
   },
   teal: {
     border: "border-teal-400/20",
     gradient:
-      "bg-gradient-to-br from-teal-500/15 via-teal-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(20,184,166,0.15)] dark:shadow-[0_15px_40px_rgba(20,184,166,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-teal-300/40",
     iconBg: "border-teal-300/30 bg-teal-100/50",
   },
@@ -580,7 +580,7 @@ export default function InvoiceDetailPage({
             </div>
 
             <div className="space-y-3 mt-4">
-              <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-gradient-to-r from-orange-100/50 via-orange-50/30 to-transparent dark:from-orange-500/10 dark:via-orange-500/5 dark:to-transparent border border-orange-200/30 dark:border-orange-400/10">
+              <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-card border border-orange-200/30 dark:border-orange-400/10">
                 <Calendar className="h-4 w-4 text-orange-500 dark:text-orange-400" />
                 <span className="text-gray-600 dark:text-gray-400">
                   Issued:
@@ -593,8 +593,8 @@ export default function InvoiceDetailPage({
                 className={cn(
                   "flex items-center gap-2 text-sm p-3 rounded-xl border",
                   isOverdue
-                    ? "bg-gradient-to-r from-rose-100/50 via-rose-50/30 to-transparent dark:from-rose-500/10 dark:via-rose-500/5 dark:to-transparent border-rose-200/30 dark:border-rose-400/10"
-                    : "bg-gradient-to-r from-amber-100/50 via-amber-50/30 to-transparent dark:from-amber-500/10 dark:via-amber-500/5 dark:to-transparent border-amber-200/30 dark:border-amber-400/10",
+                    ? "bg-card border-rose-200/30 dark:border-rose-400/10"
+                    : "bg-card border-amber-200/30 dark:border-amber-400/10",
                 )}
               >
                 <Calendar
@@ -621,7 +621,7 @@ export default function InvoiceDetailPage({
                 </span>
               </div>
               {sentAt && (
-                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-gradient-to-r from-blue-100/50 via-blue-50/30 to-transparent dark:from-blue-500/10 dark:via-blue-500/5 dark:to-transparent border border-blue-200/30 dark:border-blue-400/10">
+                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-card border border-blue-200/30 dark:border-blue-400/10">
                   <Send className="h-4 w-4 text-blue-500 dark:text-blue-400" />
                   <span className="text-gray-600 dark:text-gray-400">
                     Sent:
@@ -632,7 +632,7 @@ export default function InvoiceDetailPage({
                 </div>
               )}
               {paidAt && (
-                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-gradient-to-r from-emerald-100/50 via-emerald-50/30 to-transparent dark:from-emerald-500/10 dark:via-emerald-500/5 dark:to-transparent border border-emerald-200/30 dark:border-emerald-400/10">
+                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-card border border-emerald-200/30 dark:border-emerald-400/10">
                   <CheckCircle className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
                   <span className="text-gray-600 dark:text-gray-400">
                     Paid:
@@ -643,7 +643,7 @@ export default function InvoiceDetailPage({
                 </div>
               )}
               {cancelledAt && (
-                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-gradient-to-r from-gray-100/50 via-gray-50/30 to-transparent dark:from-gray-500/10 dark:via-gray-500/5 dark:to-transparent border border-gray-200/30 dark:border-gray-400/10">
+                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-card border border-gray-200/30 dark:border-gray-400/10">
                   <XCircle className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                   <span className="text-gray-600 dark:text-gray-400">
                     Cancelled:
@@ -654,7 +654,7 @@ export default function InvoiceDetailPage({
                 </div>
               )}
               {invoice.orderId && (
-                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-gradient-to-r from-violet-100/50 via-violet-50/30 to-transparent dark:from-violet-500/10 dark:via-violet-500/5 dark:to-transparent border border-violet-200/30 dark:border-violet-400/10">
+                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-card border border-violet-200/30 dark:border-violet-400/10">
                   <FileText className="h-4 w-4 text-violet-500 dark:text-violet-400" />
                   <span className="text-gray-600 dark:text-gray-400">
                     Related Order:
@@ -668,7 +668,7 @@ export default function InvoiceDetailPage({
                 </div>
               )}
               {invoice.paymentLink && (
-                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-gradient-to-r from-sky-100/50 via-sky-50/30 to-transparent dark:from-sky-500/10 dark:via-sky-500/5 dark:to-transparent border border-sky-200/30 dark:border-sky-400/10">
+                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-card border border-sky-200/30 dark:border-sky-400/10">
                   <CreditCard className="h-4 w-4 text-sky-500 dark:text-sky-400" />
                   <span className="text-gray-600 dark:text-gray-400">
                     Payment Link:
@@ -684,7 +684,7 @@ export default function InvoiceDetailPage({
                 </div>
               )}
               {invoice.notes && (
-                <div className="p-3 rounded-xl bg-gradient-to-r from-teal-100/50 via-teal-50/30 to-transparent dark:from-teal-500/10 dark:via-teal-500/5 dark:to-transparent border border-teal-200/30 dark:border-teal-400/10">
+                <div className="p-3 rounded-xl bg-card border border-teal-200/30 dark:border-teal-400/10">
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                     Notes:
                   </p>
@@ -719,7 +719,7 @@ export default function InvoiceDetailPage({
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                 {invoice.invoiceCreatedBy && (
-                  <div className="p-3 rounded-xl bg-gradient-to-r from-teal-100/50 via-teal-50/30 to-transparent dark:from-teal-500/10 dark:via-teal-500/5 dark:to-transparent border border-teal-200/30 dark:border-teal-400/10">
+                  <div className="p-3 rounded-xl bg-card border border-teal-200/30 dark:border-teal-400/10">
                     <p className="text-gray-600 dark:text-gray-400 font-medium mb-0.5">
                       Invoice created by
                     </p>
@@ -735,7 +735,7 @@ export default function InvoiceDetailPage({
                   </div>
                 )}
                 {invoice.orderedBy && (
-                  <div className="p-3 rounded-xl bg-gradient-to-r from-teal-100/50 via-teal-50/30 to-transparent dark:from-teal-500/10 dark:via-teal-500/5 dark:to-transparent border border-teal-200/30 dark:border-teal-400/10">
+                  <div className="p-3 rounded-xl bg-card border border-teal-200/30 dark:border-teal-400/10">
                     <p className="text-gray-600 dark:text-gray-400 font-medium mb-0.5">
                       Ordered by
                     </p>
@@ -750,7 +750,7 @@ export default function InvoiceDetailPage({
                   </div>
                 )}
                 {invoice.client && (
-                  <div className="p-3 rounded-xl bg-gradient-to-r from-teal-100/50 via-teal-50/30 to-transparent dark:from-teal-500/10 dark:via-teal-500/5 dark:to-transparent border border-teal-200/30 dark:border-teal-400/10">
+                  <div className="p-3 rounded-xl bg-card border border-teal-200/30 dark:border-teal-400/10">
                     <p className="text-gray-600 dark:text-gray-400 font-medium mb-0.5">
                       Customer / Bill to
                     </p>
@@ -766,7 +766,7 @@ export default function InvoiceDetailPage({
                 )}
                 {invoice.invoiceProductOwners &&
                   invoice.invoiceProductOwners.length > 0 && (
-                    <div className="sm:col-span-2 p-3 rounded-xl bg-gradient-to-r from-teal-100/50 via-teal-50/30 to-transparent dark:from-teal-500/10 dark:via-teal-500/5 dark:to-transparent border border-teal-200/30 dark:border-teal-400/10">
+                    <div className="sm:col-span-2 p-3 rounded-xl bg-card border border-teal-200/30 dark:border-teal-400/10">
                       <p className="text-gray-600 dark:text-gray-400 font-medium mb-2">
                         Product owner(s)
                       </p>
@@ -810,7 +810,7 @@ export default function InvoiceDetailPage({
                     Billing Address
                   </h3>
                 </div>
-                <p className="text-sm text-gray-900 dark:text-white p-3 rounded-xl bg-gradient-to-r from-sky-100/40 via-sky-50/20 to-transparent dark:from-sky-500/10 dark:via-sky-500/5 dark:to-transparent border border-sky-200/30 dark:border-sky-400/10">
+                <p className="text-sm text-gray-900 dark:text-white p-3 rounded-xl bg-card border border-sky-200/30 dark:border-sky-400/10">
                   {formatAddress(invoice.billingAddress)}
                 </p>
               </GlassCard>
@@ -834,7 +834,7 @@ export default function InvoiceDetailPage({
               </div>
 
               <div className="space-y-2">
-                <div className="flex justify-between text-sm p-2 rounded-lg bg-gradient-to-r from-sky-100/40 via-sky-50/20 to-transparent dark:from-sky-500/10 dark:via-sky-500/5 dark:to-transparent">
+                <div className="flex justify-between text-sm p-2 rounded-lg bg-card ">
                   <span className="text-gray-600 dark:text-gray-400">
                     Subtotal:
                   </span>
@@ -843,7 +843,7 @@ export default function InvoiceDetailPage({
                   </span>
                 </div>
                 {invoice.tax && invoice.tax > 0 && (
-                  <div className="flex justify-between text-sm p-2 rounded-lg bg-gradient-to-r from-amber-100/40 via-amber-50/20 to-transparent dark:from-amber-500/10 dark:via-amber-500/5 dark:to-transparent">
+                  <div className="flex justify-between text-sm p-2 rounded-lg bg-card ">
                     <span className="text-gray-600 dark:text-gray-400">
                       Tax:
                     </span>
@@ -853,7 +853,7 @@ export default function InvoiceDetailPage({
                   </div>
                 )}
                 {invoice.shipping != null && invoice.shipping > 0 && (
-                  <div className="flex justify-between text-sm p-2 rounded-lg bg-gradient-to-r from-violet-100/40 via-violet-50/20 to-transparent dark:from-violet-500/10 dark:via-violet-500/5 dark:to-transparent">
+                  <div className="flex justify-between text-sm p-2 rounded-lg bg-card ">
                     <span className="text-gray-600 dark:text-gray-400">
                       Shipping:
                     </span>
@@ -863,7 +863,7 @@ export default function InvoiceDetailPage({
                   </div>
                 )}
                 {invoice.discount && invoice.discount > 0 && (
-                  <div className="flex justify-between text-sm p-2 rounded-lg bg-gradient-to-r from-rose-100/40 via-rose-50/20 to-transparent dark:from-rose-500/10 dark:via-rose-500/5 dark:to-transparent">
+                  <div className="flex justify-between text-sm p-2 rounded-lg bg-card ">
                     <span className="text-gray-600 dark:text-gray-400">
                       Discount:
                     </span>
@@ -873,7 +873,7 @@ export default function InvoiceDetailPage({
                   </div>
                 )}
                 <Separator className="my-2 bg-teal-200/50 dark:bg-teal-400/20" />
-                <div className="flex justify-between text-lg font-semibold p-3 rounded-xl bg-gradient-to-r from-blue-100/50 via-blue-50/30 to-transparent dark:from-blue-500/15 dark:via-blue-500/10 dark:to-transparent border border-blue-200/30 dark:border-blue-400/20">
+                <div className="flex justify-between text-lg font-semibold p-3 rounded-xl bg-card border border-blue-200/30 dark:border-blue-400/20">
                   <span className="text-gray-900 dark:text-white">Total:</span>
                   <span className="text-blue-600 dark:text-blue-400">
                     ${invoice.total.toFixed(2)}
@@ -882,7 +882,7 @@ export default function InvoiceDetailPage({
                 {invoice.amountPaid > 0 && (
                   <>
                     <Separator className="my-2 bg-teal-200/50 dark:bg-teal-400/20" />
-                    <div className="flex justify-between text-sm p-2 rounded-lg bg-gradient-to-r from-emerald-100/40 via-emerald-50/20 to-transparent dark:from-emerald-500/10 dark:via-emerald-500/5 dark:to-transparent">
+                    <div className="flex justify-between text-sm p-2 rounded-lg bg-card ">
                       <span className="text-gray-600 dark:text-gray-400">
                         Amount Paid:
                       </span>
@@ -894,10 +894,10 @@ export default function InvoiceDetailPage({
                       className={cn(
                         "flex justify-between text-lg font-semibold p-3 rounded-xl border",
                         invoice.amountDue > 0 && isOverdue
-                          ? "bg-gradient-to-r from-rose-100/50 via-rose-50/30 to-transparent dark:from-rose-500/15 dark:via-rose-500/10 dark:to-transparent border-rose-200/30 dark:border-rose-400/20"
+                          ? "bg-card border-rose-200/30 dark:border-rose-400/20"
                           : invoice.amountDue > 0
-                            ? "bg-gradient-to-r from-amber-100/50 via-amber-50/30 to-transparent dark:from-amber-500/15 dark:via-amber-500/10 dark:to-transparent border-amber-200/30 dark:border-amber-400/20"
-                            : "bg-gradient-to-r from-emerald-100/50 via-emerald-50/30 to-transparent dark:from-emerald-500/15 dark:via-emerald-500/10 dark:to-transparent border-emerald-200/30 dark:border-emerald-400/20",
+                            ? "bg-card border-amber-200/30 dark:border-amber-400/20"
+                            : "bg-card border-emerald-200/30 dark:border-emerald-400/20",
                       )}
                     >
                       <span className="text-gray-900 dark:text-white">
@@ -934,14 +934,14 @@ export default function InvoiceDetailPage({
             <Button
               onClick={handleEditInvoice}
               disabled={isClientRole}
-              className="w-full sm:w-auto gap-2 rounded-xl border border-blue-400/30 bg-gradient-to-r from-blue-500/70 via-blue-500/50 to-blue-500/30 text-white shadow-[0_10px_25px_rgba(59,130,246,0.35)] backdrop-blur-sm hover:border-blue-300/50 hover:from-blue-500/80 hover:via-blue-500/60 hover:to-blue-500/40 transition-all duration-300 disabled:opacity-50"
+              className="w-full sm:w-auto gap-2 rounded-xl border border-blue-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-blue-300/50 transition-all duration-300 disabled:opacity-50"
             >
               <Edit className="h-4 w-4 shrink-0" />
               Edit Invoice
             </Button>
             <Button
               asChild
-              className="w-full sm:w-auto gap-2 rounded-xl border border-teal-400/30 bg-gradient-to-r from-teal-500/70 via-teal-500/50 to-teal-500/30 text-white shadow-[0_10px_25px_rgba(20,184,166,0.35)] backdrop-blur-sm hover:border-teal-300/50 hover:from-teal-500/80 hover:via-teal-500/60 hover:to-teal-500/40 transition-all duration-300"
+              className="w-full sm:w-auto gap-2 rounded-xl border border-teal-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-teal-300/50 transition-all duration-300"
             >
               <a
                 href={`/api/invoices/${invoice.id}/pdf`}
@@ -955,7 +955,7 @@ export default function InvoiceDetailPage({
               <Button
                 onClick={() => setSendDialogOpen(true)}
                 disabled={isSending}
-                className="w-full sm:w-auto gap-2 rounded-xl border border-sky-400/30 bg-gradient-to-r from-sky-500/70 via-sky-500/50 to-sky-500/30 text-white shadow-[0_10px_25px_rgba(2,132,199,0.35)] backdrop-blur-sm hover:border-sky-300/50 hover:from-sky-500/80 hover:via-sky-500/60 hover:to-sky-500/40 transition-all duration-300 disabled:opacity-50"
+                className="w-full sm:w-auto gap-2 rounded-xl border border-sky-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-sky-300/50 transition-all duration-300 disabled:opacity-50"
               >
                 <Send className="h-4 w-4 shrink-0" />
                 {isSending ? "Sending..." : "Send Invoice"}
@@ -965,7 +965,7 @@ export default function InvoiceDetailPage({
               <Button
                 onClick={() => setDeleteDialogOpen(true)}
                 disabled={isDeleting}
-                className="w-full sm:w-auto gap-2 rounded-xl border border-rose-400/30 bg-gradient-to-r from-rose-500/70 via-rose-500/50 to-rose-500/30 text-white shadow-[0_10px_25px_rgba(225,29,72,0.35)] backdrop-blur-sm hover:border-rose-300/50 hover:from-rose-500/80 hover:via-rose-500/60 hover:to-rose-500/40 transition-all duration-300 disabled:opacity-50"
+                className="w-full sm:w-auto gap-2 rounded-xl border border-rose-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-rose-300/50 transition-all duration-300 disabled:opacity-50"
               >
                 <Trash2 className="h-4 w-4 shrink-0" />
                 {isDeleting ? "Deleting..." : "Delete Invoice"}
@@ -974,7 +974,7 @@ export default function InvoiceDetailPage({
             {invoice.orderId && (
               <Button
                 asChild
-                className="w-full sm:w-auto gap-2 rounded-xl border border-violet-400/30 bg-gradient-to-r from-violet-500/70 via-violet-500/50 to-violet-500/30 text-white shadow-[0_10px_25px_rgba(139,92,246,0.35)] backdrop-blur-sm hover:border-violet-300/50 hover:from-violet-500/80 hover:via-violet-500/60 hover:to-violet-500/40 transition-all duration-300"
+                className="w-full sm:w-auto gap-2 rounded-xl border border-violet-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-violet-300/50 transition-all duration-300"
               >
                 <Link href={`/orders/${invoice.orderId}`}>
                   <FileText className="h-4 w-4 shrink-0" />
@@ -994,7 +994,7 @@ export default function InvoiceDetailPage({
                   shipping={invoice.shipping ?? undefined}
                   discount={invoice.discount ?? undefined}
                   trigger={
-                    <Button className="w-full sm:w-auto gap-2 rounded-xl border border-emerald-400/30 bg-gradient-to-r from-emerald-500/70 via-emerald-500/50 to-emerald-500/30 text-white shadow-[0_10px_25px_rgba(16,185,129,0.35)] backdrop-blur-sm hover:border-emerald-300/50 hover:from-emerald-500/80 hover:via-emerald-500/60 hover:to-emerald-500/40 transition-all duration-300">
+                    <Button className="w-full sm:w-auto gap-2 rounded-xl border border-emerald-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-emerald-300/50 transition-all duration-300">
                       <CreditCard className="h-4 w-4 shrink-0" />
                       Pay ${invoice.amountDue.toFixed(2)}
                     </Button>

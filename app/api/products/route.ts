@@ -275,7 +275,7 @@ export async function POST(request: NextRequest) {
       }),
       `product-${product.sku}`,
       200,
-      "/stock-inventory/qr-codes/",
+      "/techmaster-store/qr-codes/",
     )
       .then(async (qrCodeData) => {
         // Update product with QR code URL and fileId
@@ -510,7 +510,7 @@ export async function PUT(request: NextRequest) {
         }),
         `product-${product.sku}`,
         200,
-        "/stock-inventory/qr-codes/",
+        "/techmaster-store/qr-codes/",
       )
         .then(async (qrCodeData) => {
           // Update product with new QR code URL and fileId

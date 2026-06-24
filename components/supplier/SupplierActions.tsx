@@ -106,7 +106,7 @@ export default function SupplierActions({ row, onEdit, onBeforeNavigate }: Suppl
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="border border-white/10 bg-gradient-to-br from-white/5 via-white/5 to-white/5 backdrop-blur-sm shadow-lg"
+          className="border border-white/10 bg-card backdrop-blur-sm shadow-lg"
         >
           {onBeforeNavigate ? (
             <DropdownMenuItem onClick={handleViewDetails} className="flex items-center gap-2">

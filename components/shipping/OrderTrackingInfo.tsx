@@ -123,8 +123,8 @@ export default function OrderTrackingInfo({
       className={cn(
         "rounded-[28px] border border-emerald-400/20 dark:border-emerald-400/30 p-4 sm:p-5 backdrop-blur-sm transition-all duration-300",
         "bg-white/60 dark:bg-white/5",
-        "bg-gradient-to-br from-emerald-500/15 via-emerald-500/5 to-transparent dark:from-emerald-500/25 dark:via-emerald-500/10 dark:to-emerald-500/5",
-        "shadow-[0_15px_40px_rgba(16,185,129,0.15)] dark:shadow-[0_30px_80px_rgba(16,185,129,0.25)]",
+        "bg-card ",
+        "shadow-sm ",
         "hover:border-emerald-300/40 dark:hover:border-emerald-300/50",
         className,
       )}
@@ -170,7 +170,7 @@ export default function OrderTrackingInfo({
         {/* Track Package + Download Label PDF — same gradient shadow style as Update Order / Cancel Order */}
         <div className="flex flex-col sm:flex-row gap-2">
           {trackingUrl && (
-            <Button asChild className="flex-1 gap-2 rounded-xl border border-sky-400/30 bg-gradient-to-r from-sky-500/70 via-sky-500/50 to-sky-500/30 dark:from-sky-500/70 dark:via-sky-500/50 dark:to-sky-500/30 text-white shadow-[0_15px_35px_rgba(2,132,199,0.45)] dark:shadow-[0_15px_35px_rgba(2,132,199,0.25)] backdrop-blur-sm hover:border-sky-300/50 hover:from-sky-500/80 hover:via-sky-500/60 hover:to-sky-500/40 dark:hover:border-sky-300/50 transition-all duration-300 h-10">
+            <Button asChild className="flex-1 gap-2 rounded-xl border border-sky-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-sky-300/50 dark:hover:border-sky-300/50 transition-all duration-300 h-10">
               <a
                 href={trackingUrl}
                 target="_blank"
@@ -184,7 +184,7 @@ export default function OrderTrackingInfo({
             </Button>
           )}
           {order.labelUrl && (
-            <Button asChild className="flex-1 gap-2 rounded-xl border border-violet-400/30 bg-gradient-to-r from-violet-500/70 via-violet-500/50 to-violet-500/30 dark:from-violet-500/70 dark:via-violet-500/50 dark:to-violet-500/30 text-white shadow-[0_15px_35px_rgba(139,92,246,0.45)] dark:shadow-[0_15px_35px_rgba(139,92,246,0.25)] backdrop-blur-sm hover:border-violet-300/50 hover:from-violet-500/80 hover:via-violet-500/60 hover:to-violet-500/40 dark:hover:border-violet-300/50 transition-all duration-300 h-10">
+            <Button asChild className="flex-1 gap-2 rounded-xl border border-violet-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-violet-300/50 dark:hover:border-violet-300/50 transition-all duration-300 h-10">
               <a
                 href={order.labelUrl}
                 target="_blank"

@@ -139,7 +139,7 @@ export default function Navbar({ children }: NavbarProps) {
       localStorage.removeItem("token");
       localStorage.removeItem("getSession");
       localStorage.removeItem("prevUserId");
-      localStorage.removeItem("stock-inventory-query-cache");
+      localStorage.removeItem("techmaster-store-query-cache");
 
       // Await the server-side logout so the httpOnly session_id cookie is
       // cleared via Set-Cookie BEFORE the browser navigates to /login.
@@ -243,7 +243,7 @@ export default function Navbar({ children }: NavbarProps) {
 
   // If children prop is provided, wrap with full layout, otherwise just return navbar
   const navbarContent = (
-    <header className="sticky top-0 z-50 w-full h-[72px] min-h-[72px] border-b border-gray-200/50 dark:border-white/10 bg-gradient-to-br from-white/90 via-white/85 to-white/80 dark:from-white/10 dark:via-white/10 dark:to-white/5 backdrop-blur-2xl shadow-[0_10px_30px_rgba(2,132,199,0.15)] dark:shadow-[0_10px_30px_rgba(15,23,42,0.25)] will-change-transform transform-gpu">
+    <header className="sticky top-0 z-50 w-full h-[72px] min-h-[72px] border-b border-gray-200/50 dark:border-white/10 bg-card backdrop-blur-2xl shadow-sm will-change-transform transform-gpu">
       {/* Skip to main content - visible on focus for keyboard/screen reader users (WCAG 2.1) */}
       <a
         href="#main-content"
@@ -259,7 +259,7 @@ export default function Navbar({ children }: NavbarProps) {
             role="button"
             tabIndex={0}
             aria-label="Go to home"
-            className="group flex aspect-square size-10 items-center justify-center rounded-xl border border-rose-400/40 dark:border-rose-400/30 bg-gradient-to-br from-rose-500/30 via-rose-500/15 to-rose-500/8 dark:from-rose-500/20 dark:via-rose-500/15 dark:to-rose-500/10 shadow-[0_5px_20px_rgba(225,29,72,0.3)] dark:shadow-[0_5px_20px_rgba(225,29,72,0.25)] backdrop-blur-sm cursor-pointer transition-all duration-200 hover:border-rose-400/60 dark:hover:border-rose-400/40 hover:from-rose-500/40 hover:via-rose-500/20 hover:to-rose-500/10 dark:hover:from-rose-500/30 dark:hover:via-rose-500/20 dark:hover:to-rose-500/15 hover:shadow-[0_10px_35px_rgba(225,29,72,0.5)] dark:hover:shadow-[0_10px_35px_rgba(225,29,72,0.4)]"
+            className="group flex aspect-square size-10 items-center justify-center rounded-xl border border-rose-400/40 dark:border-rose-400/30 bg-card shadow-sm backdrop-blur-sm cursor-pointer transition-all duration-200 hover:border-rose-400/60 dark:hover:border-rose-400/40 "
             onClick={() => handleNavigation(homePath)}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
@@ -270,8 +270,8 @@ export default function Navbar({ children }: NavbarProps) {
           >
             <AiFillProduct className="text-2xl text-rose-600 dark:text-rose-400 transition-transform group-hover:scale-110 drop-shadow-[0_2px_8px_rgba(225,29,72,0.4)]" />
           </div>
-          <h1 className="text-lg font-semibold tracking-tight bg-gradient-to-r from-rose-600 to-gray-900 dark:from-rose-400 dark:to-gray-100 bg-clip-text text-transparent lg:text-xl transition-all duration-300 ease-in-out hover:from-rose-700 hover:to-gray-950 dark:hover:from-rose-300 dark:hover:to-gray-50 cursor-pointer">
-            Stock Inventory
+          <h1 className="text-lg font-semibold tracking-tight text-foreground lg:text-xl transition-all duration-300 ease-in-out cursor-pointer">
+            Techmaster Store
           </h1>
         </div>
 
@@ -286,7 +286,7 @@ export default function Navbar({ children }: NavbarProps) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-sm font-medium text-gray-700 dark:text-muted-foreground will-change-[background,box-shadow,color] transition-[background-image,box-shadow,color] duration-300 ease-in-out hover:text-sky-600 dark:hover:text-foreground hover:bg-gradient-to-br hover:from-sky-500/10 hover:via-sky-500/5 hover:to-sky-500/5 dark:hover:from-white/10 dark:hover:via-white/5 dark:hover:to-white/5 hover:backdrop-blur-sm hover:shadow-[0_5px_15px_rgba(2,132,199,0.25)] dark:hover:shadow-[0_5px_15px_rgba(255,255,255,0.15)] rounded-md px-3 py-2 border-0 focus:border-0 focus-visible:border-0 focus-visible:ring-0 focus:ring-0 data-[state=open]:border-0"
+                      className="text-sm font-medium text-gray-700 dark:text-muted-foreground will-change-[background,box-shadow,color] transition-[background-image,box-shadow,color] duration-300 ease-in-out hover:text-sky-600 dark:hover:text-foreground hover:bg-accent hover:backdrop-blur-sm rounded-md px-3 py-2 border-0 focus:border-0 focus-visible:border-0 focus-visible:ring-0 focus:ring-0 data-[state=open]:border-0"
                     >
                       <span>{item.label}</span>
                       <ChevronDown className="ml-1 h-4 w-4" />
@@ -295,13 +295,13 @@ export default function Navbar({ children }: NavbarProps) {
                   <DropdownMenuContent
                     align="start"
                     sideOffset={2}
-                    className="w-48 border border-white/10 dark:border-white/10 bg-gradient-to-br from-white/80 via-white/70 to-white/60 dark:from-white/10 dark:via-white/10 dark:to-white/5 backdrop-blur-sm shadow-[0_10px_30px_rgba(0,0,0,0.2)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] text-gray-900 dark:text-white"
+                    className="w-48 border border-white/10 dark:border-white/10 bg-card backdrop-blur-sm shadow-sm text-gray-900 dark:text-white"
                   >
                     {item.dropdownItems.map((sub) => (
                       <DropdownMenuItem
                         key={sub.path}
                         onSelect={() => handleNavigation(sub.path)}
-                        className="text-gray-700 dark:text-muted-foreground hover:text-gray-900 dark:hover:text-foreground hover:bg-gradient-to-br hover:from-sky-500/10 hover:via-sky-500/5 hover:to-sky-500/5 dark:hover:from-white/10 dark:hover:via-white/5 dark:hover:to-white/5 cursor-pointer"
+                        className="text-gray-700 dark:text-muted-foreground hover:text-gray-900 dark:hover:text-foreground hover:bg-accent cursor-pointer"
                       >
                         {sub.label}
                       </DropdownMenuItem>
@@ -317,7 +317,7 @@ export default function Navbar({ children }: NavbarProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleNavigation(item.path)}
-                className="text-sm font-medium text-gray-700 dark:text-muted-foreground will-change-[background,box-shadow,color] transition-[background-image,box-shadow,color] duration-300 ease-in-out hover:text-sky-600 dark:hover:text-foreground hover:bg-gradient-to-br hover:from-sky-500/10 hover:via-sky-500/5 hover:to-sky-500/5 dark:hover:from-white/10 dark:hover:via-white/5 dark:hover:to-white/5 hover:backdrop-blur-sm hover:shadow-[0_5px_15px_rgba(2,132,199,0.25)] dark:hover:shadow-[0_5px_15px_rgba(255,255,255,0.15)] rounded-md px-3 py-2"
+                className="text-sm font-medium text-gray-700 dark:text-muted-foreground will-change-[background,box-shadow,color] transition-[background-image,box-shadow,color] duration-300 ease-in-out hover:text-sky-600 dark:hover:text-foreground hover:bg-accent hover:backdrop-blur-sm rounded-md px-3 py-2"
               >
                 {item.label}
               </Button>
@@ -331,7 +331,7 @@ export default function Navbar({ children }: NavbarProps) {
           {/* Show skeleton during auth check, then show bell when user is available */}
           {isCheckingAuth ? (
             // Skeleton placeholder during auth check to maintain layout - matches NotificationBell styling
-            <div className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full border border-rose-400/30 dark:border-rose-400/30 bg-gradient-to-r from-rose-500/25 via-rose-500/15 to-rose-500/10 dark:from-rose-500/25 dark:via-rose-500/15 dark:to-rose-500/10 shadow-[0_10px_30px_rgba(225,29,72,0.2)] backdrop-blur-sm animate-pulse flex items-center justify-center">
+            <div className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full border border-rose-400/30 dark:border-rose-400/30 bg-card shadow-sm backdrop-blur-sm animate-pulse flex items-center justify-center">
               <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-rose-400/50 dark:text-rose-300/50" />
             </div>
           ) : user ? (
@@ -348,7 +348,7 @@ export default function Navbar({ children }: NavbarProps) {
                 <Button
                   variant="ghost"
                   aria-label="Open account menu"
-                  className="relative h-10 w-10 min-h-10 min-w-10 rounded-full border-2 border-sky-400/50 dark:border-white/20 bg-gradient-to-br from-sky-500/25 via-sky-500/10 to-sky-500/5 dark:from-white/10 dark:via-white/10 dark:to-white/5 backdrop-blur-sm hover:border-sky-400/70 dark:hover:border-white/30 hover:from-sky-500/35 hover:via-sky-500/15 hover:to-sky-500/8 dark:hover:from-white/15 dark:hover:via-white/15 dark:hover:to-white/8 transition-all duration-200 shadow-[0_5px_20px_rgba(2,132,199,0.3)] hover:shadow-[0_10px_30px_rgba(2,132,199,0.5)] ring-2 ring-sky-400/30 dark:ring-white/20 hover:ring-sky-400/50 dark:hover:ring-white/30 p-0 overflow-hidden focus-visible:outline-none focus:outline-none focus-visible:ring-0 focus:ring-0"
+                  className="relative h-10 w-10 min-h-10 min-w-10 rounded-full border-2 border-sky-400/50 dark:border-white/20 bg-card backdrop-blur-sm hover:border-sky-400/70 dark:hover:border-white/30 transition-all duration-200 shadow-sm ring-2 ring-sky-400/30 dark:ring-white/20 hover:ring-sky-400/50 dark:hover:ring-white/30 p-0 overflow-hidden focus-visible:outline-none focus:outline-none focus-visible:ring-0 focus:ring-0"
                 >
                   {isCheckingAuth ? (
                     <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
@@ -451,7 +451,7 @@ export default function Navbar({ children }: NavbarProps) {
               aria-expanded={isMobileMenuOpen}
               aria-controls="mobile-menu-panel"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="h-8 w-8 sm:h-10 sm:w-10 text-gray-900 dark:text-foreground hover:bg-gradient-to-br hover:from-sky-500/10 hover:via-sky-500/5 hover:to-sky-500/5 dark:hover:from-white/10 dark:hover:via-white/5 dark:hover:to-white/5 hover:backdrop-blur-sm transition-all duration-300 ease-in-out"
+              className="h-8 w-8 sm:h-10 sm:w-10 text-gray-900 dark:text-foreground hover:bg-accent hover:backdrop-blur-sm transition-all duration-300 ease-in-out"
             >
               {isMobileMenuOpen ? (
                 <X className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -469,7 +469,7 @@ export default function Navbar({ children }: NavbarProps) {
           id="mobile-menu-panel"
           role="navigation"
           aria-label="Mobile navigation"
-          className="xl:hidden border-t border-white/10 dark:border-white/10 bg-gradient-to-br from-white/95 via-white/90 to-white/85 dark:from-white/10 dark:via-white/10 dark:to-white/5 backdrop-blur-xl max-h-[calc(100vh-3.5rem)] overflow-y-auto"
+          className="xl:hidden border-t border-white/10 dark:border-white/10 bg-card backdrop-blur-xl max-h-[calc(100vh-3.5rem)] overflow-y-auto"
         >
           <div className="mx-auto w-full max-w-9xl px-2 sm:px-4 lg:px-6 sm:py-6 space-y-3">
             {/* User Email with Avatar */}
@@ -478,7 +478,7 @@ export default function Navbar({ children }: NavbarProps) {
                 <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
               ) : (
                 avatarUrl && (
-                  <div className="relative flex h-10 w-10 items-center justify-center rounded-full border-2 border-sky-400/50 dark:border-white/20 bg-gradient-to-br from-sky-500/25 via-sky-500/10 to-sky-500/5 dark:from-white/10 dark:via-white/10 dark:to-white/5 backdrop-blur-sm overflow-hidden ring-2 ring-sky-400/30 dark:ring-white/20 shadow-[0_5px_20px_rgba(2,132,199,0.3)]">
+                  <div className="relative flex h-10 w-10 items-center justify-center rounded-full border-2 border-sky-400/50 dark:border-white/20 bg-card backdrop-blur-sm overflow-hidden ring-2 ring-sky-400/30 dark:ring-white/20 shadow-sm">
                     <Image
                       src={avatarUrl}
                       alt={user?.name || "User"}
@@ -519,7 +519,7 @@ export default function Navbar({ children }: NavbarProps) {
                           <Button
                             key={sub.path}
                             variant="ghost"
-                            className="w-full justify-start text-gray-600 dark:text-muted-foreground hover:text-gray-900 dark:hover:text-foreground hover:bg-gradient-to-br hover:from-sky-500/10 hover:via-sky-500/5 hover:to-sky-500/5 dark:hover:from-white/10 dark:hover:via-white/5 dark:hover:to-white/5 hover:backdrop-blur-sm transition-all duration-300 ease-in-out px-3 py-2.5 h-auto min-h-[40px] text-sm"
+                            className="w-full justify-start text-gray-600 dark:text-muted-foreground hover:text-gray-900 dark:hover:text-foreground hover:bg-accent hover:backdrop-blur-sm transition-all duration-300 ease-in-out px-3 py-2.5 h-auto min-h-[40px] text-sm"
                             onClick={() => {
                               handleNavigation(sub.path);
                             }}
@@ -536,7 +536,7 @@ export default function Navbar({ children }: NavbarProps) {
                   <Button
                     key={item.path}
                     variant="ghost"
-                    className="w-full justify-start text-gray-700 dark:text-muted-foreground hover:text-gray-900 dark:hover:text-foreground hover:bg-gradient-to-br hover:from-sky-500/10 hover:via-sky-500/5 hover:to-sky-500/5 dark:hover:from-white/10 dark:hover:via-white/5 dark:hover:to-white/5 hover:backdrop-blur-sm transition-all duration-300 ease-in-out px-3 py-3.5 h-auto min-h-[44px]"
+                    className="w-full justify-start text-gray-700 dark:text-muted-foreground hover:text-gray-900 dark:hover:text-foreground hover:bg-accent hover:backdrop-blur-sm transition-all duration-300 ease-in-out px-3 py-3.5 h-auto min-h-[44px]"
                     onClick={() => handleNavigation(item.path)}
                   >
                     {item.label}
@@ -550,7 +550,7 @@ export default function Navbar({ children }: NavbarProps) {
             {/* Support Tickets */}
             <Button
               variant="ghost"
-              className="w-full justify-start text-gray-700 dark:text-muted-foreground hover:text-gray-900 dark:hover:text-foreground hover:bg-gradient-to-br hover:from-sky-500/10 hover:via-sky-500/5 hover:to-sky-500/5 dark:hover:from-white/10 dark:hover:via-white/5 dark:hover:to-white/5 hover:backdrop-blur-sm transition-all duration-300 ease-in-out px-3 py-3.5 h-auto min-h-[44px]"
+              className="w-full justify-start text-gray-700 dark:text-muted-foreground hover:text-gray-900 dark:hover:text-foreground hover:bg-accent hover:backdrop-blur-sm transition-all duration-300 ease-in-out px-3 py-3.5 h-auto min-h-[44px]"
               onClick={() => {
                 router.push("/support-tickets");
                 setIsMobileMenuOpen(false);
@@ -563,7 +563,7 @@ export default function Navbar({ children }: NavbarProps) {
             {/* Email Preferences */}
             <Button
               variant="ghost"
-              className="w-full justify-start text-gray-700 dark:text-muted-foreground hover:text-gray-900 dark:hover:text-foreground hover:bg-gradient-to-br hover:from-sky-500/10 hover:via-sky-500/5 hover:to-sky-500/5 dark:hover:from-white/10 dark:hover:via-white/5 dark:hover:to-white/5 hover:backdrop-blur-sm transition-all duration-300 ease-in-out px-3 py-3.5 h-auto min-h-[44px]"
+              className="w-full justify-start text-gray-700 dark:text-muted-foreground hover:text-gray-900 dark:hover:text-foreground hover:bg-accent hover:backdrop-blur-sm transition-all duration-300 ease-in-out px-3 py-3.5 h-auto min-h-[44px]"
               onClick={() => {
                 router.push("/settings/email-preferences");
                 setIsMobileMenuOpen(false);
@@ -589,7 +589,7 @@ export default function Navbar({ children }: NavbarProps) {
             {/* API Status */}
             <Button
               variant="ghost"
-              className="w-full justify-start text-gray-700 dark:text-muted-foreground hover:text-gray-900 dark:hover:text-foreground hover:bg-gradient-to-br hover:from-sky-500/10 hover:via-sky-500/5 hover:to-sky-500/5 dark:hover:from-white/10 dark:hover:via-white/5 dark:hover:to-white/5 hover:backdrop-blur-sm transition-all duration-300 ease-in-out px-3 py-3.5 h-auto min-h-[44px]"
+              className="w-full justify-start text-gray-700 dark:text-muted-foreground hover:text-gray-900 dark:hover:text-foreground hover:bg-accent hover:backdrop-blur-sm transition-all duration-300 ease-in-out px-3 py-3.5 h-auto min-h-[44px]"
               onClick={() => {
                 router.push("/api-status");
                 setIsMobileMenuOpen(false);
@@ -604,7 +604,7 @@ export default function Navbar({ children }: NavbarProps) {
             {/* Logout */}
             <Button
               variant="ghost"
-              className="w-full justify-start text-gray-700 dark:text-muted-foreground hover:text-gray-900 dark:hover:text-foreground hover:bg-gradient-to-br hover:from-rose-500/10 hover:via-rose-500/5 hover:to-rose-500/5 dark:hover:from-white/10 dark:hover:via-white/5 dark:hover:to-white/5 hover:backdrop-blur-sm transition-all duration-300 ease-in-out px-3 py-3.5 h-auto min-h-[44px]"
+              className="w-full justify-start text-gray-700 dark:text-muted-foreground hover:text-gray-900 dark:hover:text-foreground hover:bg-accent hover:backdrop-blur-sm transition-all duration-300 ease-in-out px-3 py-3.5 h-auto min-h-[44px]"
               onClick={handleLogout}
               disabled={isLoggingOut}
             >

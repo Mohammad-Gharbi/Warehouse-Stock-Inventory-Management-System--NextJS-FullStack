@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       qrCodeDataString,
       `product-${product.sku}`,
       200,
-      "/stock-inventory/qr-codes/"
+      "/techmaster-store/qr-codes/"
     );
 
     // Update product with QR code URL and fileId

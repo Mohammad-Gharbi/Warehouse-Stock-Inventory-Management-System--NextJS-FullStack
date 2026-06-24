@@ -51,72 +51,72 @@ const variantConfig: Record<
 > = {
   sky: {
     border: "border-sky-400/20",
-    gradient: "bg-gradient-to-br from-sky-500/15 via-sky-500/5 to-transparent",
+    gradient: "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(2,132,199,0.15)] dark:shadow-[0_15px_40px_rgba(2,132,199,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-sky-300/40",
     iconBg: "border-sky-300/30 bg-sky-100/50",
   },
   emerald: {
     border: "border-emerald-400/20",
     gradient:
-      "bg-gradient-to-br from-emerald-500/15 via-emerald-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(16,185,129,0.15)] dark:shadow-[0_15px_40px_rgba(16,185,129,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-emerald-300/40",
     iconBg: "border-emerald-300/30 bg-emerald-100/50",
   },
   amber: {
     border: "border-amber-400/20",
     gradient:
-      "bg-gradient-to-br from-amber-500/15 via-amber-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_40px_rgba(245,158,11,0.08)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-amber-300/40",
     iconBg: "border-amber-300/30 bg-amber-100/50",
   },
   rose: {
     border: "border-rose-400/20",
     gradient:
-      "bg-gradient-to-br from-rose-500/15 via-rose-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(225,29,72,0.15)] dark:shadow-[0_15px_40px_rgba(225,29,72,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-rose-300/40",
     iconBg: "border-rose-300/30 bg-rose-100/50",
   },
   violet: {
     border: "border-violet-400/20",
     gradient:
-      "bg-gradient-to-br from-violet-500/15 via-violet-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(139,92,246,0.15)] dark:shadow-[0_15px_40px_rgba(139,92,246,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-violet-300/40",
     iconBg: "border-violet-300/30 bg-violet-100/50",
   },
   blue: {
     border: "border-blue-400/20",
     gradient:
-      "bg-gradient-to-br from-blue-500/15 via-blue-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(59,130,246,0.15)] dark:shadow-[0_15px_40px_rgba(59,130,246,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-blue-300/40",
     iconBg: "border-blue-300/30 bg-blue-100/50",
   },
   orange: {
     border: "border-orange-400/20",
     gradient:
-      "bg-gradient-to-br from-orange-500/15 via-orange-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(249,115,22,0.15)] dark:shadow-[0_15px_40px_rgba(249,115,22,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-orange-300/40",
     iconBg: "border-orange-300/30 bg-orange-100/50",
   },
   teal: {
     border: "border-teal-400/20",
     gradient:
-      "bg-gradient-to-br from-teal-500/15 via-teal-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(20,184,166,0.15)] dark:shadow-[0_15px_40px_rgba(20,184,166,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-teal-300/40",
     iconBg: "border-teal-300/30 bg-teal-100/50",
   },
@@ -369,7 +369,7 @@ export default function ApiStatusPage() {
         | undefined;
 
       const status: SystemStatus = {
-        project: "Stockly Inventory Management",
+        project: "Techmaster Store",
         environment: healthData.environment,
         currentTime: new Date(healthData.timestamp).toLocaleString(),
         uptime: healthData.uptime,
@@ -455,14 +455,14 @@ export default function ApiStatusPage() {
                 API & Project Status
               </h1>
               <p className="text-sm sm:text-base text-gray-600 dark:text-white/70">
-                Real-time monitoring of Stockly&apos;s API endpoints and system
-                health
+                Real-time monitoring of Techmaster Store&apos;s API endpoints and
+                system health
               </p>
             </div>
             <Button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="flex items-center gap-2 rounded-xl border-emerald-400/30 bg-gradient-to-r from-emerald-500/20 via-emerald-500/10 to-transparent hover:from-emerald-500/30 shadow-[0_10px_30px_rgba(16,185,129,0.2)]"
+              className="flex items-center gap-2 rounded-xl border-emerald-400/30 bg-card shadow-sm"
             >
               <FiRefreshCw
                 className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
@@ -690,7 +690,7 @@ export default function ApiStatusPage() {
               ) : systemStatus ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Database */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl border border-emerald-400/20 bg-gradient-to-r from-emerald-500/10 to-transparent backdrop-blur-sm gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl border border-emerald-400/20 bg-card backdrop-blur-sm gap-2">
                     <div className="flex items-center gap-3">
                       <FiDatabase className="h-5 w-5 text-gray-900 dark:text-white" />
                       <div>
@@ -720,7 +720,7 @@ export default function ApiStatusPage() {
                   </div>
 
                   {/* Redis */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl border border-amber-400/20 bg-gradient-to-r from-amber-500/10 to-transparent backdrop-blur-sm gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl border border-amber-400/20 bg-card backdrop-blur-sm gap-2">
                     <div className="flex items-center gap-3">
                       <FiActivity className="h-5 w-5 text-gray-900 dark:text-white" />
                       <div>
@@ -752,7 +752,7 @@ export default function ApiStatusPage() {
                   </div>
 
                   {/* ImageKit */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl border border-sky-400/20 bg-gradient-to-r from-sky-500/10 to-transparent backdrop-blur-sm gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl border border-sky-400/20 bg-card backdrop-blur-sm gap-2">
                     <div className="flex items-center gap-3">
                       <FiImage className="h-5 w-5 text-gray-900 dark:text-white" />
                       <div>
@@ -785,7 +785,7 @@ export default function ApiStatusPage() {
                   </div>
 
                   {/* Brevo */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl border border-rose-400/20 bg-gradient-to-r from-rose-500/10 to-transparent backdrop-blur-sm gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl border border-rose-400/20 bg-card backdrop-blur-sm gap-2">
                     <div className="flex items-center gap-3">
                       <FiMail className="h-5 w-5 text-gray-900 dark:text-white" />
                       <div>
@@ -840,7 +840,7 @@ export default function ApiStatusPage() {
                 <div className="space-y-6">
                   {/* Summary Stats */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="p-4 rounded-xl border border-blue-400/20 bg-gradient-to-br from-blue-500/10 via-blue-500/5 to-transparent backdrop-blur-sm">
+                    <div className="p-4 rounded-xl border border-blue-400/20 bg-card backdrop-blur-sm">
                       <div className="text-sm text-gray-600 dark:text-white/60 mb-1">
                         Total Endpoints
                       </div>
@@ -848,7 +848,7 @@ export default function ApiStatusPage() {
                         {systemStatus.performance.totalEndpoints}
                       </div>
                     </div>
-                    <div className="p-4 rounded-xl border border-emerald-400/20 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent backdrop-blur-sm">
+                    <div className="p-4 rounded-xl border border-emerald-400/20 bg-card backdrop-blur-sm">
                       <div className="text-sm text-gray-600 dark:text-white/60 mb-1">
                         Total Requests
                       </div>
@@ -856,7 +856,7 @@ export default function ApiStatusPage() {
                         {systemStatus.performance.totalRequests.toLocaleString()}
                       </div>
                     </div>
-                    <div className="p-4 rounded-xl border border-amber-400/20 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent backdrop-blur-sm">
+                    <div className="p-4 rounded-xl border border-amber-400/20 bg-card backdrop-blur-sm">
                       <div className="text-sm text-gray-600 dark:text-white/60 mb-1 flex items-center gap-1">
                         <FiClock className="h-3 w-3" />
                         Avg Response
@@ -865,7 +865,7 @@ export default function ApiStatusPage() {
                         {systemStatus.performance.averageResponseTime}ms
                       </div>
                     </div>
-                    <div className="p-4 rounded-xl border border-rose-400/20 bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent backdrop-blur-sm">
+                    <div className="p-4 rounded-xl border border-rose-400/20 bg-card backdrop-blur-sm">
                       <div className="text-sm text-gray-600 dark:text-white/60 mb-1">
                         Error Rate
                       </div>
@@ -983,7 +983,7 @@ export default function ApiStatusPage() {
                       Cache Statistics
                     </h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="p-3 rounded-xl border border-emerald-400/20 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent backdrop-blur-sm">
+                      <div className="p-3 rounded-xl border border-emerald-400/20 bg-card backdrop-blur-sm">
                         <div className="text-xs text-gray-600 dark:text-white/60 mb-1">
                           Cache Hits
                         </div>
@@ -991,7 +991,7 @@ export default function ApiStatusPage() {
                           {systemStatus.systemMetrics.cache.hits.toLocaleString()}
                         </div>
                       </div>
-                      <div className="p-3 rounded-xl border border-orange-400/20 bg-gradient-to-br from-orange-500/10 via-orange-500/5 to-transparent backdrop-blur-sm">
+                      <div className="p-3 rounded-xl border border-orange-400/20 bg-card backdrop-blur-sm">
                         <div className="text-xs text-gray-600 dark:text-white/60 mb-1">
                           Cache Misses
                         </div>
@@ -999,7 +999,7 @@ export default function ApiStatusPage() {
                           {systemStatus.systemMetrics.cache.misses.toLocaleString()}
                         </div>
                       </div>
-                      <div className="p-3 rounded-xl border border-blue-400/20 bg-gradient-to-br from-blue-500/10 via-blue-500/5 to-transparent backdrop-blur-sm">
+                      <div className="p-3 rounded-xl border border-blue-400/20 bg-card backdrop-blur-sm">
                         <div className="text-xs text-gray-600 dark:text-white/60 mb-1">
                           Hit Rate
                         </div>
@@ -1007,7 +1007,7 @@ export default function ApiStatusPage() {
                           {systemStatus.systemMetrics.cache.hitRate}%
                         </div>
                       </div>
-                      <div className="p-3 rounded-xl border border-violet-400/20 bg-gradient-to-br from-violet-500/10 via-violet-500/5 to-transparent backdrop-blur-sm">
+                      <div className="p-3 rounded-xl border border-violet-400/20 bg-card backdrop-blur-sm">
                         <div className="text-xs text-gray-600 dark:text-white/60 mb-1">
                           Total Requests
                         </div>
@@ -1025,7 +1025,7 @@ export default function ApiStatusPage() {
                       Database Performance
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="p-3 rounded-xl border border-sky-400/20 bg-gradient-to-br from-sky-500/10 via-sky-500/5 to-transparent backdrop-blur-sm">
+                      <div className="p-3 rounded-xl border border-sky-400/20 bg-card backdrop-blur-sm">
                         <div className="text-xs text-gray-600 dark:text-white/60 mb-1">
                           Total Queries
                         </div>
@@ -1033,7 +1033,7 @@ export default function ApiStatusPage() {
                           {systemStatus.systemMetrics.database.totalQueries.toLocaleString()}
                         </div>
                       </div>
-                      <div className="p-3 rounded-xl border border-emerald-400/20 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent backdrop-blur-sm">
+                      <div className="p-3 rounded-xl border border-emerald-400/20 bg-card backdrop-blur-sm">
                         <div className="text-xs text-gray-600 dark:text-white/60 mb-1 flex items-center gap-1">
                           <FiClock className="h-3 w-3" />
                           Avg Query Time
@@ -1043,7 +1043,7 @@ export default function ApiStatusPage() {
                           ms
                         </div>
                       </div>
-                      <div className="p-3 rounded-xl border border-amber-400/20 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent backdrop-blur-sm">
+                      <div className="p-3 rounded-xl border border-amber-400/20 bg-card backdrop-blur-sm">
                         <div className="text-xs text-gray-600 dark:text-white/60 mb-1">
                           Slow Queries (&gt;1s)
                         </div>
@@ -1061,7 +1061,7 @@ export default function ApiStatusPage() {
                       System Resources
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="p-4 rounded-xl border border-rose-400/20 bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent backdrop-blur-sm">
+                      <div className="p-4 rounded-xl border border-rose-400/20 bg-card backdrop-blur-sm">
                         <h5 className="font-medium mb-3 text-sm text-gray-900 dark:text-white">
                           Memory Usage
                         </h5>
@@ -1116,7 +1116,7 @@ export default function ApiStatusPage() {
                           </div>
                         </div>
                       </div>
-                      <div className="p-4 rounded-xl border border-violet-400/20 bg-gradient-to-br from-violet-500/10 via-violet-500/5 to-transparent backdrop-blur-sm">
+                      <div className="p-4 rounded-xl border border-violet-400/20 bg-card backdrop-blur-sm">
                         <h5 className="font-medium mb-3 text-sm text-gray-900 dark:text-white">
                           Process Info
                         </h5>

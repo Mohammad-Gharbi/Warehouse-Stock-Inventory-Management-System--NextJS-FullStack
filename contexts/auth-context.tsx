@@ -50,7 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem("token");
     localStorage.removeItem("getSession");
     localStorage.removeItem("prevUserId");
-    localStorage.removeItem("stock-inventory-query-cache");
+    localStorage.removeItem("techmaster-store-query-cache");
     queryClient.clear();
   }, [queryClient]);
 

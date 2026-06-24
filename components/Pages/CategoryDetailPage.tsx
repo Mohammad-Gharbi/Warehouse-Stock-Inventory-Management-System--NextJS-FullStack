@@ -71,72 +71,72 @@ const variantConfig: Record<
 > = {
   sky: {
     border: "border-sky-400/20",
-    gradient: "bg-gradient-to-br from-sky-500/15 via-sky-500/5 to-transparent",
+    gradient: "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(2,132,199,0.15)] dark:shadow-[0_15px_40px_rgba(2,132,199,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-sky-300/40",
     iconBg: "border-sky-300/30 bg-sky-100/50",
   },
   emerald: {
     border: "border-emerald-400/20",
     gradient:
-      "bg-gradient-to-br from-emerald-500/15 via-emerald-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(16,185,129,0.15)] dark:shadow-[0_15px_40px_rgba(16,185,129,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-emerald-300/40",
     iconBg: "border-emerald-300/30 bg-emerald-100/50",
   },
   amber: {
     border: "border-amber-400/20",
     gradient:
-      "bg-gradient-to-br from-amber-500/15 via-amber-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(245,158,11,0.12)] dark:shadow-[0_15px_40px_rgba(245,158,11,0.08)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-amber-300/40",
     iconBg: "border-amber-300/30 bg-amber-100/50",
   },
   rose: {
     border: "border-rose-400/20",
     gradient:
-      "bg-gradient-to-br from-rose-500/15 via-rose-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(225,29,72,0.15)] dark:shadow-[0_15px_40px_rgba(225,29,72,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-rose-300/40",
     iconBg: "border-rose-300/30 bg-rose-100/50",
   },
   violet: {
     border: "border-violet-400/20",
     gradient:
-      "bg-gradient-to-br from-violet-500/15 via-violet-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(139,92,246,0.15)] dark:shadow-[0_15px_40px_rgba(139,92,246,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-violet-300/40",
     iconBg: "border-violet-300/30 bg-violet-100/50",
   },
   blue: {
     border: "border-blue-400/20",
     gradient:
-      "bg-gradient-to-br from-blue-500/15 via-blue-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(59,130,246,0.15)] dark:shadow-[0_15px_40px_rgba(59,130,246,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-blue-300/40",
     iconBg: "border-blue-300/30 bg-blue-100/50",
   },
   orange: {
     border: "border-orange-400/20",
     gradient:
-      "bg-gradient-to-br from-orange-500/15 via-orange-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(249,115,22,0.15)] dark:shadow-[0_15px_40px_rgba(249,115,22,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-orange-300/40",
     iconBg: "border-orange-300/30 bg-orange-100/50",
   },
   teal: {
     border: "border-teal-400/20",
     gradient:
-      "bg-gradient-to-br from-teal-500/15 via-teal-500/5 to-transparent",
+      "bg-card ",
     shadow:
-      "shadow-[0_15px_40px_rgba(20,184,166,0.15)] dark:shadow-[0_15px_40px_rgba(20,184,166,0.1)]",
+      "shadow-sm ",
     hoverBorder: "hover:border-teal-300/40",
     iconBg: "border-teal-300/30 bg-teal-100/50",
   },
@@ -443,7 +443,7 @@ export default function CategoryDetailPage({
               </div>
 
               <div className="space-y-4">
-                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-gradient-to-r from-orange-100/50 via-orange-50/30 to-transparent dark:from-orange-500/10 dark:via-orange-500/5 dark:to-transparent border border-orange-200/30 dark:border-orange-400/10">
+                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-card border border-orange-200/30 dark:border-orange-400/10">
                   <Tag className="h-4 w-4 text-orange-500 dark:text-orange-400" />
                   <span className="text-gray-600 dark:text-gray-400">
                     Name:
@@ -454,7 +454,7 @@ export default function CategoryDetailPage({
                 </div>
 
                 {category.description && (
-                  <div className="p-3 rounded-xl bg-gradient-to-r from-amber-100/50 via-amber-50/30 to-transparent dark:from-amber-500/10 dark:via-amber-500/5 dark:to-transparent border border-amber-200/30 dark:border-amber-400/10">
+                  <div className="p-3 rounded-xl bg-card border border-amber-200/30 dark:border-amber-400/10">
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                       Description:
                     </p>
@@ -465,7 +465,7 @@ export default function CategoryDetailPage({
                 )}
 
                 {category.notes && (
-                  <div className="p-3 rounded-xl bg-gradient-to-r from-yellow-100/50 via-yellow-50/30 to-transparent dark:from-yellow-500/10 dark:via-yellow-500/5 dark:to-transparent border border-yellow-200/30 dark:border-yellow-400/10">
+                  <div className="p-3 rounded-xl bg-card border border-yellow-200/30 dark:border-yellow-400/10">
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                       Notes:
                     </p>
@@ -475,7 +475,7 @@ export default function CategoryDetailPage({
                   </div>
                 )}
 
-                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-gradient-to-r from-teal-100/50 via-teal-50/30 to-transparent dark:from-teal-500/10 dark:via-teal-500/5 dark:to-transparent border border-teal-200/30 dark:border-teal-400/10">
+                <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-card border border-teal-200/30 dark:border-teal-400/10">
                   <Calendar className="h-4 w-4 text-teal-500 dark:text-teal-400" />
                   <span className="text-gray-600 dark:text-gray-400">
                     Created:
@@ -486,7 +486,7 @@ export default function CategoryDetailPage({
                 </div>
 
                 {updatedAt && (
-                  <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-gradient-to-r from-sky-100/50 via-sky-50/30 to-transparent dark:from-sky-500/10 dark:via-sky-500/5 dark:to-transparent border border-sky-200/30 dark:border-sky-400/10">
+                  <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-card border border-sky-200/30 dark:border-sky-400/10">
                     <Calendar className="h-4 w-4 text-sky-500 dark:text-sky-400" />
                     <span className="text-gray-600 dark:text-gray-400">
                       Updated:
@@ -499,7 +499,7 @@ export default function CategoryDetailPage({
 
                 {/* Creator Information */}
                 {category.creator && (
-                  <div className="p-3 rounded-xl bg-gradient-to-r from-violet-100/50 via-violet-50/30 to-transparent dark:from-violet-500/10 dark:via-violet-500/5 dark:to-transparent border border-violet-200/30 dark:border-violet-400/10 space-y-2">
+                  <div className="p-3 rounded-xl bg-card border border-violet-200/30 dark:border-violet-400/10 space-y-2">
                     <div className="flex items-center gap-2 text-sm">
                       <User className="h-4 w-4 text-violet-500 dark:text-violet-400" />
                       <span className="text-gray-600 dark:text-gray-400">
@@ -523,7 +523,7 @@ export default function CategoryDetailPage({
 
                 {/* Updater Information */}
                 {category.updater && (
-                  <div className="p-3 rounded-xl bg-gradient-to-r from-blue-100/50 via-blue-50/30 to-transparent dark:from-blue-500/10 dark:via-blue-500/5 dark:to-transparent border border-blue-200/30 dark:border-blue-400/10 space-y-2">
+                  <div className="p-3 rounded-xl bg-card border border-blue-200/30 dark:border-blue-400/10 space-y-2">
                     <div className="flex items-center gap-2 text-sm">
                       <User className="h-4 w-4 text-blue-500 dark:text-blue-400" />
                       <span className="text-gray-600 dark:text-gray-400">
@@ -570,7 +570,7 @@ export default function CategoryDetailPage({
               </div>
 
               <div className="space-y-3 mt-4">
-                <div className="flex justify-between items-center p-3 rounded-xl bg-gradient-to-r from-sky-100/50 via-sky-50/30 to-transparent dark:from-sky-500/10 dark:via-sky-500/5 dark:to-transparent border border-sky-200/30 dark:border-sky-400/10">
+                <div className="flex justify-between items-center p-3 rounded-xl bg-card border border-sky-200/30 dark:border-sky-400/10">
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     Total Products:
                   </span>
@@ -579,7 +579,7 @@ export default function CategoryDetailPage({
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center p-3 rounded-xl bg-gradient-to-r from-violet-100/50 via-violet-50/30 to-transparent dark:from-violet-500/10 dark:via-violet-500/5 dark:to-transparent border border-violet-200/30 dark:border-violet-400/10">
+                <div className="flex justify-between items-center p-3 rounded-xl bg-card border border-violet-200/30 dark:border-violet-400/10">
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     Total Quantity Sold:
                   </span>
@@ -588,7 +588,7 @@ export default function CategoryDetailPage({
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center p-3 rounded-xl bg-gradient-to-r from-emerald-100/50 via-emerald-50/30 to-transparent dark:from-emerald-500/10 dark:via-emerald-500/5 dark:to-transparent border border-emerald-200/30 dark:border-emerald-400/10">
+                <div className="flex justify-between items-center p-3 rounded-xl bg-card border border-emerald-200/30 dark:border-emerald-400/10">
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     Total Revenue:
                   </span>
@@ -597,7 +597,7 @@ export default function CategoryDetailPage({
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center p-3 rounded-xl bg-gradient-to-r from-amber-100/50 via-amber-50/30 to-transparent dark:from-amber-500/10 dark:via-amber-500/5 dark:to-transparent border border-amber-200/30 dark:border-amber-400/10">
+                <div className="flex justify-between items-center p-3 rounded-xl bg-card border border-amber-200/30 dark:border-amber-400/10">
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     Orders Containing Products:
                   </span>
@@ -608,7 +608,7 @@ export default function CategoryDetailPage({
 
                 <Separator className="my-3 bg-teal-200/50 dark:bg-teal-400/20" />
 
-                <div className="flex justify-between items-center p-3 rounded-xl bg-gradient-to-r from-blue-100/50 via-blue-50/30 to-transparent dark:from-blue-500/10 dark:via-blue-500/5 dark:to-transparent border border-blue-200/30 dark:border-blue-400/10">
+                <div className="flex justify-between items-center p-3 rounded-xl bg-card border border-blue-200/30 dark:border-blue-400/10">
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     Current Stock Value:
                   </span>
@@ -649,7 +649,7 @@ export default function CategoryDetailPage({
                   <Link
                     key={product.id}
                     href={`/products/${product.id}`}
-                    className="flex items-center gap-3 p-4 rounded-xl border border-sky-200/40 dark:border-sky-400/20 bg-gradient-to-r from-sky-100/40 via-sky-50/20 to-transparent dark:from-sky-500/10 dark:via-sky-500/5 dark:to-transparent hover:border-sky-300/60 dark:hover:border-sky-400/40 hover:from-sky-100/60 dark:hover:from-sky-500/20 transition-all duration-300"
+                    className="flex items-center gap-3 p-4 rounded-xl border border-sky-200/40 dark:border-sky-400/20 bg-card hover:border-sky-300/60 dark:hover:border-sky-400/40 transition-all duration-300"
                   >
                     {product.imageUrl && (
                       <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-white/50 dark:bg-white/5 border border-sky-200/30 dark:border-sky-400/20 flex-shrink-0">
@@ -708,7 +708,7 @@ export default function CategoryDetailPage({
                   <Link
                     key={order.id}
                     href={`/orders/${order.orderId}`}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-violet-200/40 dark:border-violet-400/20 bg-gradient-to-r from-violet-100/40 via-violet-50/20 to-transparent dark:from-violet-500/10 dark:via-violet-500/5 dark:to-transparent hover:border-violet-300/60 dark:hover:border-violet-400/40 hover:from-violet-100/60 dark:hover:from-violet-500/20 transition-all duration-300"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-violet-200/40 dark:border-violet-400/20 bg-card hover:border-violet-300/60 dark:hover:border-violet-400/40 transition-all duration-300"
                   >
                     <div className="flex-1">
                       <h4 className="font-medium text-gray-900 dark:text-white">
@@ -776,7 +776,7 @@ export default function CategoryDetailPage({
             <Button
               onClick={handleEditCategory}
               disabled={isClientRole}
-              className="w-full sm:w-auto gap-2 rounded-xl border border-blue-400/30 bg-gradient-to-r from-blue-500/70 via-blue-500/50 to-blue-500/30 text-white shadow-[0_10px_25px_rgba(59,130,246,0.35)] backdrop-blur-sm hover:border-blue-300/50 hover:from-blue-500/80 hover:via-blue-500/60 hover:to-blue-500/40 transition-all duration-300 disabled:opacity-50"
+              className="w-full sm:w-auto gap-2 rounded-xl border border-blue-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-blue-300/50 transition-all duration-300 disabled:opacity-50"
             >
               <Edit className="h-4 w-4 shrink-0" />
               Edit Category
@@ -784,7 +784,7 @@ export default function CategoryDetailPage({
             <Button
               onClick={handleDuplicateCategory}
               disabled={isCopying || isClientRole}
-              className="w-full sm:w-auto gap-2 rounded-xl border border-violet-400/30 bg-gradient-to-r from-violet-500/70 via-violet-500/50 to-violet-500/30 text-white shadow-[0_10px_25px_rgba(139,92,246,0.35)] backdrop-blur-sm hover:border-violet-300/50 hover:from-violet-500/80 hover:via-violet-500/60 hover:to-violet-500/40 transition-all duration-300 disabled:opacity-50"
+              className="w-full sm:w-auto gap-2 rounded-xl border border-violet-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-violet-300/50 transition-all duration-300 disabled:opacity-50"
             >
               <Copy className="h-4 w-4 shrink-0" />
               {isCopying ? "Duplicating..." : "Create Duplicate"}
@@ -792,7 +792,7 @@ export default function CategoryDetailPage({
             <Button
               onClick={() => setDeleteDialogOpen(true)}
               disabled={isDeleting || isClientRole}
-              className="w-full sm:w-auto gap-2 rounded-xl border border-rose-400/30 bg-gradient-to-r from-rose-500/70 via-rose-500/50 to-rose-500/30 text-white shadow-[0_10px_25px_rgba(225,29,72,0.35)] backdrop-blur-sm hover:border-rose-300/50 hover:from-rose-500/80 hover:via-rose-500/60 hover:to-rose-500/40 transition-all duration-300 disabled:opacity-50"
+              className="w-full sm:w-auto gap-2 rounded-xl border border-rose-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-rose-300/50 transition-all duration-300 disabled:opacity-50"
             >
               <Trash2 className="h-4 w-4 shrink-0" />
               {isDeleting ? "Deleting..." : "Delete Category"}

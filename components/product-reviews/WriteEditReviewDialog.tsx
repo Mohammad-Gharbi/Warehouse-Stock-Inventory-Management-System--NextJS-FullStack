@@ -97,9 +97,9 @@ export default function WriteEditReviewDialog({
       <DialogContent
         className={cn(
           "p-4 sm:p-7 sm:px-8 poppins max-h-[90vh] overflow-y-auto",
-          "bg-gradient-to-br from-slate-800/98 to-slate-900/98 dark:from-slate-800/98 dark:to-slate-900/98",
+          "bg-card ",
           "border-amber-400/30 dark:border-amber-400/30",
-          "shadow-[0_25px_60px_rgba(245,158,11,0.25)] dark:shadow-[0_25px_60px_rgba(245,158,11,0.2)]",
+          "shadow-sm ",
         )}
         onOpenAutoFocus={(e) => {
           e.preventDefault();
@@ -156,7 +156,7 @@ export default function WriteEditReviewDialog({
               onChange={(e) => setComment(e.target.value)}
               disabled={isPending}
               placeholder="Share your experience..."
-              className="min-h-[100px] rounded-xl mt-1 border border-amber-400/30 bg-white/10 text-white placeholder:text-white/40 focus-visible:outline-none focus-visible:border focus-visible:border-amber-400 focus-visible:ring-2 focus-visible:ring-amber-500/50 shadow-[0_10px_30px_rgba(245,158,11,0.15)]"
+              className="min-h-[100px] rounded-xl mt-1 border border-amber-400/30 bg-white/10 text-white placeholder:text-white/40 focus-visible:outline-none focus-visible:border focus-visible:border-amber-400 focus-visible:ring-2 focus-visible:ring-amber-500/50 shadow-sm"
             />
           </div>
           <DialogFooter className="mt-6 flex flex-col sm:flex-row items-center gap-3">
@@ -173,9 +173,9 @@ export default function WriteEditReviewDialog({
               type="submit"
               disabled={isPending || !comment.trim()}
               className={cn(
-                "h-11 rounded-xl border border-amber-400/30 bg-gradient-to-r from-amber-500/70 via-amber-500/50 to-amber-500/30 text-white",
-                "shadow-[0_15px_35px_rgba(245,158,11,0.4)] backdrop-blur-sm transition duration-200",
-                "hover:border-amber-300/40 hover:from-amber-500/80 hover:via-amber-500/60 hover:to-amber-500/40 hover:shadow-[0_20px_45px_rgba(245,158,11,0.5)] disabled:opacity-50",
+                "h-11 rounded-xl border border-amber-400/30 bg-card text-white",
+                "shadow-sm backdrop-blur-sm transition duration-200",
+                "hover:border-amber-300/40 disabled:opacity-50",
               )}
             >
               {isPending ? (
