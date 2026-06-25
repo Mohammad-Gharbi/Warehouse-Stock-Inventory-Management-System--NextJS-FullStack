@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Main app navbar: logo, nav links (role-based: admin vs client vs supplier), theme toggle, notifications, profile menu.
+ * Main app navbar: logo, nav links (role-based: admin vs client), theme toggle, notifications, profile menu.
  * Role is inferred from user.role or pathname so correct links show before auth finishes (e.g. on refresh).
  */
 import React, { useState, useCallback, ReactNode } from "react";
@@ -56,8 +56,6 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
   { label: "Orders", path: "/orders" },
   { label: "Invoices", path: "/invoices" },
   { label: "Categories", path: "/categories" },
-  { label: "Suppliers", path: "/suppliers" },
-  { label: "Warehouses", path: "/warehouses" },
   { label: "Business Insights", path: "/business-insights" },
   { label: "Admin Panel", path: "/admin" },
 ];
@@ -69,16 +67,10 @@ const CLIENT_NAV_ITEMS: NavItem[] = [
   { label: "My Invoices", path: "/invoices" },
 ];
 
-const SUPPLIER_NAV_ITEMS: NavItem[] = [
-  { label: "Supplier Portal", path: "/supplier" },
-  { label: "My Products", path: "/products" },
-  { label: "View Orders", path: "/orders" },
-];
-
 /** Whether a nav item is the active route (exact for "/", prefix match otherwise). */
 function isActivePath(pathname: string | null, path: string): boolean {
   if (!pathname) return false;
-  if (path === "/" || path === "/client" || path === "/supplier") {
+  if (path === "/" || path === "/client") {
     return pathname === path;
   }
   return pathname === path || pathname.startsWith(`${path}/`);
@@ -238,24 +230,14 @@ export default function Navbar({ children }: NavbarProps) {
     [router],
   );
 
-  // Role from auth when available; else infer from pathname so client/supplier see correct nav on refresh (no admin flash).
+  // Role from auth when available; else infer from pathname so client sees correct nav on refresh (no admin flash).
   const role =
-    user?.role ??
-    (pathname?.startsWith("/client")
-      ? "client"
-      : pathname?.startsWith("/supplier")
-        ? "supplier"
-        : "user");
+    user?.role ?? (pathname?.startsWith("/client") ? "client" : "user");
   const navItems: NavItem[] =
-    role === "client"
-      ? CLIENT_NAV_ITEMS
-      : role === "supplier"
-        ? SUPPLIER_NAV_ITEMS
-        : ADMIN_NAV_ITEMS;
+    role === "client" ? CLIENT_NAV_ITEMS : ADMIN_NAV_ITEMS;
 
-  /** Home link for logo/brand: admin → /, client → /client, supplier → /supplier */
-  const homePath =
-    role === "client" ? "/client" : role === "supplier" ? "/supplier" : "/";
+  /** Home link for logo/brand: admin → /, client → /client */
+  const homePath = role === "client" ? "/client" : "/";
 
   // Avatar: use custom/Google image if present, else RoboHash (same user → same robot)
   const preferredImage =

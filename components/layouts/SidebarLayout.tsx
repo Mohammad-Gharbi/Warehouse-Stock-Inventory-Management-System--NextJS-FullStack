@@ -43,8 +43,6 @@ const SIDEBAR_NAV_ITEMS: {
   { path: "/orders", label: "Orders", icon: ShoppingCart },
   { path: "/invoices", label: "Invoices", icon: FileText },
   { path: "/categories", label: "Categories", icon: Tag },
-  { path: "/suppliers", label: "Suppliers", icon: Users },
-  { path: "/warehouses", label: "Warehouses", icon: Warehouse },
   { path: "/business-insights", label: "Business Insights", icon: TrendingUp },
   { path: "/admin", label: "Admin", icon: Settings },
   { path: "/api-status", label: "API Status", icon: Activity },

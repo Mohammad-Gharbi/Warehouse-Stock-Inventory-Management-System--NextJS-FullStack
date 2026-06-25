@@ -60,23 +60,6 @@ export {
   type CategoryFormData,
 } from "./category";
 
-// Supplier validations
-export {
-  createSupplierBodySchema,
-  createSupplierSchema,
-  updateSupplierBodySchema,
-  updateSupplierSchema,
-  type SupplierFormData,
-} from "./supplier";
-
-// Warehouse validations
-export {
-  createWarehouseBodySchema,
-  updateWarehouseBodySchema,
-  type CreateWarehouseBody,
-  type UpdateWarehouseBody,
-} from "./warehouse";
-
 // Order validations
 export {
   createOrderSchema,
@@ -120,12 +103,3 @@ export {
   type UpdateUserAdminFormData,
   type CreateUserAdminFormData,
 } from "./user-management";
-
-export {
-  createStockAllocationSchema,
-  updateStockAllocationSchema,
-  createStockTransferSchema,
-  type CreateStockAllocationFormData,
-  type UpdateStockAllocationFormData,
-  type CreateStockTransferFormData,
-} from "./stock-allocation";

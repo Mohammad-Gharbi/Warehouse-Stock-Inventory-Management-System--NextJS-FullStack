@@ -9,7 +9,6 @@
  * TODO (Future): After all feature implementation is complete, wrap main API routes:
  * - app/api/products/route.ts (GET, POST, PUT, DELETE)
  * - app/api/categories/route.ts (GET, POST, PUT, DELETE)
- * - app/api/suppliers/route.ts (GET, POST, PUT, DELETE)
  * - app/api/auth/* routes
  * 
  * Usage: export const GET = withPerformanceTracking(async (request) => { ... })

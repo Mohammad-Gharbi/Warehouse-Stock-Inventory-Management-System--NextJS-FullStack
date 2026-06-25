@@ -56,8 +56,6 @@ export interface OrderItem {
   createdAt: Date;
   /** Category ID for link to category detail (from product) */
   categoryId?: string | null;
-  /** Supplier ID for link to supplier detail (from product) */
-  supplierId?: string | null;
 }
 
 /**

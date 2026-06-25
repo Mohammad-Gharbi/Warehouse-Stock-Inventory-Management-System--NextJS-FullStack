@@ -33,8 +33,6 @@ import {
 import {
   useOrders,
   useProducts,
-  useSuppliers,
-  useWarehouses,
 } from "@/hooks/queries";
 import { PageContentWrapper } from "@/components/shared";
 import { format } from "date-fns";
@@ -75,13 +73,9 @@ export default function AdminDashboardOverview({
 
   const ordersQuery = useOrders();
   const productsQuery = useProducts();
-  const suppliersQuery = useSuppliers();
-  const warehousesQuery = useWarehouses();
 
   const orders = ordersQuery.data ?? [];
   const products = productsQuery.data ?? [];
-  const suppliers = suppliersQuery.data ?? [];
-  const warehouses = warehousesQuery.data ?? [];
 
   useEffect(() => {
     if (!isMountedRef.current) {
@@ -92,9 +86,7 @@ export default function AdminDashboardOverview({
 
   const anyPending =
     ordersQuery.isPending ||
-    productsQuery.isPending ||
-    suppliersQuery.isPending ||
-    warehousesQuery.isPending;
+    productsQuery.isPending;
   const showSkeleton = !isMounted || anyPending;
 
   const stats = useMemo(() => {
@@ -113,12 +105,10 @@ export default function AdminDashboardOverview({
       totalRevenue,
       totalProducts,
       totalUsers,
-      totalSuppliers: suppliers.length,
-      totalWarehouses: warehouses.length,
       avgOrderValue,
       ordersByStatus,
     };
-  }, [orders, products, suppliers, warehouses]);
+  }, [orders, products]);
 
   const recentOrders = useMemo(() => {
     const sorted = [...orders].sort(
@@ -241,34 +231,6 @@ export default function AdminDashboardOverview({
             <CardContent>
               <div className="text-2xl font-semibold">{stats.totalUsers}</div>
               <p className="text-xs text-muted-foreground">From orders</p>
-            </CardContent>
-          </Card>
-          <Card className="border border-white/10 dark:border-white/10 bg-card ">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Total Suppliers
-              </CardTitle>
-              <Truck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-semibold">
-                {stats.totalSuppliers}
-              </div>
-              <p className="text-xs text-muted-foreground">Suppliers</p>
-            </CardContent>
-          </Card>
-          <Card className="border border-white/10 dark:border-white/10 bg-card ">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Total Warehouses
-              </CardTitle>
-              <Warehouse className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-semibold">
-                {stats.totalWarehouses}
-              </div>
-              <p className="text-xs text-muted-foreground">Warehouses</p>
             </CardContent>
           </Card>
         </div>

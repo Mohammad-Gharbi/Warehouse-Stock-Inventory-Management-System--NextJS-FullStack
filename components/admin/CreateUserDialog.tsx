@@ -39,11 +39,6 @@ const ROLE_OPTIONS = [
   { value: "user", label: "User", color: "text-gray-600 dark:text-gray-400" },
   { value: "admin", label: "Admin", color: "text-rose-600 dark:text-rose-400" },
   {
-    value: "supplier",
-    label: "Supplier",
-    color: "text-violet-600 dark:text-violet-400",
-  },
-  {
     value: "client",
     label: "Client",
     color: "text-emerald-600 dark:text-emerald-400",

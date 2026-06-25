@@ -82,15 +82,6 @@ export const queryKeys = {
     detail: (id: string) => [...queryKeys.categories.details(), id] as const,
   },
 
-  // Supplier queries
-  suppliers: {
-    all: ["suppliers"] as const,
-    lists: () => [...queryKeys.suppliers.all, "list"] as const,
-    list: (filters?: Record<string, unknown>) =>
-      [...queryKeys.suppliers.lists(), filters] as const,
-    details: () => [...queryKeys.suppliers.all, "detail"] as const,
-    detail: (id: string) => [...queryKeys.suppliers.details(), id] as const,
-  },
 
   // User queries
   user: {
@@ -148,16 +139,6 @@ export const queryKeys = {
     detail: (id: string) => [...queryKeys.invoices.details(), id] as const,
     byOrder: (orderId: string) =>
       [...queryKeys.invoices.all, "order", orderId] as const,
-  },
-
-  // Warehouse queries
-  warehouses: {
-    all: ["warehouses"] as const,
-    lists: () => [...queryKeys.warehouses.all, "list"] as const,
-    list: (filters?: Record<string, unknown>) =>
-      [...queryKeys.warehouses.lists(), filters] as const,
-    details: () => [...queryKeys.warehouses.all, "detail"] as const,
-    detail: (id: string) => [...queryKeys.warehouses.details(), id] as const,
   },
 
   // Import History (Admin History) queries
@@ -226,23 +207,6 @@ export const queryKeys = {
     overview: () => [...queryKeys.clientPortal.all, "overview"] as const,
   },
 
-  // Admin Supplier Portal queries
-  supplierPortal: {
-    all: ["supplierPortal"] as const,
-    overview: () => [...queryKeys.supplierPortal.all, "overview"] as const,
-  },
-
-  // Stock Allocation queries
-  stockAllocation: {
-    all: ["stockAllocation"] as const,
-    lists: () => [...queryKeys.stockAllocation.all, "list"] as const,
-    summary: () => [...queryKeys.stockAllocation.all, "summary"] as const,
-    byProduct: (productId: string) =>
-      [...queryKeys.stockAllocation.all, "product", productId] as const,
-    byWarehouse: (warehouseId: string) =>
-      [...queryKeys.stockAllocation.all, "warehouse", warehouseId] as const,
-  },
-
   // Forecasting queries
   forecasting: {
     all: ["forecasting"] as const,
@@ -252,14 +216,12 @@ export const queryKeys = {
   // Portal queries
   portal: {
     all: ["portal"] as const,
-    supplier: () => [...queryKeys.portal.all, "supplier"] as const,
     client: () => [...queryKeys.portal.all, "client"] as const,
     clientCatalog: () => [...queryKeys.portal.all, "client", "catalog"] as const,
     clientBrowseMeta: () =>
       [...queryKeys.portal.all, "client", "browse-meta"] as const,
     clientBrowseProducts: (params: {
       ownerId: string;
-      supplierId?: string;
       categoryId?: string;
     }) =>
       [
@@ -267,7 +229,6 @@ export const queryKeys = {
         "client",
         "browse-products",
         params.ownerId,
-        params.supplierId ?? "all",
         params.categoryId ?? "all",
       ] as const,
   },

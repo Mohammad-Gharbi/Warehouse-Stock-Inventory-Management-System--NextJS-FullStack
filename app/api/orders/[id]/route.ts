@@ -10,12 +10,10 @@ import {
   getOrderById,
   getOrderByIdForAdmin,
   getOrderByIdForClient,
-  getOrderByIdForSupplier,
   getOrderByIdForProductOwner,
   updateOrder,
   cancelOrder,
 } from "@/prisma/order";
-import { getSupplierByUserId } from "@/prisma/supplier";
 import { prisma } from "@/prisma/client";
 import { updateOrderSchema } from "@/lib/validations";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
@@ -49,7 +47,6 @@ export async function GET(
     const { id } = await params;
     const userId = session.id;
     const isClient = session.role === "client";
-    const isSupplier = session.role === "supplier";
 
     const isAdmin = session.role === "admin";
     let order: Awaited<ReturnType<typeof getOrderById>> | null;
@@ -57,10 +54,6 @@ export async function GET(
       order = await getOrderByIdForAdmin(id);
     } else if (isClient) {
       order = await getOrderByIdForClient(id, userId);
-    } else if (isSupplier) {
-      const supplier = await getSupplierByUserId(userId);
-      order =
-        supplier ? await getOrderByIdForSupplier(id, supplier.id) : null;
     } else {
       order = await getOrderById(id, userId);
       // Allow product owner to view order (admin "Client Orders" detail)

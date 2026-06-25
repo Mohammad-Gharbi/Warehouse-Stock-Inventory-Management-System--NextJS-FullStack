@@ -187,12 +187,8 @@ function entityLink(
       return `${base}/invoices/${entityId}`;
     case "user":
       return `${base}/user-management/${entityId}`;
-    case "supplier":
-      return `${base}/suppliers/${entityId}`;
     case "category":
       return `${base}/categories/${entityId}`;
-    case "warehouse":
-      return `${base}/warehouses/${entityId}`;
     case "ticket":
       return `${base}/support-tickets/${entityId}`;
     case "review":

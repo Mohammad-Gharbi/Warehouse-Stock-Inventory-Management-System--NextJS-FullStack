@@ -8,7 +8,6 @@ import { getCache, setCache, cacheKeys } from "@/lib/cache";
 import {
   getOrdersByUser,
   getOrdersByClientId,
-  getOrdersContainingSupplierProducts,
   getOrdersContainingProductOwnerProducts,
 } from "@/prisma/order";
 import { prisma } from "@/prisma/client";
@@ -125,78 +124,6 @@ export async function getOrdersForUser(
     })),
     placedByName,
   }));
-
-  await setCache(cacheKey, transformed, 300);
-  return transformed;
-}
-
-/**
- * Fetch orders that contain at least one product from the given supplier.
- * Used for role=supplier: "View Orders" shows orders from any client/admin that include this supplier's products.
- */
-export async function getOrdersForSupplierId(
-  supplierId: string,
-): Promise<OrderForPage[]> {
-  const cacheKey = cacheKeys.orders.list({ supplierId });
-  const cached = await getCache<OrderForPage[]>(cacheKey);
-  if (cached) {
-    return cached;
-  }
-
-  const orders = await getOrdersContainingSupplierProducts(supplierId);
-
-  const userIds = [...new Set(orders.map((o) => o.userId))];
-  const users =
-    userIds.length > 0
-      ? await prisma.user.findMany({
-          where: { id: { in: userIds } },
-          select: { id: true, name: true, email: true },
-        })
-      : [];
-  const userMap = new Map(users.map((u) => [u.id, u]));
-
-  const transformed: OrderForPage[] = orders.map((order) => {
-    const u = userMap.get(order.userId);
-    return {
-      id: order.id,
-      orderNumber: order.orderNumber,
-      userId: order.userId,
-      clientId: order.clientId ?? null,
-      status: order.status,
-      paymentStatus: order.paymentStatus,
-      subtotal: order.subtotal,
-      tax: order.tax ?? null,
-      shipping: order.shipping ?? null,
-      discount: order.discount ?? null,
-      total: order.total,
-      shippingAddress: order.shippingAddress,
-      billingAddress: order.billingAddress,
-      notes: order.notes,
-      trackingNumber: order.trackingNumber,
-      trackingUrl: order.trackingUrl,
-      estimatedDelivery: order.estimatedDelivery?.toISOString() || null,
-      shippedAt: order.shippedAt?.toISOString() || null,
-      deliveredAt: order.deliveredAt?.toISOString() || null,
-      cancelledAt: order.cancelledAt?.toISOString() || null,
-      createdAt: order.createdAt.toISOString(),
-      updatedAt: order.updatedAt?.toISOString() ?? null,
-      createdBy: order.createdBy,
-      updatedBy: order.updatedBy,
-      items: order.items.map((item) => ({
-        id: item.id,
-        orderId: item.orderId,
-        productId: item.productId,
-        productName: item.productName,
-        sku: item.sku ?? null,
-        quantity: item.quantity,
-        price: item.price,
-        subtotal: item.subtotal,
-        createdAt: item.createdAt.toISOString(),
-      })),
-      placedByName: u?.name ?? u?.email ?? null,
-      placedByEmail: u?.email ?? null,
-    };
-  });
 
   await setCache(cacheKey, transformed, 300);
   return transformed;

@@ -35,12 +35,6 @@ async function main() {
   const product = await prisma.product.deleteMany({});
   console.log(`   Product: ${product.count}`);
 
-  const stockAllocation = await prisma.stockAllocation.deleteMany({});
-  console.log(`   StockAllocation: ${stockAllocation.count}`);
-
-  const stockTransfer = await prisma.stockTransfer.deleteMany({});
-  console.log(`   StockTransfer: ${stockTransfer.count}`);
-
   const importHistory = await prisma.importHistory.deleteMany({});
   console.log(`   ImportHistory: ${importHistory.count}`);
 
@@ -55,12 +49,6 @@ async function main() {
 
   const category = await prisma.category.deleteMany({});
   console.log(`   Category: ${category.count}`);
-
-  const supplier = await prisma.supplier.deleteMany({});
-  console.log(`   Supplier: ${supplier.count}`);
-
-  const warehouse = await prisma.warehouse.deleteMany({});
-  console.log(`   Warehouse: ${warehouse.count}`);
 
   const session = await prisma.session.deleteMany({});
   console.log(`   Session: ${session.count}`);

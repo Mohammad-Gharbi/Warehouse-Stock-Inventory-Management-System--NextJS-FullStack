@@ -4,11 +4,7 @@
  */
 
 export type ImportHistoryStatus = "processing" | "completed" | "failed";
-export type ImportHistoryType =
-  | "products"
-  | "orders"
-  | "suppliers"
-  | "categories";
+export type ImportHistoryType = "products" | "orders" | "categories";
 
 export type ImportHistoryErrorItem = {
   rowNumber: number;

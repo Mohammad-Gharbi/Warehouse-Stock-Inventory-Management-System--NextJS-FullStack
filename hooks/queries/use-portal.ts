@@ -8,28 +8,11 @@ import { apiClient } from "@/lib/api";
 import { queryKeys } from "@/lib/react-query";
 import { useAuth } from "@/contexts";
 import type {
-  SupplierPortalDashboard,
   ClientPortalDashboard,
   ClientCatalogOverview,
   ClientBrowseMeta,
   ClientBrowseProductsResponse,
 } from "@/types";
-
-/**
- * Get supplier portal dashboard (keyed by userId so supplier sees own data)
- */
-export function useSupplierPortalDashboard() {
-  const { user } = useAuth();
-  const userId = user?.id ?? "";
-  return useQuery({
-    queryKey: [...queryKeys.portal.supplier(), userId],
-    queryFn: async (): Promise<SupplierPortalDashboard> => {
-      const response = await apiClient.portal.getSupplierDashboard();
-      return response.data;
-    },
-    enabled: !!userId && user?.role === "supplier",
-  });
-}
 
 /**
  * Get client portal dashboard (keyed by userId so client sees own data, not cached admin data)
@@ -78,11 +61,10 @@ export function useClientBrowseMeta() {
 }
 
 /**
- * Get client browse products (by owner, optional supplier/category filter)
+ * Get client browse products (by owner, optional category filter)
  */
 export function useClientBrowseProducts(params: {
   ownerId: string;
-  supplierId?: string;
   categoryId?: string;
 }) {
   return useQuery({

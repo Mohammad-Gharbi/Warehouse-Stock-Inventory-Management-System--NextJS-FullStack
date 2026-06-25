@@ -22,7 +22,6 @@ import {
   useClientOrders,
   useDashboard,
   useClientPortalDashboard,
-  useSupplierPortalDashboard,
 } from "@/hooks/queries";
 import OrderFilters from "./OrderFilters";
 import OrderDialog from "./OrderDialog";
@@ -75,19 +74,13 @@ const OrderList = React.memo(
     const dashboardQuery = useDashboard();
     const dashboard =
       dataSource === "adminCombined" ? (dashboardQuery.data ?? null) : null;
-    /** Show store-wide state cards only for admin/user on /orders (not for client/supplier) */
+    /** Show store-wide state cards only for admin/user on /orders (not for client) */
     const isUserOrdersPage =
-      pathname === "/orders" &&
-      user?.role !== "client" &&
-      user?.role !== "supplier";
+      pathname === "/orders" && user?.role !== "client";
     /** Client on /orders: show client-specific order state cards (same data as /client portal) */
     const isClientOrdersPage =
       pathname === "/orders" && user?.role === "client";
-    /** Supplier on /orders: show supplier-specific header and state cards */
-    const isSupplierOrdersPage =
-      pathname === "/orders" && user?.role === "supplier";
     const portalDashboardQuery = useClientPortalDashboard();
-    const supplierPortalQuery = useSupplierPortalDashboard();
     const clientPortalDashboard = isClientOrdersPage
       ? (portalDashboardQuery.data ?? null)
       : null;
@@ -176,10 +169,14 @@ const OrderList = React.memo(
       () =>
         createOrderColumns(handleEditOrder, effectiveDetailBase, {
           showSourceBadge: dataSource === "adminCombined",
-          showPlacedBy: isSupplierOrdersPage,
           showProductOwner: isClientOrdersPage,
         }),
-      [handleEditOrder, effectiveDetailBase, dataSource, isSupplierOrdersPage, isClientOrdersPage],
+      [
+        handleEditOrder,
+        effectiveDetailBase,
+        dataSource,
+        isClientOrdersPage,
+      ],
     );
 
     // Determine loading state - FIXES HYDRATION & FLICKER (same approach as StatisticsSection)
@@ -204,11 +201,6 @@ const OrderList = React.memo(
     const clientOrdersCardsLoading =
       isClientOrdersPage &&
       (!isMounted || isCheckingAuth || portalDashboardQuery.isPending);
-    /** Supplier /orders cards: skeleton until mounted, auth ready, and supplier portal loaded */
-    const supplierOrdersCardsLoading =
-      isSupplierOrdersPage &&
-      (!isMounted || isCheckingAuth || supplierPortalQuery.isPending);
-
     const isClientOrders = dataSource === "clientOrders";
     const isAdminCombined = dataSource === "adminCombined";
 
@@ -225,21 +217,8 @@ const OrderList = React.memo(
                 ? "Client Orders"
                 : isClientOrdersPage
                   ? "Your Orders"
-                  : isSupplierOrdersPage
-                    ? "Orders (Your Products)"
-                    : "Order Management"}
+                  : "Order Management"}
           </h2>
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-            {isAdminCombined
-              ? "Orders placed by you and by clients. Filter by order type, status, and payment."
-              : isClientOrders
-                ? "Orders placed by clients that include your products. View details, update status, and manage shipping."
-                : isClientOrdersPage
-                  ? "View and track all your orders here. Check status, payment, and shipping—open an order for full details."
-                  : isSupplierOrdersPage
-                    ? "Orders that contain your products. Track status, payments, and invoices created by the product owner."
-                    : "Manage client orders, track order status, monitor payments, and handle shipping. View order history, update statuses, and process cancellations."}
-          </p>
         </div>
 
         {/* Store-wide state cards — only on /orders page (user), same as homepage */}
@@ -607,181 +586,6 @@ const OrderList = React.memo(
                   ]}
                 />
               </>
-            ) : null}
-          </div>
-        )}
-
-        {/* Supplier /orders state cards — 4 cards, supplier portal data */}
-        {isSupplierOrdersPage && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch pb-6">
-            {supplierOrdersCardsLoading ? (
-              <>
-                {[1, 2, 3, 4].map((i) => (
-                  <StatisticsCardSkeleton key={i} />
-                ))}
-              </>
-            ) : supplierPortalQuery.data ? (
-              (() => {
-                const d = supplierPortalQuery.data;
-                const nonCancelledOrders = Math.max(
-                  0,
-                  d.totalOrders - (d.orderStatusCounts?.cancelled ?? 0),
-                );
-                const avgOrder =
-                  nonCancelledOrders > 0
-                    ? d.totalRevenue / nonCancelledOrders
-                    : 0;
-                return (
-                  <>
-                    <StatisticsCard
-                      title="Total Products"
-                      value={d.totalProducts}
-                      description="Products in your catalog"
-                      icon={Package}
-                      variant="rose"
-                      badges={[
-                        {
-                          label: "Available",
-                          value: d.productStatusCounts?.available ?? 0,
-                        },
-                        {
-                          label: "Stock low",
-                          value: d.productStatusCounts?.stockLow ?? 0,
-                        },
-                        {
-                          label: "Stock out",
-                          value: d.productStatusCounts?.stockOut ?? 0,
-                        },
-                        {
-                          label: "Product value",
-                          value: formatCurrency(d.productValue ?? 0),
-                        },
-                        {
-                          label: "Orders",
-                          value: formatCurrency(d.valueBreakdown?.orders ?? 0),
-                        },
-                        {
-                          label: "Invoices",
-                          value: formatCurrency(
-                            d.valueBreakdown?.invoices ?? 0,
-                          ),
-                        },
-                        {
-                          label: "Due",
-                          value: formatCurrency(d.valueBreakdown?.due ?? 0),
-                        },
-                        {
-                          label: "Cancelled",
-                          value: formatCurrency(
-                            d.valueBreakdown?.cancelled ?? 0,
-                          ),
-                        },
-                        {
-                          label: "Refunded",
-                          value: formatCurrency(
-                            d.valueBreakdown?.refunded ?? 0,
-                          ),
-                        },
-                      ]}
-                    />
-                    <StatisticsCard
-                      title="Total Orders"
-                      value={d.totalOrders}
-                      description="Orders containing your products"
-                      icon={ShoppingCart}
-                      variant="emerald"
-                      badges={[
-                        {
-                          label: "Pending",
-                          value: d.orderStatusCounts?.pending ?? 0,
-                        },
-                        {
-                          label: "In progress",
-                          value: d.orderStatusCounts?.inProgress ?? 0,
-                        },
-                        {
-                          label: "Shipped",
-                          value: d.orderStatusCounts?.shipped ?? 0,
-                        },
-                        {
-                          label: "Delivered",
-                          value: d.orderStatusCounts?.delivered ?? 0,
-                        },
-                        {
-                          label: "Refunded",
-                          value: d.orderStatusCounts?.refunded ?? 0,
-                        },
-                        {
-                          label: "Cancelled",
-                          value: d.orderStatusCounts?.cancelled ?? 0,
-                        },
-                      ]}
-                    />
-                    <StatisticsCard
-                      title="Total Revenue"
-                      value={formatCurrency(d.totalRevenue ?? 0)}
-                      description="Revenue from your products (excl. cancelled)"
-                      icon={DollarSign}
-                      variant="amber"
-                      badges={[
-                        {
-                          label: "Paid",
-                          value: formatCurrency(d.revenueBreakdown?.paid ?? 0),
-                        },
-                        {
-                          label: "Due",
-                          value: formatCurrency(d.revenueBreakdown?.due ?? 0),
-                        },
-                        {
-                          label: "Refund",
-                          value: formatCurrency(
-                            d.revenueBreakdown?.refund ?? 0,
-                          ),
-                        },
-                        {
-                          label: "Pending",
-                          value: formatCurrency(
-                            d.revenueBreakdown?.pending ?? 0,
-                          ),
-                        },
-                        {
-                          label: "Avg/Order",
-                          value: formatCurrency(avgOrder),
-                        },
-                      ]}
-                    />
-                    <StatisticsCard
-                      title="Total Invoices"
-                      value={d.totalInvoices ?? 0}
-                      description="Invoices created by product owner"
-                      icon={FileText}
-                      variant="sky"
-                      badges={[
-                        {
-                          label: "Paid",
-                          value: d.invoiceBreakdown?.paid ?? 0,
-                        },
-                        {
-                          label: "Pending",
-                          value: d.invoiceBreakdown?.pending ?? 0,
-                        },
-                        {
-                          label: "Overdue",
-                          value: d.invoiceBreakdown?.overdue ?? 0,
-                        },
-                        {
-                          label: "Cancelled",
-                          value: d.invoiceBreakdown?.cancelled ?? 0,
-                        },
-                        {
-                          label: "Refunded",
-                          value: d.invoiceBreakdown?.refunded ?? 0,
-                        },
-                      ]}
-                    />
-                  </>
-                );
-              })()
             ) : null}
           </div>
         )}

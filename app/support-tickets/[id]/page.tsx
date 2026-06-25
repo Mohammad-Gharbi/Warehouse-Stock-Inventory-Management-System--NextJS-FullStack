@@ -58,7 +58,6 @@ export default async function SupportTicketDetailRoute({ params }: Props) {
     assignedToId: record.assignedToId,
     productId: record.productId,
     orderId: record.orderId,
-    supplierId: record.supplierId,
     notes: record.notes,
     createdAt: record.createdAt.toISOString(),
     updatedAt: record.updatedAt?.toISOString() ?? null,

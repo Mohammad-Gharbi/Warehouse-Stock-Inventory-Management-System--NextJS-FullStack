@@ -7,7 +7,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionFromRequest } from "@/utils/auth";
 import { logger } from "@/lib/logger";
 import { getProductById } from "@/prisma/product";
-import { getSupplierByUserId } from "@/prisma/supplier";
 import { getCache, setCache, invalidateCache, cacheKeys } from "@/lib/cache";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
 import { prisma } from "@/prisma/client";
@@ -39,7 +38,6 @@ export async function GET(
     const { id } = await params;
     const userId = session.id;
     const isAdmin = session.role === "admin";
-    const isSupplier = session.role === "supplier";
     const isClient = session.role === "client";
 
     // Check cache first
@@ -55,7 +53,7 @@ export async function GET(
       `❌ Cache miss for product: ${cacheKey} - fetching from database`,
     );
 
-    // Fetch product (admin: any by id; supplier: by supplierId; client: any by id; else: own by userId)
+    // Fetch product (admin: any by id; client: any by id; else: own by userId)
     let product: Awaited<ReturnType<typeof getProductById>> | null;
     const productInclude = {
       orderItems: {
@@ -79,15 +77,6 @@ export async function GET(
         where: mergeProductListWhere({ id }),
         include: productInclude,
       });
-    } else if (isSupplier) {
-      const supplier = await getSupplierByUserId(userId);
-      if (!supplier) {
-        return NextResponse.json({ error: "Product not found" }, { status: 404 });
-      }
-      product = await prisma.product.findFirst({
-        where: mergeProductListWhere({ id, supplierId: supplier.id }),
-        include: productInclude,
-      });
     } else if (isClient) {
       product = await prisma.product.findFirst({
         where: mergeProductListWhere({ id }),
@@ -101,17 +90,11 @@ export async function GET(
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    // Fetch category and supplier details
-    const [category, supplier] = await Promise.all([
-      prisma.category.findUnique({
-        where: { id: product.categoryId },
-        select: { id: true, name: true, description: true, status: true },
-      }),
-      prisma.supplier.findUnique({
-        where: { id: product.supplierId },
-        select: { id: true, name: true, description: true, status: true },
-      }),
-    ]);
+    // Fetch category details
+    const category = await prisma.category.findUnique({
+      where: { id: product.categoryId },
+      select: { id: true, name: true, description: true, status: true },
+    });
 
     // Fetch creator and updater user details (for email)
     const [creatorUser, updaterUser] = await Promise.all([
@@ -157,21 +140,12 @@ export async function GET(
       reservedQuantity: Number(product.reservedQuantity ?? 0),
       status: product.status,
       categoryId: product.categoryId,
-      supplierId: product.supplierId,
       category: category
         ? {
             id: category.id,
             name: category.name,
             description: category.description,
             status: category.status,
-          }
-        : null,
-      supplier: supplier
-        ? {
-            id: supplier.id,
-            name: supplier.name,
-            description: supplier.description,
-            status: supplier.status,
           }
         : null,
       userId: product.userId,

@@ -80,8 +80,8 @@ export default function AdminAnalyticsContent({
     const r = stats.revenue ?? {};
     const totalRev = (r.fromOrders ?? 0) + (r.fromInvoices ?? 0);
     const parts = [
-      `Products: ${c.products ?? 0}. Users: ${c.users ?? 0}. Suppliers: ${c.suppliers ?? 0}. Categories: ${c.categories ?? 0}.`,
-      `Orders: ${c.orders ?? 0}. Invoices: ${c.invoices ?? 0}. Warehouses: ${c.warehouses ?? 0}.`,
+      `Products: ${c.products ?? 0}. Users: ${c.users ?? 0}. Categories: ${c.categories ?? 0}.`,
+      `Orders: ${c.orders ?? 0}. Invoices: ${c.invoices ?? 0}.`,
       `Support tickets: ${c.tickets ?? 0}. Product reviews: ${c.reviews ?? 0}.`,
       `Total revenue (orders + invoices): $${totalRev.toLocaleString()}.`,
     ];
@@ -155,13 +155,12 @@ export default function AdminAnalyticsContent({
       <div className="space-y-6">
         <div className="flex flex-col items-start text-left pb-2">
           <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white pb-1">
-            Store Analytics &amp; Dashboard (self + client + supplier + other
-            users)
+            Store Analytics &amp; Dashboard (self + client + other users)
           </h1>
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             Overview, statistics, trends, and AI-powered insights across
-            products, users, suppliers, categories, orders, invoices,
-            warehouses, tickets, and reviews. Store-wide metrics.
+            products, users, categories, orders, invoices, tickets, and
+            reviews. Store-wide metrics.
           </p>
         </div>
 
@@ -311,44 +310,6 @@ export default function AdminAnalyticsContent({
                   {
                     label: "Client",
                     value: stats.userRoleBreakdown?.client ?? 0,
-                  },
-                  {
-                    label: "Supplier",
-                    value: stats.userRoleBreakdown?.supplier ?? 0,
-                  },
-                ]}
-              />
-              <StatisticsCard
-                title="Total Suppliers"
-                value={stats.counts?.suppliers}
-                description="Suppliers"
-                icon={Truck}
-                variant="emerald"
-                badges={[
-                  {
-                    label: "Active",
-                    value: stats.supplierStatusBreakdown?.active ?? 0,
-                  },
-                  {
-                    label: "Inactive",
-                    value: stats.supplierStatusBreakdown?.inactive ?? 0,
-                  },
-                ]}
-              />
-              <StatisticsCard
-                title="Total Warehouses"
-                value={stats.counts?.warehouses}
-                description="Storage locations"
-                icon={Warehouse}
-                variant="teal"
-                badges={[
-                  {
-                    label: "Active",
-                    value: stats.warehouseAnalytics?.activeWarehouses ?? 0,
-                  },
-                  {
-                    label: "Inactive",
-                    value: stats.warehouseAnalytics?.inactiveWarehouses ?? 0,
                   },
                 ]}
               />
@@ -1052,130 +1013,6 @@ export default function AdminAnalyticsContent({
             </ChartCard>
           </div>
         )}
-
-        {/* Warehouse Analytics section */}
-        {stats &&
-          stats.warehouseAnalytics &&
-          (() => {
-            const typeMap = new Map(
-              (stats.warehouseAnalytics.typeDistribution ?? []).map((t) => [
-                (t.type ?? "").toLowerCase().trim(),
-                t.count,
-              ]),
-            );
-            const knownTypes = ["main", "secondary", "storage", "hub", "store"];
-            const othersCount = [...typeMap.entries()].reduce(
-              (sum, [k, v]) => (knownTypes.includes(k) ? sum : sum + v),
-              0,
-            );
-            const warehouseTypeBadges = [
-              { key: "main", label: "Main" },
-              { key: "secondary", label: "Secondary" },
-              { key: "storage", label: "Storage" },
-              { key: "hub", label: "Hub" },
-              { key: "store", label: "Store" },
-              { key: "others", label: "Others" },
-            ].map(({ key, label }) => ({
-              label,
-              value: key === "others" ? othersCount : (typeMap.get(key) ?? 0),
-            }));
-            return (
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                  <Warehouse className="h-5 w-5 text-amber-500" />
-                  Warehouse Analytics
-                </h2>
-
-                {/* Summary cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <StatisticsCard
-                    title="Total Warehouses"
-                    value={stats.warehouseAnalytics.totalWarehouses}
-                    description="All locations"
-                    icon={Warehouse}
-                    variant="teal"
-                    badges={[
-                      {
-                        label: "Active",
-                        value: stats.warehouseAnalytics.activeWarehouses,
-                      },
-                      {
-                        label: "Inactive",
-                        value: stats.warehouseAnalytics.inactiveWarehouses,
-                      },
-                    ]}
-                  />
-                  <StatisticsCard
-                    title="Active Warehouses"
-                    value={stats.warehouseAnalytics.activeWarehouses}
-                    description="Operational"
-                    icon={Warehouse}
-                    variant="emerald"
-                    badges={warehouseTypeBadges}
-                  />
-                  <StatisticsCard
-                    title="Inactive Warehouses"
-                    value={stats.warehouseAnalytics.inactiveWarehouses}
-                    description="Not in use"
-                    icon={Warehouse}
-                    variant="rose"
-                    badges={warehouseTypeBadges}
-                  />
-                </div>
-
-                {/* Warehouse Type Distribution */}
-                {stats.warehouseAnalytics.typeDistribution.length > 0 && (
-                  <ChartCard
-                    variant="teal"
-                    title="Warehouses by Type"
-                    icon={Warehouse}
-                    description="Store-wide"
-                  >
-                    <ResponsiveChartContainer>
-                      <BarChart
-                        data={stats.warehouseAnalytics.typeDistribution.map(
-                          (t, i) => ({
-                            type: t.type,
-                            count: t.count,
-                            fill: `hsl(${(i * 60 + 35) % 360}, 70%, 50%)`,
-                          }),
-                        )}
-                        layout="vertical"
-                        margin={{ top: 8, right: 8, left: 90, bottom: 8 }}
-                      >
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          className="stroke-muted"
-                          horizontal={false}
-                        />
-                        <XAxis
-                          type="number"
-                          tick={{ fontSize: 12 }}
-                          className="text-muted-foreground"
-                        />
-                        <YAxis
-                          type="category"
-                          dataKey="type"
-                          tick={{ fontSize: 12 }}
-                          className="text-muted-foreground"
-                          width={85}
-                        />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: "hsl(var(--card))",
-                            border: "1px solid hsl(var(--border))",
-                            borderRadius: "8px",
-                          }}
-                          formatter={(value) => [value, "Warehouses"]}
-                        />
-                        <Bar dataKey="count" radius={[0, 4, 4, 0]} />
-                      </BarChart>
-                    </ResponsiveChartContainer>
-                  </ChartCard>
-                )}
-              </div>
-            );
-          })()}
 
         {/* Log summary: recent activity — 4 cards: 2 per row */}
         {stats && (

@@ -43,7 +43,6 @@ interface DataTableProps<TData, TValue> {
   ) => void;
   selectedCategory: string[];
   selectedStatuses: string[];
-  selectedSuppliers: string[];
 }
 
 // Function to return color based on status
@@ -84,7 +83,6 @@ export const ProductTable = React.memo(function ProductTable({
   setPagination,
   selectedCategory,
   selectedStatuses,
-  selectedSuppliers,
 }: DataTableProps<Product, unknown>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -100,19 +98,15 @@ export const ProductTable = React.memo(function ProductTable({
         selectedCategory.length === 0 ||
         selectedCategory.includes(product.categoryId ?? "");
 
-      const supplierMatch =
-        selectedSuppliers.length === 0 ||
-        selectedSuppliers.includes(product.supplierId ?? "");
-
       const statusMatch =
         selectedStatuses.length === 0 ||
         selectedStatuses.includes(product.status ?? "");
 
-      return searchMatch && categoryMatch && supplierMatch && statusMatch;
+      return searchMatch && categoryMatch && statusMatch;
     });
 
     return filtered;
-  }, [data, searchTerm, selectedCategory, selectedSuppliers, selectedStatuses]);
+  }, [data, searchTerm, selectedCategory, selectedStatuses]);
 
   useClampPaginationIndex(filteredData.length, pagination, setPagination);
 

@@ -17,7 +17,6 @@ import type { ImportHistoryForPage } from "@/types";
 const IMPORT_TYPE_OPTIONS = [
   { id: "products", name: "Products" },
   { id: "orders", name: "Orders" },
-  { id: "suppliers", name: "Suppliers" },
   { id: "categories", name: "Categories" },
 ];
 

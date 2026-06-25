@@ -191,7 +191,6 @@ model Product {
   reservedQuantity BigInt      @default(0)
   sku              String      @unique
   status           String
-  supplierId       String      @db.Uuid
   userId           String      @db.Uuid
   createdBy        String      @db.Uuid
   updatedBy        String?     @db.Uuid
@@ -207,7 +206,6 @@ model Product {
   @@index([deletedAt])
   @@index([userId, deletedAt, createdAt])
   @@index([categoryId])
-  @@index([supplierId])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -246,57 +244,6 @@ model StockAlert {
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model StockAllocation {
-  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  productId        String    @db.Uuid
-  warehouseId      String    @db.Uuid
-  quantity         BigInt    @default(0)
-  reservedQuantity BigInt    @default(0)
-  userId           String    @db.Uuid
-  createdAt        DateTime  @default(now()) @db.Timestamptz(6)
-  updatedAt        DateTime? @db.Timestamptz(6)
-
-  @@unique([productId, warehouseId])
-  @@index([productId])
-  @@index([warehouseId])
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model StockTransfer {
-  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  productId       String    @db.Uuid
-  fromWarehouseId String    @db.Uuid
-  toWarehouseId   String    @db.Uuid
-  quantity        BigInt
-  status          String    @default("pending")
-  notes           String?
-  userId          String    @db.Uuid
-  createdAt       DateTime  @default(now()) @db.Timestamptz(6)
-  completedAt     DateTime? @db.Timestamptz(6)
-
-  @@index([fromWarehouseId])
-  @@index([productId])
-  @@index([status])
-  @@index([toWarehouseId])
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model Supplier {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name        String
-  userId      String    @db.Uuid
-  status      Boolean   @default(true)
-  description String?
-  notes       String?
-  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
-  updatedAt   DateTime? @db.Timestamptz(6)
-  createdBy   String    @db.Uuid
-  updatedBy   String?   @db.Uuid
-
-  @@index([userId])
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model SupportTicket {
   id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   subject            String
@@ -307,7 +254,6 @@ model SupportTicket {
   assignedToId       String?              @db.Uuid
   productId          String?              @db.Uuid
   orderId            String?              @db.Uuid
-  supplierId         String?              @db.Uuid
   notes              String?
   createdAt          DateTime             @default(now()) @db.Timestamptz(6)
   updatedAt          DateTime?            @db.Timestamptz(6)
@@ -376,26 +322,9 @@ model VerificationToken {
   token String? @unique
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model Warehouse {
-  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name      String
-  address   String?
-  type      String?
-  status    Boolean   @default(true)
-  userId    String    @db.Uuid
-  createdAt DateTime  @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime? @db.Timestamptz(6)
-  createdBy String    @db.Uuid
-  updatedBy String?   @db.Uuid
-
-  @@index([userId])
-}
-
 enum user_role {
   user
   admin
-  supplier
   client
   retailer
 }

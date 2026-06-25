@@ -222,7 +222,6 @@ export async function getOrderById(orderId: string, userId: string) {
               price: true,
               userId: true,
               categoryId: true,
-              supplierId: true,
             },
           },
         },
@@ -247,46 +246,6 @@ export async function getOrdersByClientId(clientId: string) {
               sku: true,
               price: true,
               userId: true,
-            },
-          },
-        },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-}
-
-/**
- * Get orders that contain at least one product from the given supplier.
- * Used for role=supplier: "View Orders" = orders that include their products (from any client/admin).
- */
-export async function getOrdersContainingSupplierProducts(supplierId: string) {
-  const orderIds = await prisma.orderItem.findMany({
-    where: {
-      product: {
-        supplierId,
-      },
-    },
-    select: { orderId: true },
-    distinct: ["orderId"],
-  });
-  const ids = orderIds.map((o) => o.orderId);
-  if (ids.length === 0) {
-    return [];
-  }
-  return prisma.order.findMany({
-    where: { id: { in: ids } },
-    include: {
-      items: {
-        include: {
-          product: {
-            select: {
-              id: true,
-              name: true,
-              sku: true,
-              price: true,
-              userId: true,
-              supplierId: true,
             },
           },
         },
@@ -354,7 +313,6 @@ export async function getOrderByIdForAdmin(orderId: string) {
               price: true,
               userId: true,
               categoryId: true,
-              supplierId: true,
             },
           },
         },
@@ -383,7 +341,6 @@ export async function getOrderByIdForProductOwner(
               price: true,
               userId: true,
               categoryId: true,
-              supplierId: true,
             },
           },
         },
@@ -416,46 +373,12 @@ export async function getOrderByIdForClient(orderId: string, clientId: string) {
               sku: true,
               price: true,
               categoryId: true,
-              supplierId: true,
             },
           },
         },
       },
     },
   });
-}
-
-/**
- * Get order by ID for supplier (only if order contains at least one product from this supplier).
- */
-export async function getOrderByIdForSupplier(
-  orderId: string,
-  supplierId: string,
-) {
-  const order = await prisma.order.findFirst({
-    where: { id: orderId },
-    include: {
-      items: {
-        include: {
-          product: {
-            select: {
-              id: true,
-              name: true,
-              sku: true,
-              price: true,
-              userId: true,
-              supplierId: true,
-            },
-          },
-        },
-      },
-    },
-  });
-  if (!order) return null;
-  const hasSupplierProduct = order.items.some(
-    (item) => item.product.supplierId === supplierId,
-  );
-  return hasSupplierProduct ? order : null;
 }
 
 /**

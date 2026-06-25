@@ -24,9 +24,7 @@ export interface Product {
   createdBy: string; // User ID who created the product
   updatedBy?: string | null; // User ID who last updated the product
   categoryId: string;
-  supplierId: string;
   category?: string | { id: string; name: string } | null;
-  supplier?: string | { id: string; name: string } | null;
   qrCodeUrl?: string; // ImageKit URL for QR code image
   qrCodeFileId?: string; // ImageKit file ID for cleanup when regenerating
   imageUrl?: string; // ImageKit URL for product image
@@ -35,8 +33,6 @@ export interface Product {
   /** Set when product is archived (soft-deleted) due to order history */
   deletedAt?: Date | null;
   deletedBy?: string | null;
-  /** Product owner display name (populated when fetching by supplier) */
-  productOwnerName?: string | null;
   /** Extended by API for detail page */
   creator?: { name: string; email: string } | null;
   updater?: { name: string; email: string } | null;
@@ -73,7 +69,6 @@ export interface CreateProductInput {
   quantity: number;
   status: ProductStatus;
   categoryId: string;
-  supplierId: string;
   userId: string;
   imageUrl?: string;
   imageFileId?: string;
@@ -91,7 +86,6 @@ export interface UpdateProductInput {
   quantity?: number;
   status?: ProductStatus;
   categoryId?: string;
-  supplierId?: string;
   imageUrl?: string;
   imageFileId?: string;
   expirationDate?: string | null; // ISO date string or null to clear

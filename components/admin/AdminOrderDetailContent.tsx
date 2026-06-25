@@ -564,14 +564,6 @@ export default function AdminOrderDetailContent({
                           Category
                         </Link>
                       )}
-                      {item.supplierId && (
-                        <Link
-                          href={`/admin/suppliers/${item.supplierId}`}
-                          className="text-xs text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300"
-                        >
-                          Supplier
-                        </Link>
-                      )}
                     </div>
                     {item.sku && (
                       <p className="text-sm text-gray-600 dark:text-gray-400">

@@ -1,5 +1,5 @@
 /**
- * Portal Types for Supplier and Client portals
+ * Portal Types for the Client portal
  */
 
 /**
@@ -12,90 +12,11 @@ export interface PortalOrderStatusCounts {
   inProgress: number;
   shipped: number;
   delivered: number;
-  /** Paid/partial orders (not cancelled); in supplier "Pending Orders" card = completed */
+  /** Paid/partial orders (not cancelled) */
   completed: number;
   cancelled: number;
   /** Orders with paymentStatus === 'refunded' */
   refunded?: number;
-}
-
-/** Product status counts for supplier (available, stock low ≤20, stock out) */
-export interface SupplierProductStatusCounts {
-  available: number;
-  stockLow: number;
-  stockOut: number;
-}
-
-/** Revenue by payment status (supplier's share) */
-export interface SupplierRevenueBreakdown {
-  paid: number;
-  due: number;
-  refund: number;
-  pending: number;
-}
-
-/** Value breakdown for supplier Product Value card (orders/invoices/due/cancelled/refunded) */
-export interface SupplierValueBreakdown {
-  orders: number;
-  invoices: number;
-  due: number;
-  cancelled: number;
-  refunded: number;
-}
-
-/** Invoice counts for orders that contain supplier's products (created by product owner) */
-export interface SupplierInvoiceBreakdown {
-  paid: number;
-  pending: number;
-  overdue: number;
-  cancelled: number;
-  refunded: number;
-}
-
-/**
- * Supplier Portal Dashboard Stats
- */
-export interface SupplierPortalDashboard {
-  supplierId: string;
-  supplierName: string;
-  totalProducts: number;
-  /** Product status counts (threshold 20 for stock low, same as product owner) */
-  productStatusCounts: SupplierProductStatusCounts;
-  /** Sum of price × quantity for this supplier's products only */
-  productValue: number;
-  /** Value breakdown for Product Value card (supplier's share) */
-  valueBreakdown: SupplierValueBreakdown;
-  totalOrders: number;
-  pendingOrders: number;
-  orderStatusCounts: PortalOrderStatusCounts;
-  totalRevenue: number;
-  paidRevenue: number;
-  unpaidRevenue: number;
-  /** Revenue by payment status (supplier share); excl. cancelled orders */
-  revenueBreakdown: SupplierRevenueBreakdown;
-  /** Invoices for orders containing supplier's products (created by product owner) */
-  totalInvoices: number;
-  invoiceBreakdown: SupplierInvoiceBreakdown;
-  recentOrders: Array<{
-    id: string;
-    orderNumber: string;
-    status: string;
-    total: number;
-    createdAt: string;
-    productCount: number;
-  }>;
-  lowStockProducts: Array<{
-    id: string;
-    name: string;
-    sku: string;
-    quantity: number;
-    status: string;
-  }>;
-  monthlyRevenue: Array<{
-    month: string;
-    revenue: number;
-    orders: number;
-  }>;
 }
 
 /**
@@ -171,15 +92,9 @@ export interface ClientPortalDashboard {
 }
 
 /**
- * Client catalog overview (read-only: suppliers, categories, products)
+ * Client catalog overview (read-only: categories, products)
  */
 export interface ClientCatalogOverview {
-  suppliers: Array<{
-    id: string;
-    name: string;
-    status: string;
-    productCount: number;
-  }>;
   categories: Array<{
     id: string;
     name: string;
@@ -194,8 +109,6 @@ export interface ClientCatalogOverview {
     sku: string;
     categoryId: string;
     categoryName: string;
-    supplierId: string;
-    supplierName: string;
     price: number;
     status: string;
     productOwnerId: string;
@@ -211,9 +124,7 @@ export interface ClientBrowseMeta {
   stats: {
     admins: number;
     clients: number;
-    suppliers: { total: number; active: number; inactive: number };
     categories: { total: number; active: number; inactive: number };
-    warehouses: { total: number; active: number; inactive: number };
   };
 }
 
@@ -230,9 +141,7 @@ export interface ClientBrowseProductsResponse {
     reservedQuantity: number;
     status: string;
     categoryId: string;
-    supplierId: string;
     category: string;
-    supplier: string;
     userId: string;
     createdBy: string;
     updatedBy: string | null;
@@ -244,7 +153,6 @@ export interface ClientBrowseProductsResponse {
     expirationDate: string | null;
   }>;
   categories: Array<{ id: string; name: string }>;
-  suppliers: Array<{ id: string; name: string }>;
   /** Product owner info (when client browses by ownerId); used for empty-state messaging */
   owner?: { id: string; name: string; email: string };
 }
@@ -256,6 +164,6 @@ export interface PortalUser {
   id: string;
   name: string;
   email: string;
-  role: "supplier" | "client";
-  linkedEntityId?: string; // Supplier ID or Client (User) ID
+  role: "client";
+  linkedEntityId?: string; // Client (User) ID
 }

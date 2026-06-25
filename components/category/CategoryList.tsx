@@ -114,11 +114,6 @@ const CategoryList = React.memo(() => {
         <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white pb-2">
           Category Management
         </h2>
-        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-          Organize your inventory with a comprehensive category system. Create,
-          manage, and maintain product categories to streamline your inventory
-          organization and improve product discoverability.
-        </p>
       </div>
 
       {/* Store-wide state cards — only on /categories page (user), same as homepage/products */}
@@ -194,26 +189,6 @@ const CategoryList = React.memo(() => {
                       categoriesPageStats.orderAnalytics
                         ?.cancelledOrderAmount ?? 0,
                     ),
-                  },
-                ]}
-              />
-              <StatisticsCard
-                title="Total Suppliers"
-                value={categoriesPageStats.counts.suppliers}
-                description="Suppliers"
-                icon={Truck}
-                variant="emerald"
-                badges={[
-                  {
-                    label: "Active",
-                    value:
-                      categoriesPageStats.supplierStatusBreakdown?.active ?? 0,
-                  },
-                  {
-                    label: "Inactive",
-                    value:
-                      categoriesPageStats.supplierStatusBreakdown?.inactive ??
-                      0,
                   },
                 ]}
               />

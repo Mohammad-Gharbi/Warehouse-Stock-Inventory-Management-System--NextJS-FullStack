@@ -20,13 +20,10 @@ import {
 import type {
   Product,
   Category,
-  Supplier,
   CreateProductInput,
   UpdateProductInput,
   CreateCategoryInput,
   UpdateCategoryInput,
-  CreateSupplierInput,
-  UpdateSupplierInput,
   LoginInput,
   RegisterInput,
   LoginResponse,
@@ -42,9 +39,6 @@ import type {
   CreateInvoiceInput,
   UpdateInvoiceInput,
   InvoiceFilters,
-  Warehouse,
-  CreateWarehouseInput,
-  UpdateWarehouseInput,
   ImportHistoryForPage,
   SupportTicket,
   SupportTicketReply,
@@ -60,12 +54,7 @@ import type {
   UpdateUserAdminInput,
   CreateUserAdminInput,
   ClientPortalStats,
-  SupplierPortalStats,
-  StockAllocation,
-  CreateStockAllocationInput,
-  WarehouseStockSummary,
   ForecastingSummary,
-  SupplierPortalDashboard,
   ClientPortalDashboard,
   ClientCatalogOverview,
   ClientBrowseMeta,
@@ -377,155 +366,6 @@ class ApiClient {
     delete: async (id: string): Promise<ApiResponse<void>> => {
       const response = await this.client.delete<void>(
         `${API_ENDPOINTS.categories.base}?id=${id}`,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-  };
-
-  /**
-   * Suppliers API methods
-   */
-  suppliers = {
-    /**
-     * Get all suppliers
-     */
-    getAll: async (): Promise<ApiResponse<Supplier[]>> => {
-      const response = await this.client.get<Supplier[]>(
-        API_ENDPOINTS.suppliers.base,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-
-    /**
-     * Get supplier by ID
-     */
-    getById: async (id: string): Promise<ApiResponse<Supplier>> => {
-      const response = await this.client.get<Supplier>(
-        `${API_ENDPOINTS.suppliers.base}/${id}`,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-
-    /**
-     * Create new supplier
-     */
-    create: async (
-      data: CreateSupplierInput,
-    ): Promise<ApiResponse<Supplier>> => {
-      const response = await this.client.post<Supplier>(
-        API_ENDPOINTS.suppliers.base,
-        data,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-
-    /**
-     * Update existing supplier
-     * Note: API expects { id, name } in body
-     */
-    update: async (
-      data: UpdateSupplierInput,
-    ): Promise<ApiResponse<Supplier>> => {
-      const response = await this.client.put<Supplier>(
-        API_ENDPOINTS.suppliers.base,
-        data,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-
-    /**
-     * Delete supplier
-     * Note: App Router API uses query parameter ?id=...
-     */
-    delete: async (id: string): Promise<ApiResponse<void>> => {
-      const response = await this.client.delete<void>(
-        `${API_ENDPOINTS.suppliers.base}?id=${id}`,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-  };
-
-  /**
-   * Warehouses API methods
-   */
-  warehouses = {
-    getAll: async (): Promise<ApiResponse<Warehouse[]>> => {
-      const response = await this.client.get<Warehouse[]>(
-        API_ENDPOINTS.warehouses.base,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-
-    getById: async (id: string): Promise<ApiResponse<Warehouse>> => {
-      const response = await this.client.get<Warehouse>(
-        `${API_ENDPOINTS.warehouses.base}/${id}`,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-
-    create: async (
-      data: CreateWarehouseInput,
-    ): Promise<ApiResponse<Warehouse>> => {
-      const response = await this.client.post<Warehouse>(
-        API_ENDPOINTS.warehouses.base,
-        data,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-
-    update: async (
-      data: UpdateWarehouseInput,
-    ): Promise<ApiResponse<Warehouse>> => {
-      const response = await this.client.put<Warehouse>(
-        API_ENDPOINTS.warehouses.base,
-        data,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-
-    delete: async (id: string): Promise<ApiResponse<void>> => {
-      const response = await this.client.delete<void>(
-        `${API_ENDPOINTS.warehouses.base}?id=${id}`,
       );
       return {
         data: response.data,
@@ -865,76 +705,6 @@ class ApiClient {
   };
 
   /**
-   * Admin Supplier Portal API methods
-   */
-  supplierPortal = {
-    getOverview: async (): Promise<ApiResponse<SupplierPortalStats>> => {
-      const response = await this.client.get<SupplierPortalStats>(
-        API_ENDPOINTS.supplierPortal.base,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-  };
-
-  /**
-   * Stock Allocations API methods
-   */
-  stockAllocations = {
-    getAll: async (): Promise<ApiResponse<StockAllocation[]>> => {
-      const response = await this.client.get<StockAllocation[]>(
-        API_ENDPOINTS.stockAllocations.base,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-
-    getSummary: async (): Promise<ApiResponse<WarehouseStockSummary[]>> => {
-      const response = await this.client.get<WarehouseStockSummary[]>(
-        `${API_ENDPOINTS.stockAllocations.base}?summary=true`,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-
-    getByWarehouse: async (
-      warehouseId: string,
-    ): Promise<ApiResponse<StockAllocation[]>> => {
-      const response = await this.client.get<StockAllocation[]>(
-        `${API_ENDPOINTS.stockAllocations.base}?warehouseId=${warehouseId}`,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-
-    create: async (
-      data: CreateStockAllocationInput,
-    ): Promise<ApiResponse<StockAllocation>> => {
-      const response = await this.client.post<StockAllocation>(
-        API_ENDPOINTS.stockAllocations.base,
-        data,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-  };
-
-  /**
    * Forecasting API methods
    */
   forecasting = {
@@ -951,22 +721,9 @@ class ApiClient {
   };
 
   /**
-   * Portal API methods (external supplier/client portals)
+   * Portal API methods (external client portal)
    */
   portal = {
-    getSupplierDashboard: async (): Promise<
-      ApiResponse<SupplierPortalDashboard>
-    > => {
-      const response = await this.client.get<SupplierPortalDashboard>(
-        API_ENDPOINTS.portal.supplier,
-      );
-      return {
-        data: response.data,
-        status: response.status,
-        statusText: response.statusText,
-      };
-    },
-
     getClientDashboard: async (): Promise<
       ApiResponse<ClientPortalDashboard>
     > => {
@@ -1005,11 +762,10 @@ class ApiClient {
     },
 
     getClientBrowseProducts: async (
-      params: { ownerId: string; supplierId?: string; categoryId?: string },
+      params: { ownerId: string; categoryId?: string },
     ): Promise<ApiResponse<ClientBrowseProductsResponse>> => {
       const searchParams = new URLSearchParams();
       searchParams.set("ownerId", params.ownerId);
-      if (params.supplierId) searchParams.set("supplierId", params.supplierId);
       if (params.categoryId) searchParams.set("categoryId", params.categoryId);
       const url = `${API_ENDPOINTS.portal.clientBrowseProducts}?${searchParams.toString()}`;
       const response = await this.client.get<ClientBrowseProductsResponse>(url);

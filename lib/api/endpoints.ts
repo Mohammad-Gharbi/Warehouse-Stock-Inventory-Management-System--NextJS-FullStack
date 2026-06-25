@@ -26,11 +26,6 @@ export const API_ENDPOINTS = {
     base: "/categories",
   },
 
-  // Supplier endpoints
-  suppliers: {
-    base: "/suppliers",
-  },
-
   // User endpoints
   user: {
     emailPreferences: "/user/email-preferences",
@@ -64,11 +59,6 @@ export const API_ENDPOINTS = {
     base: "/invoices",
   },
 
-  // Warehouse endpoints
-  warehouses: {
-    base: "/warehouses",
-  },
-
   // Import History (Admin History) endpoints
   importHistory: {
     base: "/import-history",
@@ -94,16 +84,6 @@ export const API_ENDPOINTS = {
     base: "/client-portal",
   },
 
-  // Admin Supplier Portal
-  supplierPortal: {
-    base: "/supplier-portal",
-  },
-
-  // Stock Allocations
-  stockAllocations: {
-    base: "/stock-allocations",
-  },
-
   // Forecasting
   forecasting: {
     base: "/forecasting",
@@ -111,7 +91,6 @@ export const API_ENDPOINTS = {
 
   // External Portals
   portal: {
-    supplier: "/portal/supplier",
     client: "/portal/client",
     clientCatalog: "/portal/client/catalog",
     clientBrowseMeta: "/portal/client/browse-meta",

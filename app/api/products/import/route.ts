@@ -134,27 +134,6 @@ export async function POST(request: NextRequest) {
             return category.id;
           },
         },
-        {
-          importColumn: "Supplier",
-          schemaField: "supplierId",
-          transform: async (value) => {
-            // Look up supplier by name
-            const supplierName = String(value).trim();
-            if (!supplierName) {
-              throw new Error("Supplier is required");
-            }
-            const supplier = await prisma.supplier.findFirst({
-              where: {
-                name: { equals: supplierName, mode: "insensitive" },
-                userId,
-              },
-            });
-            if (!supplier) {
-              throw new Error(`Supplier "${supplierName}" not found`);
-            }
-            return supplier.id;
-          },
-        },
       ];
 
       // Note: Column mapping with async transforms requires special handling
@@ -196,19 +175,13 @@ export async function POST(request: NextRequest) {
           schemaField: "categoryName",
           transform: (value) => String(value).trim(),
         },
-        {
-          importColumn: "Supplier",
-          schemaField: "supplierName",
-          transform: (value) => String(value).trim(),
-        },
       ];
 
-      // Validate rows (without category/supplier lookup)
+      // Validate rows (without category lookup)
       const validationResult = validateRows(
         dataRows,
         createProductSchema.extend({
           categoryName: z.string().min(1),
-          supplierName: z.string().min(1),
         }),
         simplifiedMapping,
       );
@@ -222,19 +195,13 @@ export async function POST(request: NextRequest) {
         message: string;
       }> = [...validationResult.errors];
 
-      // Get all categories and suppliers for lookup
+      // Get all categories for lookup
       const categories = await prisma.category.findMany({
-        where: { userId },
-      });
-      const suppliers = await prisma.supplier.findMany({
         where: { userId },
       });
 
       const categoryMap = new Map(
         categories.map((cat) => [cat.name.toLowerCase(), cat.id]),
-      );
-      const supplierMap = new Map(
-        suppliers.map((sup) => [sup.name.toLowerCase(), sup.id]),
       );
 
       // Process each valid row
@@ -244,12 +211,8 @@ export async function POST(request: NextRequest) {
           const categoryName = String(rowData.categoryName || "")
             .trim()
             .toLowerCase();
-          const supplierName = String(rowData.supplierName || "")
-            .trim()
-            .toLowerCase();
 
           const categoryId = categoryMap.get(categoryName);
-          const supplierId = supplierMap.get(supplierName);
 
           if (!categoryId) {
             failCount++;
@@ -257,16 +220,6 @@ export async function POST(request: NextRequest) {
               rowNumber: 0, // Will be set from original row
               field: "categoryName",
               message: `Category "${rowData.categoryName}" not found`,
-            });
-            continue;
-          }
-
-          if (!supplierId) {
-            failCount++;
-            errors.push({
-              rowNumber: 0,
-              field: "supplierName",
-              message: `Supplier "${rowData.supplierName}" not found`,
             });
             continue;
           }
@@ -295,7 +248,6 @@ export async function POST(request: NextRequest) {
               quantity: BigInt(Number(rowData.quantity)),
               status: String(rowData.status),
               categoryId,
-              supplierId,
               userId,
               createdBy: userId,
             },

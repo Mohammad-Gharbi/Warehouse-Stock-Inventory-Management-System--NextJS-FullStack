@@ -28,7 +28,6 @@ export async function createSupportTicket(
       assignedToId: data.assignedToId ?? null,
       productId: data.productId ?? null,
       orderId: data.orderId ?? null,
-      supplierId: data.supplierId ?? null,
       updatedAt: now,
     },
   });

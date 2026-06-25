@@ -45,7 +45,7 @@ export interface ValidationErrorResponse extends ApiError {
 
 /**
  * Admin sidebar badge counts (Orders, Invoices, Support Tickets, Product Reviews,
- * Products, Warehouses, Supplier Portal, Client Portal, User Management).
+ * Products, Client Portal, User Management).
  */
 export interface AdminCounts {
   clientOrders: number;
@@ -53,8 +53,6 @@ export interface AdminCounts {
   supportTickets: number;
   productReviews: number;
   products: number;
-  warehouses: number;
-  suppliers: number;
   clients: number;
   users: number;
 }

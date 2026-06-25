@@ -39,7 +39,6 @@ function baseTransform(
     assignedToId: r.assignedToId,
     productId: r.productId,
     orderId: r.orderId,
-    supplierId: r.supplierId,
     notes: r.notes,
     createdAt: r.createdAt.toISOString(),
     updatedAt: r.updatedAt?.toISOString() ?? null,

@@ -1,6 +1,6 @@
 /**
  * Client Portal Catalog API Route
- * GET /api/portal/client/catalog — read-only catalog (suppliers, categories, products) for client role
+ * GET /api/portal/client/catalog — read-only catalog (categories, products) for client role
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -12,7 +12,6 @@ import { prisma } from "@/prisma/client";
 import { mergeProductListWhere } from "@/lib/products/product-query";
 import type { ClientCatalogOverview } from "@/types";
 
-const CATALOG_LIMIT_SUPPLIERS = 30;
 const CATALOG_LIMIT_CATEGORIES = 30;
 const CATALOG_LIMIT_PRODUCTS = 50;
 const CACHE_TTL = 300; // 5 minutes
@@ -43,12 +42,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(cached);
     }
 
-    const [suppliers, categories, products] = await Promise.all([
-      prisma.supplier.findMany({
-        orderBy: { name: "asc" },
-        take: CATALOG_LIMIT_SUPPLIERS,
-        select: { id: true, name: true, status: true },
-      }),
+    const [categories, products] = await Promise.all([
       prisma.category.findMany({
         orderBy: { name: "asc" },
         take: CATALOG_LIMIT_CATEGORIES,
@@ -65,60 +59,39 @@ export async function GET(request: NextRequest) {
           price: true,
           status: true,
           categoryId: true,
-          supplierId: true,
           userId: true,
         },
       }),
     ]);
 
     const categoryIds = [...new Set(products.map((p) => p.categoryId))];
-    const supplierIds = [...new Set(products.map((p) => p.supplierId))];
     const creatorIds = [
       ...new Set([
         ...categories.map((c) => c.userId),
         ...products.map((p) => p.userId),
       ]),
     ];
-    const [categoryList, supplierList, supplierCounts, categoryCounts, users] =
-      await Promise.all([
-        prisma.category.findMany({
-          where: { id: { in: categoryIds } },
-          select: { id: true, name: true },
-        }),
-        prisma.supplier.findMany({
-          where: { id: { in: supplierIds } },
-          select: { id: true, name: true },
-        }),
-        prisma.product.groupBy({
-          by: ["supplierId"],
-          _count: { id: true },
-        }),
-        prisma.product.groupBy({
-          by: ["categoryId"],
-          _count: { id: true },
-        }),
-        prisma.user.findMany({
-          where: { id: { in: creatorIds } },
-          select: { id: true, name: true },
-        }),
-      ]);
+    const [categoryList, categoryCounts, users] = await Promise.all([
+      prisma.category.findMany({
+        where: { id: { in: categoryIds } },
+        select: { id: true, name: true },
+      }),
+      prisma.product.groupBy({
+        by: ["categoryId"],
+        _count: { id: true },
+      }),
+      prisma.user.findMany({
+        where: { id: { in: creatorIds } },
+        select: { id: true, name: true },
+      }),
+    ]);
     const categoryMap = new Map(categoryList.map((c) => [c.id, c.name]));
-    const supplierMap = new Map(supplierList.map((s) => [s.id, s.name]));
     const userMap = new Map(users.map((u) => [u.id, u.name]));
-    const productCountBySupplier = new Map(
-      supplierCounts.map((s) => [s.supplierId, s._count.id]),
-    );
     const productCountByCategory = new Map(
       categoryCounts.map((c) => [c.categoryId, c._count.id]),
     );
 
     const overview: ClientCatalogOverview = {
-      suppliers: suppliers.map((s) => ({
-        id: s.id,
-        name: s.name,
-        status: s.status ? "Active" : "Inactive",
-        productCount: productCountBySupplier.get(s.id) ?? 0,
-      })),
       categories: categories.map((c) => ({
         id: c.id,
         name: c.name,
@@ -133,8 +106,6 @@ export async function GET(request: NextRequest) {
         sku: p.sku,
         categoryId: p.categoryId,
         categoryName: categoryMap.get(p.categoryId) ?? "—",
-        supplierId: p.supplierId,
-        supplierName: supplierMap.get(p.supplierId) ?? "—",
         price: Number(p.price),
         status: p.status,
         productOwnerId: p.userId,

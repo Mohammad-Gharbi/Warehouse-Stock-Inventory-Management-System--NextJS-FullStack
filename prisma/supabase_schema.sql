@@ -14,7 +14,7 @@ create extension if not exists "pgcrypto";
 do $$
 begin
   if not exists (select 1 from pg_type where typname = 'user_role') then
-    create type user_role as enum ('user', 'admin', 'supplier', 'client', 'retailer');
+    create type user_role as enum ('user', 'admin', 'client', 'retailer');
   end if;
 end
 $$;
@@ -129,39 +129,6 @@ create table if not exists "Category" (
 );
 
 -- ----------------------------------------------------------------------------
--- Supplier
--- ----------------------------------------------------------------------------
-create table if not exists "Supplier" (
-  id            uuid primary key default gen_random_uuid(),
-  name          text not null,
-  "userId"      uuid not null,
-  status        boolean not null default true,
-  description   text,
-  notes         text,
-  "createdAt"   timestamptz not null default now(),
-  "updatedAt"   timestamptz,
-  "createdBy"   uuid not null,
-  "updatedBy"   uuid
-);
-
--- ----------------------------------------------------------------------------
--- Warehouse
--- ----------------------------------------------------------------------------
-create table if not exists "Warehouse" (
-  id            uuid primary key default gen_random_uuid(),
-  name          text not null,
-  address       text,
-  type          text,
-  status        boolean not null default true,
-  "userId"      uuid not null,
-  "createdAt"   timestamptz not null default now(),
-  "updatedAt"   timestamptz,
-  "createdBy"   uuid not null,
-  "updatedBy"   uuid
-);
-create index if not exists "Warehouse_userId_idx" on "Warehouse" ("userId");
-
--- ----------------------------------------------------------------------------
 -- Product
 -- ----------------------------------------------------------------------------
 create table if not exists "Product" (
@@ -175,7 +142,6 @@ create table if not exists "Product" (
   "reservedQuantity" bigint not null default 0,
   sku                text not null unique,
   status             text not null,
-  "supplierId"       uuid not null,
   "userId"           uuid not null,
   "createdBy"        uuid not null,
   "updatedBy"        uuid,
@@ -280,44 +246,6 @@ create index if not exists "Invoice_userId_status_dueDate_idx"
   on "Invoice" ("userId", status, "dueDate");
 
 -- ----------------------------------------------------------------------------
--- StockAllocation
--- ----------------------------------------------------------------------------
-create table if not exists "StockAllocation" (
-  id                 uuid primary key default gen_random_uuid(),
-  "productId"        uuid not null,
-  "warehouseId"      uuid not null,
-  quantity           bigint not null default 0,
-  "reservedQuantity" bigint not null default 0,
-  "userId"           uuid not null,
-  "createdAt"        timestamptz not null default now(),
-  "updatedAt"        timestamptz,
-  constraint "StockAllocation_productId_warehouseId_key"
-    unique ("productId", "warehouseId")
-);
-create index if not exists "StockAllocation_productId_idx" on "StockAllocation" ("productId");
-create index if not exists "StockAllocation_warehouseId_idx" on "StockAllocation" ("warehouseId");
-
--- ----------------------------------------------------------------------------
--- StockTransfer
--- ----------------------------------------------------------------------------
-create table if not exists "StockTransfer" (
-  id                uuid primary key default gen_random_uuid(),
-  "productId"       uuid not null,
-  "fromWarehouseId" uuid not null,
-  "toWarehouseId"   uuid not null,
-  quantity          bigint not null,
-  status            text not null default 'pending',
-  notes             text,
-  "userId"          uuid not null,
-  "createdAt"       timestamptz not null default now(),
-  "completedAt"     timestamptz
-);
-create index if not exists "StockTransfer_productId_idx" on "StockTransfer" ("productId");
-create index if not exists "StockTransfer_fromWarehouseId_idx" on "StockTransfer" ("fromWarehouseId");
-create index if not exists "StockTransfer_toWarehouseId_idx" on "StockTransfer" ("toWarehouseId");
-create index if not exists "StockTransfer_status_idx" on "StockTransfer" (status);
-
--- ----------------------------------------------------------------------------
 -- Notification
 -- ----------------------------------------------------------------------------
 create table if not exists "Notification" (
@@ -350,7 +278,6 @@ create table if not exists "SupportTicket" (
   "assignedToId" uuid,
   "productId"   uuid,
   "orderId"     uuid,
-  "supplierId"  uuid,
   notes         text,
   "createdAt"   timestamptz not null default now(),
   "updatedAt"   timestamptz
@@ -546,14 +473,10 @@ grant all on table public."User" to supabase_auth_admin;
 -- Enable RLS on every business table.
 -- --------------------------------------------------------------------------
 alter table "Category"           enable row level security;
-alter table "Supplier"           enable row level security;
-alter table "Warehouse"          enable row level security;
 alter table "Product"            enable row level security;
 alter table "Order"              enable row level security;
 alter table "OrderItem"          enable row level security;
 alter table "Invoice"            enable row level security;
-alter table "StockAllocation"    enable row level security;
-alter table "StockTransfer"      enable row level security;
 alter table "Notification"       enable row level security;
 alter table "SupportTicket"      enable row level security;
 alter table "SupportTicketReply" enable row level security;
@@ -573,8 +496,8 @@ do $$
 declare
   t text;
   owner_tables text[] := array[
-    'Category','Supplier','Warehouse','Product','Order',
-    'Invoice','StockAllocation','StockTransfer','SupportTicket',
+    'Category','Product','Order',
+    'Invoice','SupportTicket',
     'ProductReview','ImportHistory','AuditLog'
   ];
 begin

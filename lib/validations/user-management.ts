@@ -7,7 +7,6 @@ import { z } from "zod";
 const userRoleEnum = z.enum([
   "user",
   "admin",
-  "supplier",
   "client",
   "retailer",
 ]);

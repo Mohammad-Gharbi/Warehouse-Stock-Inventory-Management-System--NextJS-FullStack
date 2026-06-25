@@ -6,7 +6,6 @@ export { default as InvoicesPage } from "./InvoicesPage";
 export { default as OrderDetailPage } from "./OrderDetailPage";
 export { default as InvoiceDetailPage } from "./InvoiceDetailPage";
 export { default as ProductDetailPage } from "./ProductDetailPage";
-export { default as SupplierDetailPage } from "./SupplierDetailPage";
 export { default as CategoryDetailPage } from "./CategoryDetailPage";
 export { default as BusinessInsightPage } from "./BusinessInsightPage";
 export { default as ApiStatusPage } from "./ApiStatusPage";

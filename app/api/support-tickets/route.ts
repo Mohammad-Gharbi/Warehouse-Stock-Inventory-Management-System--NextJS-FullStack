@@ -35,7 +35,6 @@ function transform(
     assignedToId: r.assignedToId,
     productId: r.productId,
     orderId: r.orderId,
-    supplierId: r.supplierId,
     notes: r.notes,
     createdAt: r.createdAt.toISOString(),
     updatedAt: r.updatedAt?.toISOString() ?? null,
@@ -211,7 +210,6 @@ export async function POST(request: NextRequest) {
         assignedToId: data.assignedToId ?? null,
         productId: data.productId,
         orderId: data.orderId,
-        supplierId: data.supplierId,
       },
       userId,
     );

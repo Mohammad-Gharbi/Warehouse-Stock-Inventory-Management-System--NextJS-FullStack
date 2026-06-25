@@ -3,13 +3,11 @@
  * Aggregates counts, revenue, trends, and recent activity across all entities.
  * Only import from server code (e.g. app/admin/insights/page.tsx, GET /api/dashboard).
  * getDashboardForAdmin(userId) returns DashboardStats; uses Redis cache when available.
- * Supplier count includes demo supplier (getDemoSupplierUserId) so list and dashboard match.
  */
 
 import { getCache, setCache, cacheKeys } from "@/lib/cache";
 import { prisma } from "@/prisma/client";
 import { mergeProductListWhere } from "@/lib/products/product-query";
-import { getDemoSupplierUserId } from "@/prisma/supplier";
 import type {
   DashboardStats,
   DashboardCounts,
@@ -25,10 +23,8 @@ import type {
   DashboardTopProduct,
   DashboardInvoiceAnalytics,
   DashboardInvoiceStatusDist,
-  DashboardWarehouseAnalytics,
   DashboardProductStatusBreakdown,
   DashboardUserRoleBreakdown,
-  DashboardSupplierStatusBreakdown,
   DashboardCategoryStatusBreakdown,
   DashboardTicketStatusBreakdown,
   DashboardReviewStatusBreakdown,
@@ -103,12 +99,6 @@ export async function getDashboardForAdmin(userId: string): Promise<DashboardSta
   const cached = await getCache<DashboardStats>(cacheKey);
   if (cached) return cached;
 
-  const demoUserId = await getDemoSupplierUserId();
-  const whereSuppliers =
-    demoUserId != null
-      ? { OR: [{ userId }, { userId: demoUserId }] }
-      : userScope(userId);
-
   const since = getTwelveMonthsAgo();
   const whereUser = userScope(userId);
 
@@ -139,11 +129,9 @@ export async function getDashboardForAdmin(userId: string): Promise<DashboardSta
 
   const [
     productsCount,
-    suppliersCount,
     categoriesCount,
     ordersCount,
     invoicesCount,
-    warehousesCount,
     ticketsCount,
     reviewsCount,
     orderSum,
@@ -164,18 +152,13 @@ export async function getDashboardForAdmin(userId: string): Promise<DashboardSta
     orderStatusGroups,
     topProductsRaw,
     invoiceStatusGroups,
-    activeWarehousesCount,
-    inactiveWarehousesCount,
-    warehouseTypeGroups,
     selfInvoiceCount,
     orderRevenueSelfSum,
   ] = await Promise.all([
     prisma.product.count({ where: mergeProductListWhere(whereUser) }),
-    prisma.supplier.count({ where: whereSuppliers }),
     prisma.category.count({ where: whereUser }),
     prisma.order.count({ where: whereStoreOrders }),
     prisma.invoice.count({ where: whereInvoiceForStore }),
-    prisma.warehouse.count({ where: whereUser }),
     prisma.supportTicket.count({ where: { assignedToId: userId } }),
     prisma.productReview.count({ where: reviewWhere }),
     prisma.order.aggregate({ where: whereStoreOrders, _sum: { total: true } }),
@@ -292,13 +275,6 @@ export async function getDashboardForAdmin(userId: string): Promise<DashboardSta
       _count: { id: true },
       _sum: { total: true, amountPaid: true, amountDue: true },
     }),
-    prisma.warehouse.count({ where: { ...whereUser, status: true } }),
-    prisma.warehouse.count({ where: { ...whereUser, status: false } }),
-    prisma.warehouse.groupBy({
-      by: ["type"],
-      where: whereUser,
-      _count: { id: true },
-    }),
     selfOrderIds.length > 0
       ? prisma.invoice.count({ where: { orderId: { in: selfOrderIds } } })
       : 0,
@@ -317,8 +293,6 @@ export async function getDashboardForAdmin(userId: string): Promise<DashboardSta
     usersCount,
     userRoleGroups,
     productsForBreakdown,
-    supplierActiveCount,
-    supplierInactiveCount,
     categoryActiveCount,
     categoryInactiveCount,
     ticketStatusGroups,
@@ -330,8 +304,6 @@ export async function getDashboardForAdmin(userId: string): Promise<DashboardSta
       where: mergeProductListWhere(whereUser),
       select: { status: true, price: true, quantity: true },
     }),
-    prisma.supplier.count({ where: { ...whereSuppliers, status: true } }),
-    prisma.supplier.count({ where: { ...whereSuppliers, status: false } }),
     prisma.category.count({ where: { ...whereUser, status: true } }),
     prisma.category.count({ where: { ...whereUser, status: false } }),
     prisma.supportTicket.groupBy({
@@ -363,20 +335,13 @@ export async function getDashboardForAdmin(userId: string): Promise<DashboardSta
   const userRoleBreakdown: DashboardUserRoleBreakdown = {
     admin: 0,
     client: 0,
-    supplier: 0,
   };
   for (const g of userRoleGroups) {
     const role = (g.role ?? "").toLowerCase();
     const count = g._count.id;
     if (role === "admin") userRoleBreakdown.admin = count;
     else if (role === "client") userRoleBreakdown.client = count;
-    else if (role === "supplier") userRoleBreakdown.supplier = count;
   }
-
-  const supplierStatusBreakdown: DashboardSupplierStatusBreakdown = {
-    active: supplierActiveCount,
-    inactive: supplierInactiveCount,
-  };
 
   const categoryStatusBreakdown: DashboardCategoryStatusBreakdown = {
     active: categoryActiveCount,
@@ -414,11 +379,9 @@ export async function getDashboardForAdmin(userId: string): Promise<DashboardSta
   const counts: DashboardCounts = {
     products: productsCount,
     users: usersCount,
-    suppliers: suppliersCount,
     categories: categoriesCount,
     orders: ordersCount,
     invoices: invoicesCount,
-    warehouses: warehousesCount,
     tickets: ticketsCount,
     reviews: reviewsCount,
   };
@@ -618,19 +581,6 @@ export async function getDashboardForAdmin(userId: string): Promise<DashboardSta
     averageInvoiceValueExcludingCancelled: avgExcludingCancelled,
   };
 
-  // Build warehouse analytics
-  const warehouseTypeDistribution = warehouseTypeGroups.map((g) => ({
-    type: g.type || "(Unspecified)",
-    count: g._count.id,
-  }));
-
-  const warehouseAnalytics: DashboardWarehouseAnalytics = {
-    totalWarehouses: warehousesCount,
-    activeWarehouses: activeWarehousesCount,
-    inactiveWarehouses: inactiveWarehousesCount,
-    typeDistribution: warehouseTypeDistribution,
-  };
-
   const selfOrderCount = selfOrderIds.length;
   const revenueSelf = Number(orderRevenueSelfSum?._sum?.total ?? 0);
   const selfOthersBreakdown: DashboardSelfOthersBreakdown = {
@@ -649,11 +599,9 @@ export async function getDashboardForAdmin(userId: string): Promise<DashboardSta
     recent,
     orderAnalytics,
     invoiceAnalytics,
-    warehouseAnalytics,
     totalInventoryValue,
     productStatusBreakdown,
     userRoleBreakdown,
-    supplierStatusBreakdown,
     categoryStatusBreakdown,
     ticketStatusBreakdown,
     reviewStatusBreakdown,

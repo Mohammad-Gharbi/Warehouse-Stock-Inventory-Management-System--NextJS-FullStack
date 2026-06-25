@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useCallback } from "react";
-import { Product, Category, Supplier } from "@/types";
+import { Product, Category } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,6 @@ import { Search, Download, ChevronDown, Users } from "lucide-react";
 import ExcelJS from "exceljs";
 import { CategoryDropDown } from "@/components/category/CategoryFilter";
 import { StatusDropDown } from "./ProductStatusFilter";
-import { SuppliersDropDown } from "@/components/supplier/SupplierFilter";
 import { PaginationType } from "@/components/shared/PaginationSelector";
 import { ProductImportDialog } from "./ProductImportDialog";
 import {
@@ -27,11 +26,8 @@ import {
 type FiltersAndActionsProps = {
   allProducts: Product[];
   allCategories: Category[];
-  allSuppliers: Supplier[];
   /** When provided, pass to CategoryDropDown (e.g. client browse mode) */
   categoriesOverride?: Array<{ id: string; name: string }>;
-  /** When provided, pass to SuppliersDropDown (e.g. client browse mode) */
-  suppliersOverride?: Array<{ id: string; name: string }>;
   /** When true, hide Import (e.g. client browse mode) */
   hideImport?: boolean;
   /** When provided (e.g. client browse), show Product Owner dropdown in filter row */
@@ -42,8 +38,6 @@ type FiltersAndActionsProps = {
   setSelectedCategory: React.Dispatch<React.SetStateAction<string[]>>;
   selectedStatuses: string[];
   setSelectedStatuses: React.Dispatch<React.SetStateAction<string[]>>;
-  selectedSuppliers: string[];
-  setSelectedSuppliers: React.Dispatch<React.SetStateAction<string[]>>;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   pagination: PaginationType;
@@ -56,9 +50,7 @@ type FiltersAndActionsProps = {
 export default function FiltersAndActions({
   allProducts,
   allCategories,
-  allSuppliers,
   categoriesOverride,
-  suppliersOverride,
   hideImport = false,
   productOwnerOptions,
   selectedOwnerId = "",
@@ -67,8 +59,6 @@ export default function FiltersAndActions({
   setSelectedCategory,
   selectedStatuses,
   setSelectedStatuses,
-  selectedSuppliers,
-  setSelectedSuppliers,
   searchTerm,
   setSearchTerm,
   pagination,
@@ -90,19 +80,15 @@ export default function FiltersAndActions({
       const categoryMatch =
         selectedCategory.length === 0 ||
         selectedCategory.includes(product.categoryId ?? "");
-      const supplierMatch =
-        selectedSuppliers.length === 0 ||
-        selectedSuppliers.includes(product.supplierId ?? "");
       const statusMatch =
         selectedStatuses.length === 0 ||
         selectedStatuses.includes(product.status ?? "");
-      return searchMatch && categoryMatch && supplierMatch && statusMatch;
+      return searchMatch && categoryMatch && statusMatch;
     });
   }, [
     allProducts,
     searchTerm,
     selectedCategory,
-    selectedSuppliers,
     selectedStatuses,
   ]);
 
@@ -129,7 +115,6 @@ export default function FiltersAndActions({
         Quantity: product.quantity,
         Status: product.status,
         Category: product.category || "Unknown",
-        Supplier: product.supplier || "Unknown",
         "Created Date": new Date(product.createdAt).toLocaleDateString(),
       }));
 
@@ -183,7 +168,6 @@ export default function FiltersAndActions({
         Quantity: product.quantity,
         Status: product.status,
         Category: product.category || "Unknown",
-        Supplier: product.supplier || "Unknown",
         "Created Date": new Date(product.createdAt).toLocaleDateString(),
       }));
 
@@ -199,7 +183,6 @@ export default function FiltersAndActions({
         { header: "Quantity", key: "Quantity", width: 10 },
         { header: "Status", key: "Status", width: 12 },
         { header: "Category", key: "Category", width: 15 },
-        { header: "Supplier", key: "Supplier", width: 15 },
         { header: "Created Date", key: "Created Date", width: 12 },
       ];
 
@@ -285,15 +268,10 @@ export default function FiltersAndActions({
         </div>
       )}
 
-      {/* Row 2: Left: Suppliers, Categories | Center: Search | Right: Status, Export */}
+      {/* Row 2: Left: Categories | Center: Search | Right: Status, Export */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 flex-wrap w-full">
         {/* Left */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 flex-shrink-0 order-2 sm:order-1 w-full sm:w-auto">
-          <SuppliersDropDown
-            selectedSuppliers={selectedSuppliers}
-            setSelectedSuppliers={setSelectedSuppliers}
-            suppliersOverride={suppliersOverride}
-          />
           <CategoryDropDown
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
@@ -368,10 +346,7 @@ export default function FiltersAndActions({
         setSelectedStatuses={setSelectedStatuses}
         selectedCategories={selectedCategory}
         setSelectedCategories={setSelectedCategory}
-        selectedSuppliers={selectedSuppliers}
-        setSelectedSuppliers={setSelectedSuppliers}
         allCategories={allCategories}
-        allSuppliers={allSuppliers}
       />
     </div>
   );
@@ -383,19 +358,13 @@ function FilterArea({
   setSelectedStatuses,
   selectedCategories,
   setSelectedCategories,
-  selectedSuppliers,
-  setSelectedSuppliers,
   allCategories,
-  allSuppliers,
 }: {
   selectedStatuses: string[];
   setSelectedStatuses: React.Dispatch<React.SetStateAction<string[]>>;
   selectedCategories: string[];
   setSelectedCategories: React.Dispatch<React.SetStateAction<string[]>>;
-  selectedSuppliers: string[];
-  setSelectedSuppliers: React.Dispatch<React.SetStateAction<string[]>>;
   allCategories: Category[];
-  allSuppliers: Supplier[];
 }) {
   return (
     <div className="flex flex-col sm:flex-row gap-3 poppins">
@@ -462,48 +431,13 @@ function FilterArea({
         </div>
       )}
 
-      {/* Supplier Filter */}
-      {selectedSuppliers.length > 0 && (
-        <div className="inline-flex items-center gap-1 px-2 py-1 text-xs border border-emerald-400/30 bg-card text-gray-700 dark:text-white rounded-md backdrop-blur-sm shadow-sm">
-          <span className="text-gray-700 dark:text-white/80">Supplier:</span>
-          <div className="flex gap-1 items-center">
-            {selectedSuppliers.length < 3 ? (
-              selectedSuppliers.map((supplierId, index) => {
-                const supplier = allSuppliers.find((s) => s.id === supplierId);
-                return (
-                  <Badge
-                    key={index}
-                    className="border border-emerald-400/30 bg-card text-white backdrop-blur-sm"
-                  >
-                    {supplier?.name || supplierId}
-                  </Badge>
-                );
-              })
-            ) : (
-              <Badge className="border border-emerald-400/30 bg-card text-white backdrop-blur-sm">
-                {selectedSuppliers.length} Selected
-              </Badge>
-            )}
-          </div>
-          <button
-            aria-label="Clear supplier filter"
-            onClick={() => setSelectedSuppliers([])}
-            className="ml-1 hover:text-gray-700 dark:hover:text-white/80 transition-colors"
-          >
-            <IoClose className="h-3 w-3 text-gray-700 dark:text-white" />
-          </button>
-        </div>
-      )}
-
       {/* Reset Filters Button */}
       {(selectedStatuses.length > 0 ||
-        selectedCategories.length > 0 ||
-        selectedSuppliers.length > 0) && (
+        selectedCategories.length > 0) && (
         <Button
           onClick={() => {
             setSelectedStatuses([]);
             setSelectedCategories([]);
-            setSelectedSuppliers([]);
           }}
           variant={"ghost"}
           className="p-1 px-2 text-gray-700 dark:text-white/80 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 backdrop-blur-sm"

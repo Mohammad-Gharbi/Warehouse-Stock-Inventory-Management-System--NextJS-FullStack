@@ -18,7 +18,6 @@
     "prisma:studio": "prisma studio",
     "script:check-all-data": "tsx scripts/check-all-data.ts",
     "script:delete-all-data": "tsx scripts/delete-all-data.ts",
-    "script:delete-all-suppliers": "tsx scripts/delete-all-suppliers.ts",
     "script:delete-all-categories": "tsx scripts/delete-all-categories.ts",
     "script:delete-user": "tsx scripts/delete-user.ts",
     "script:backfill-order-stock": "tsx scripts/backfill-order-stock.ts",

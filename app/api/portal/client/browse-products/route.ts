@@ -12,9 +12,9 @@ import { mergeProductListWhere } from "@/lib/products/product-query";
 
 /**
  * GET /api/portal/client/browse-products
- * Query: ownerId (required), supplierId (optional), categoryId (optional)
- * Returns products owned by ownerId, optionally filtered by supplier/category
- * Also returns categories and suppliers for that owner (for filter dropdowns)
+ * Query: ownerId (required), categoryId (optional)
+ * Returns products owned by ownerId, optionally filtered by category
+ * Also returns categories for that owner (for filter dropdowns)
  */
 export async function GET(request: NextRequest) {
   try {
@@ -37,7 +37,6 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const ownerId = searchParams.get("ownerId");
-    const supplierId = searchParams.get("supplierId");
     const categoryId = searchParams.get("categoryId");
 
     if (!ownerId) {
@@ -49,10 +48,8 @@ export async function GET(request: NextRequest) {
 
     const productWhere: {
       userId: string;
-      supplierId?: string;
       categoryId?: string;
     } = { userId: ownerId };
-    if (supplierId && supplierId !== "all") productWhere.supplierId = supplierId;
     if (categoryId && categoryId !== "all") productWhere.categoryId = categoryId;
 
     const [products, allOwnerProducts, ownerUser] = await Promise.all([
@@ -62,7 +59,7 @@ export async function GET(request: NextRequest) {
       }),
       prisma.product.findMany({
         where: mergeProductListWhere({ userId: ownerId }),
-        select: { categoryId: true, supplierId: true },
+        select: { categoryId: true },
       }),
       prisma.user.findUnique({
         where: { id: ownerId },
@@ -71,21 +68,13 @@ export async function GET(request: NextRequest) {
     ]);
 
     const categoryIds = [...new Set(allOwnerProducts.map((p) => p.categoryId))];
-    const supplierIds = [...new Set(allOwnerProducts.map((p) => p.supplierId))];
 
-    const [categories, suppliers] = await Promise.all([
-      prisma.category.findMany({
-        where: { id: { in: categoryIds } },
-        select: { id: true, name: true },
-      }),
-      prisma.supplier.findMany({
-        where: { id: { in: supplierIds } },
-        select: { id: true, name: true },
-      }),
-    ]);
+    const categories = await prisma.category.findMany({
+      where: { id: { in: categoryIds } },
+      select: { id: true, name: true },
+    });
 
     const categoryMap = new Map(categories.map((c) => [c.id, c.name]));
-    const supplierMap = new Map(suppliers.map((s) => [s.id, s.name]));
 
     const transformed = products.map((p) => ({
       id: p.id,
@@ -96,9 +85,7 @@ export async function GET(request: NextRequest) {
       reservedQuantity: Number(p.reservedQuantity ?? 0),
       status: p.status,
       categoryId: p.categoryId,
-      supplierId: p.supplierId,
       category: categoryMap.get(p.categoryId) || "Unknown",
-      supplier: supplierMap.get(p.supplierId) || "Unknown",
       userId: p.userId,
       createdBy: p.createdBy,
       updatedBy: p.updatedBy || null,
@@ -113,7 +100,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       products: transformed,
       categories,
-      suppliers,
       owner: ownerUser
         ? { id: ownerUser.id, name: ownerUser.name, email: ownerUser.email }
         : undefined,

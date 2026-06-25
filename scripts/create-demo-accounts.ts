@@ -1,16 +1,12 @@
 /**
- * Create Demo Accounts (Client & Supplier)
+ * Create Demo Account (Client)
  *
- * Creates two users in the DB for the login dropdown demo. Run this after you
- * have created your own admin account (e.g. via Register). Does not create
+ * Creates a client user in the DB for the login dropdown demo. Run this after
+ * you have created your own admin account (e.g. via Register). Does not create
  * admin — new signups already get admin role.
  *
  * Creates:
  *   - test@client.com  / 12345678  / "Test Client"  / role: client
- *   - test@supplier.com / 12345678 / "Test Supplier" / role: supplier
- *
- * For the supplier portal to work, links the first existing Supplier to
- * test@supplier.com (or creates a "Demo Supplier" if none exist).
  *
  * Usage (from project root, same DB as app/VPS). Loads .env for Supabase keys:
  *   npx tsx --env-file=.env scripts/create-demo-accounts.ts
@@ -37,16 +33,10 @@ const DEMO_USERS = [
     username: "testclient",
     role: "client",
   },
-  {
-    email: "test@supplier.com",
-    name: "Test Supplier",
-    username: "testsupplier",
-    role: "supplier",
-  },
 ] as const;
 
 async function main() {
-  console.log("\n📦 Create demo accounts (client + supplier)\n");
+  console.log("\n📦 Create demo account (client)\n");
 
   for (const u of DEMO_USERS) {
     const existing = await prisma.user.findUnique({
@@ -80,45 +70,8 @@ async function main() {
     console.log(`   ✅ Created ${u.email} (${u.name}, role: ${u.role})`);
   }
 
-  const supplierUser = await prisma.user.findUnique({
-    where: { email: "test@supplier.com" },
-    select: { id: true },
-  });
-
-  if (supplierUser) {
-    const firstSupplier = await prisma.supplier.findFirst({
-      orderBy: { createdAt: "asc" },
-      select: { id: true, name: true },
-    });
-
-    if (firstSupplier) {
-      await prisma.supplier.update({
-        where: { id: firstSupplier.id },
-        data: {
-          userId: supplierUser.id,
-          createdBy: supplierUser.id,
-          updatedBy: supplierUser.id,
-          updatedAt: new Date(),
-        },
-      });
-      console.log(`   ✅ Linked supplier "${firstSupplier.name}" to test@supplier.com`);
-    } else {
-      await prisma.supplier.create({
-        data: {
-          name: "Demo Supplier",
-          userId: supplierUser.id,
-          status: true,
-          createdBy: supplierUser.id,
-          updatedBy: supplierUser.id,
-          updatedAt: new Date(),
-        },
-      });
-      console.log(`   ✅ Created "Demo Supplier" and linked to test@supplier.com`);
-    }
-  }
-
-  console.log("\n   Password for both demo accounts: " + PASSWORD_PLAIN);
-  console.log("   Use the login dropdown to sign in as Admin (your account), Client, or Supplier.\n");
+  console.log("\n   Password for the demo account: " + PASSWORD_PLAIN);
+  console.log("   Use the login dropdown to sign in as Admin (your account) or Client.\n");
 }
 
 main()

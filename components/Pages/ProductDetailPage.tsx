@@ -234,10 +234,6 @@ export default function ProductDetailPage({
         typeof product.category === "object"
           ? (product.category as { name?: string })?.name
           : (product as { category?: string }).category,
-      supplier:
-        typeof product.supplier === "object"
-          ? (product.supplier as { name?: string })?.name
-          : (product as { supplier?: string }).supplier,
     };
     setSelectedProduct(productForForm);
     setOpenProductDialog(true);
@@ -255,7 +251,6 @@ export default function ProductDetailPage({
         quantity: product.quantity,
         status: (product.status as ProductStatus) || "Available",
         categoryId: product.categoryId,
-        supplierId: product.supplierId,
         userId: product.userId,
       },
       {
@@ -596,25 +591,6 @@ export default function ProductDetailPage({
                         className="font-medium text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300"
                       >
                         {product.category.name}
-                      </Link>
-                    </div>
-                  )}
-
-                  {product.supplier && typeof product.supplier === "object" && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Truck className="h-4 w-4 text-gray-500 dark:text-white/50" />
-                      <span className="text-gray-600 dark:text-white/60">
-                        Supplier:
-                      </span>
-                      <Link
-                        href={
-                          embedInAdmin
-                            ? `/admin/suppliers/${product.supplier.id}`
-                            : `/suppliers/${product.supplier.id}`
-                        }
-                        className="font-medium text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300"
-                      >
-                        {product.supplier.name}
                       </Link>
                     </div>
                   )}

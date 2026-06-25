@@ -5,9 +5,9 @@ import dynamic from "next/dynamic";
 import { PaginationType } from "@/components/shared/PaginationSelector";
 import { columns } from "./ProductTableColumns";
 import { useClientBrowseMeta, useClientBrowseProducts } from "@/hooks/queries";
-import type { Product, Category, Supplier } from "@/types";
+import type { Product, Category } from "@/types";
 import { StatisticsCard } from "@/components/home/StatisticsCard";
-import { Users, Truck, FolderTree, Warehouse } from "lucide-react";
+import { Users, FolderTree } from "lucide-react";
 import ProductFilters from "./ProductFilters";
 
 const ProductTable = dynamic(
@@ -47,13 +47,10 @@ export default function ClientProductList({
   const stats = meta?.stats ?? {
     admins: 0,
     clients: 0,
-    suppliers: { total: 0, active: 0, inactive: 0 },
     categories: { total: 0, active: 0, inactive: 0 },
-    warehouses: { total: 0, active: 0, inactive: 0 },
   };
   const products = productsData?.products ?? [];
   const ownerCategories = productsData?.categories ?? [];
-  const ownerSuppliers = productsData?.suppliers ?? [];
 
   useEffect(() => {
     if (!isMountedRef.current) {
@@ -77,7 +74,6 @@ export default function ClientProductList({
   });
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
-  const [selectedSuppliers, setSelectedSuppliers] = useState<string[]>([]);
 
   const productsAsProductType = useMemo(
     () =>
@@ -110,17 +106,6 @@ export default function ClientProductList({
           ]}
         />
         <StatisticsCard
-          title="Suppliers"
-          value={stats.suppliers.total}
-          description="Total suppliers"
-          icon={Truck}
-          variant="emerald"
-          badges={[
-            { label: "Active", value: stats.suppliers.active },
-            { label: "Inactive", value: stats.suppliers.inactive },
-          ]}
-        />
-        <StatisticsCard
           title="Categories"
           value={stats.categories.total}
           description="Total categories"
@@ -131,17 +116,6 @@ export default function ClientProductList({
             { label: "Inactive", value: stats.categories.inactive },
           ]}
         />
-        <StatisticsCard
-          title="Warehouses"
-          value={stats.warehouses.total}
-          description="Storage locations"
-          icon={Warehouse}
-          variant="rose"
-          badges={[
-            { label: "Active", value: stats.warehouses.active },
-            { label: "Inactive", value: stats.warehouses.inactive },
-          ]}
-        />
       </div>
 
       {/* Product Inventory Section — client-facing copy */}
@@ -150,7 +124,7 @@ export default function ClientProductList({
           Browse & Purchase Products
         </h2>
         <p className="text-base text-gray-600 dark:text-gray-400">
-          Explore products from our store. Filter by category, supplier, or status, or choose a product owner to browse their catalog.
+          Explore products from our store. Filter by category or status, or choose a product owner to browse their catalog.
         </p>
       </div>
 
@@ -168,21 +142,12 @@ export default function ClientProductList({
                 name: c.name,
               })) as Category[]
             }
-            allSuppliers={
-              ownerSuppliers.map((s) => ({
-                id: s.id,
-                name: s.name,
-              })) as Supplier[]
-            }
             categoriesOverride={ownerCategories}
-            suppliersOverride={ownerSuppliers}
             hideImport
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
             selectedStatuses={selectedStatuses}
             setSelectedStatuses={setSelectedStatuses}
-            selectedSuppliers={selectedSuppliers}
-            setSelectedSuppliers={setSelectedSuppliers}
             userId=""
             productOwnerOptions={admins}
             selectedOwnerId={selectedOwnerId}
@@ -201,7 +166,6 @@ export default function ClientProductList({
         setPagination={setPagination}
         selectedCategory={selectedCategory}
         selectedStatuses={selectedStatuses}
-        selectedSuppliers={selectedSuppliers}
       />
     </div>
   );

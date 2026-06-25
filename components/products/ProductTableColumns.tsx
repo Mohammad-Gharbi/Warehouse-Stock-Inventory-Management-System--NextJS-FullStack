@@ -67,16 +67,9 @@ const SortableHeader: React.FC<SortableHeaderProps> = ({ column, label }) => {
   );
 };
 
-export type CreateProductColumnsOptions = {
-  /** When true, show Product Owner column instead of Supplier (for supplier role on /products) */
-  forSupplier?: boolean;
-};
-
 export function createProductColumns(
   detailBase: string = "",
-  options?: CreateProductColumnsOptions,
 ): ColumnDef<Product>[] {
-  const forSupplier = options?.forSupplier === true;
   return [
   {
     id: "image",
@@ -267,50 +260,6 @@ export function createProductColumns(
       return <span>{categoryName}</span>;
     },
   },
-  ...(forSupplier
-    ? [
-        {
-          id: "productOwner",
-          header: "Product Owner",
-          cell: ({ row }) => {
-            const product = row.original;
-            const name = product.productOwnerName ?? product.userId ?? "—";
-            // Link to product detail (supplier sees same products; ownerId filter is for client browse)
-            return (
-              <Link
-                href={detailHref(detailBase, "products", product.id)}
-                className="font-semibold text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300"
-              >
-                {name}
-              </Link>
-            );
-          },
-        } as ColumnDef<Product>,
-      ]
-    : [
-        {
-          accessorKey: "supplier",
-          header: "Supplier",
-          cell: ({ row }) => {
-            const product = row.original;
-            const supplierName =
-              typeof product.supplier === "object" && product.supplier
-                ? product.supplier.name
-                : (product.supplier as string | undefined) || "Unknown";
-            if (product.supplierId) {
-              return (
-                <Link
-                  href={detailHref(detailBase, "suppliers", product.supplierId)}
-                  className="font-semibold text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300"
-                >
-                  {supplierName}
-                </Link>
-              );
-            }
-            return <span>{supplierName}</span>;
-          },
-        } as ColumnDef<Product>,
-      ]),
   {
     id: "qrCode",
     header: "QR Code",
@@ -324,7 +273,6 @@ export function createProductColumns(
         quantity: product.quantity,
         status: product.status,
         category: product.category,
-        supplier: product.supplier,
       });
 
       return (

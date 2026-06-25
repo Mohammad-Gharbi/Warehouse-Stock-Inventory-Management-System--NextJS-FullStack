@@ -27,8 +27,6 @@ import {
 import {
   useOrders,
   useProducts,
-  useSuppliers,
-  useWarehouses,
   useInvoices,
   useCategories,
   useUsers,
@@ -86,16 +84,12 @@ export default function AdminMyActivityContent() {
 
   const ordersQuery = useOrders();
   const productsQuery = useProducts();
-  const suppliersQuery = useSuppliers();
-  const warehousesQuery = useWarehouses();
   const invoicesQuery = useInvoices();
   const categoriesQuery = useCategories();
   const usersQuery = useUsers();
 
   const orders = ordersQuery.data ?? [];
   const products = productsQuery.data ?? [];
-  const suppliers = suppliersQuery.data ?? [];
-  const warehouses = warehousesQuery.data ?? [];
   const invoices = invoicesQuery.data ?? [];
   const categories = categoriesQuery.data ?? [];
   const users = usersQuery.data ?? [];
@@ -110,8 +104,6 @@ export default function AdminMyActivityContent() {
   const anyPending =
     ordersQuery.isPending ||
     productsQuery.isPending ||
-    suppliersQuery.isPending ||
-    warehousesQuery.isPending ||
     invoicesQuery.isPending ||
     categoriesQuery.isPending ||
     usersQuery.isPending;
@@ -144,14 +136,6 @@ export default function AdminMyActivityContent() {
       (c) => c.status === false,
     ).length;
 
-    const supplierActive = suppliers.filter((s) => s.status === true).length;
-    const supplierInactive = suppliers.filter((s) => s.status === false).length;
-
-    const warehouseActive = warehouses.filter((w) => w.status === true).length;
-    const warehouseInactive = warehouses.filter(
-      (w) => w.status === false,
-    ).length;
-
     const invoicePaid = invoices.filter((i) => i.status === "paid").length;
     const invoicePending = invoices.filter(
       (i) => i.status === "draft" || i.status === "sent",
@@ -171,7 +155,6 @@ export default function AdminMyActivityContent() {
 
     const userAdmin = users.filter((u) => u.role === "admin").length;
     const userClient = users.filter((u) => u.role === "client").length;
-    const userSupplier = users.filter((u) => u.role === "supplier").length;
 
     const orderPaid = orders.filter(
       (o) => (o.paymentStatus || "").toLowerCase() === "paid",
@@ -213,8 +196,6 @@ export default function AdminMyActivityContent() {
       cancelledAmount,
       totalProducts: products.length,
       totalUsers: users.length,
-      totalSuppliers: suppliers.length,
-      totalWarehouses: warehouses.length,
       totalInvoices: invoices.length,
       totalCategories: categories.length,
       avgOrderValue,
@@ -224,10 +205,6 @@ export default function AdminMyActivityContent() {
       productStockOut,
       categoryActive,
       categoryInactive,
-      supplierActive,
-      supplierInactive,
-      warehouseActive,
-      warehouseInactive,
       invoicePaid,
       invoicePending,
       invoiceOverdue,
@@ -235,11 +212,10 @@ export default function AdminMyActivityContent() {
       outstandingAmount,
       userAdmin,
       userClient,
-      userSupplier,
       orderPaid,
       orderUnpaid,
     };
-  }, [orders, products, suppliers, warehouses, invoices, categories, users]);
+  }, [orders, products, invoices, categories, users]);
 
   const recentOrders = useMemo(() => {
     const sorted = [...orders].sort(
@@ -387,29 +363,6 @@ export default function AdminMyActivityContent() {
                 badges={[
                   { label: "Admin", value: stats.userAdmin },
                   { label: "Client", value: stats.userClient },
-                  { label: "Supplier", value: stats.userSupplier },
-                ]}
-              />
-              <StatisticsCard
-                title="Total Suppliers"
-                value={stats.totalSuppliers}
-                description="Suppliers"
-                icon={Truck}
-                variant="sky"
-                badges={[
-                  { label: "Active", value: stats.supplierActive },
-                  { label: "Inactive", value: stats.supplierInactive },
-                ]}
-              />
-              <StatisticsCard
-                title="Total Warehouses"
-                value={stats.totalWarehouses}
-                description="Storage locations"
-                icon={Warehouse}
-                variant="blue"
-                badges={[
-                  { label: "Active", value: stats.warehouseActive },
-                  { label: "Inactive", value: stats.warehouseInactive },
                 ]}
               />
               <StatisticsCard

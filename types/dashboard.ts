@@ -6,11 +6,9 @@
 export interface DashboardCounts {
   products: number;
   users: number;
-  suppliers: number;
   categories: number;
   orders: number;
   invoices: number;
-  warehouses: number;
   tickets: number;
   reviews: number;
 }
@@ -144,16 +142,6 @@ export interface DashboardInvoiceAnalytics {
   averageInvoiceValueExcludingCancelled?: number;
 }
 
-/**
- * Warehouse analytics summary
- */
-export interface DashboardWarehouseAnalytics {
-  totalWarehouses: number;
-  activeWarehouses: number;
-  inactiveWarehouses: number;
-  typeDistribution: { type: string; count: number }[];
-}
-
 /** Product status counts (store owner's products) */
 export interface DashboardProductStatusBreakdown {
   available: number;
@@ -165,13 +153,6 @@ export interface DashboardProductStatusBreakdown {
 export interface DashboardUserRoleBreakdown {
   admin: number;
   client: number;
-  supplier: number;
-}
-
-/** Supplier status counts (store owner's suppliers) */
-export interface DashboardSupplierStatusBreakdown {
-  active: number;
-  inactive: number;
 }
 
 /** Category status counts (store owner's categories) */
@@ -218,12 +199,10 @@ export interface DashboardStats {
   recent: DashboardRecent;
   orderAnalytics: DashboardOrderAnalytics;
   invoiceAnalytics: DashboardInvoiceAnalytics;
-  warehouseAnalytics: DashboardWarehouseAnalytics;
   /** Total inventory value (sum of price*quantity for owner's products) */
   totalInventoryValue?: number;
   productStatusBreakdown?: DashboardProductStatusBreakdown;
   userRoleBreakdown?: DashboardUserRoleBreakdown;
-  supplierStatusBreakdown?: DashboardSupplierStatusBreakdown;
   categoryStatusBreakdown?: DashboardCategoryStatusBreakdown;
   ticketStatusBreakdown?: DashboardTicketStatusBreakdown;
   reviewStatusBreakdown?: DashboardReviewStatusBreakdown;

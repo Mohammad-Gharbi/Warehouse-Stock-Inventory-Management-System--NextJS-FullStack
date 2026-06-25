@@ -83,7 +83,6 @@ export default function ProductsDropDown({ row, detailBase = "" }: ProductsDropD
         quantity: row.original.quantity,
         status: row.original.status || "Available",
         categoryId: row.original.categoryId,
-        supplierId: row.original.supplierId,
         userId: row.original.userId,
       });
 

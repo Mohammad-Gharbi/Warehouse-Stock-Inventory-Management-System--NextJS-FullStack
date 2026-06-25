@@ -27,11 +27,11 @@ const geistMono = localFont({
 
 export const metadata = {
   title: {
-    default: "Techmaster Store — Warehouse & Stock Inventory Management System",
+    default: "Techmaster Store — Stock Inventory Management System",
     template: "%s | Techmaster Store",
   },
   description:
-    "Techmaster Store is a full-stack warehouse and stock inventory management system built with Next.js. Manage products, categories, suppliers, orders, invoices, and warehouses. Role-based access for admin, client, and supplier. Analytics dashboard, QR codes, export, and secure JWT authentication.",
+    "Techmaster Store is a full-stack stock inventory management system built with Next.js. Manage products, categories, orders, and invoices. Role-based access for admin and client. Analytics dashboard, QR codes, export, and secure JWT authentication.",
   authors: [
     {
       name: "Arnob Mahmud",
@@ -45,7 +45,6 @@ export const metadata = {
   keywords: [
     "stock inventory",
     "inventory management",
-    "warehouse management",
     "stock management system",
     "Next.js",
     "React",
@@ -53,7 +52,6 @@ export const metadata = {
     "product catalog",
     "orders",
     "invoices",
-    "suppliers",
     "categories",
     "JWT authentication",
     "responsive web app",
@@ -71,9 +69,9 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    title: "Techmaster Store — Warehouse & Stock Inventory Management System",
+    title: "Techmaster Store — Stock Inventory Management System",
     description:
-      "Efficiently manage products, orders, invoices, and warehouses with Techmaster Store. Secure, responsive, role-based inventory system.",
+      "Efficiently manage products, orders, and invoices with Techmaster Store. Secure, responsive, role-based inventory system.",
     url: "https://techmaster-store.vercel.app",
     siteName: "Techmaster Store",
     images: [
@@ -87,9 +85,9 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Techmaster Store — Warehouse & Stock Inventory Management System",
+    title: "Techmaster Store — Stock Inventory Management System",
     description:
-      "Efficiently manage products, orders, invoices, and warehouses. Secure, responsive inventory system.",
+      "Efficiently manage products, orders, and invoices. Secure, responsive inventory system.",
     images: ["/favicon.ico"],
   },
   robots: {

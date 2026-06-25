@@ -10,9 +10,7 @@ import {
   createOrder,
   getOrdersByUser,
   getOrdersByClientId,
-  getOrdersContainingSupplierProducts,
 } from "@/prisma/order";
-import { getSupplierByUserId } from "@/prisma/supplier";
 import { createOrderSchema } from "@/lib/validations";
 import { getCache, setCache, cacheKeys } from "@/lib/cache";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
@@ -45,18 +43,10 @@ export async function GET(request: NextRequest) {
 
     const userId = session.id;
     const isClient = session.role === "client";
-    const isSupplier = session.role === "supplier";
-    const supplier =
-      isSupplier ? await getSupplierByUserId(userId) : null;
-    if (isSupplier && !supplier) {
-      return NextResponse.json([]);
-    }
 
     const cacheKey = isClient
       ? cacheKeys.orders.list({ userId, byClient: true })
-      : isSupplier
-        ? cacheKeys.orders.list({ supplierId: supplier!.id })
-        : cacheKeys.orders.list({ userId });
+      : cacheKeys.orders.list({ userId });
 
     // Check cache first
     const cachedOrders = await getCache<unknown[]>(cacheKey);
@@ -67,9 +57,7 @@ export async function GET(request: NextRequest) {
     // Fetch from database
     const orders = isClient
       ? await getOrdersByClientId(userId)
-      : isSupplier
-        ? await getOrdersContainingSupplierProducts(supplier!.id)
-        : await getOrdersByUser(userId);
+      : await getOrdersByUser(userId);
 
     const userIds = [...new Set(orders.map((o) => o.userId))];
     const users =

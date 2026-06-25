@@ -33,7 +33,6 @@ const DOMAIN_KEYS_REQUIRE_ALL = [
   { domain: "productReviews", key: "queryKeys.productReviews.all" },
   { domain: "invoices", key: "queryKeys.invoices.all" },
   { domain: "supportTickets", key: "queryKeys.supportTickets.all" },
-  { domain: "stockAllocation", key: "queryKeys.stockAllocation.all" },
   { domain: "notifications", key: "queryKeys.notifications.all" },
   { domain: "portal", key: "queryKeys.portal.all" },
   { domain: "history", key: "queryKeys.history.all" },
@@ -49,15 +48,12 @@ const API_WRITE_ROUTE_INVALIDATION_SPEC: Record<string, readonly string[]> = {
   "app/api/products/image/route.ts": ["invalidateAllServerCaches"],
   "app/api/products/qr-code/route.ts": ["invalidateAllServerCaches"],
   "app/api/categories/route.ts": ["invalidateOnCategoryOrSupplierChange"],
-  "app/api/suppliers/route.ts": ["invalidateOnCategoryOrSupplierChange"],
   "app/api/orders/route.ts": ["invalidateOnOrderChange"],
   "app/api/orders/[id]/route.ts": ["invalidateOnOrderChange"],
   "app/api/invoices/route.ts": ["invalidateAllServerCaches"],
   "app/api/invoices/[id]/route.ts": ["invalidateAllServerCaches"],
   "app/api/invoices/[id]/send/route.ts": ["invalidateAllServerCaches"],
   "app/api/invoices/reminders/route.ts": ["invalidateAllServerCaches"],
-  "app/api/warehouses/route.ts": ["invalidateAllServerCaches"],
-  "app/api/stock-allocations/route.ts": ["invalidateAllServerCaches"],
   "app/api/product-reviews/route.ts": ["invalidateAllServerCaches"],
   "app/api/product-reviews/[id]/route.ts": ["invalidateAllServerCaches"],
   "app/api/support-tickets/route.ts": ["invalidateAllServerCaches"],
@@ -81,8 +77,6 @@ const API_WRITE_ROUTE_INVALIDATION_SPEC: Record<string, readonly string[]> = {
 const UPDATE_HOOKS_TOUCH_DETAIL = [
   "use-products.ts",
   "use-categories.ts",
-  "use-suppliers.ts",
-  "use-warehouses.ts",
   "use-orders.ts",
   "use-invoices.ts",
   "use-product-reviews.ts",
@@ -94,7 +88,6 @@ const UPDATE_HOOKS_TOUCH_DETAIL = [
 const DOMAIN_KEYS_REQUIRE_LISTS = [
   "queryKeys.products.lists()",
   "queryKeys.categories.lists()",
-  "queryKeys.suppliers.lists()",
   "queryKeys.orders.lists()",
 ] as const;
 
@@ -228,12 +221,10 @@ describe("mutation invalidation coverage (inline fetch CRUD components)", () => 
 const INVALIDATE_ALL_HOOK_DOMAINS = [
   "queryKeys.products",
   "queryKeys.categories",
-  "queryKeys.suppliers",
   "queryKeys.orders",
   "queryKeys.clientOrders",
   "queryKeys.invoices",
   "queryKeys.clientInvoices",
-  "queryKeys.warehouses",
   "queryKeys.history",
   "queryKeys.supportTickets",
   "queryKeys.productReviews",
@@ -241,8 +232,6 @@ const INVALIDATE_ALL_HOOK_DOMAINS = [
   "queryKeys.admin",
   "queryKeys.userManagement",
   "queryKeys.clientPortal",
-  "queryKeys.supplierPortal",
-  "queryKeys.stockAllocation",
   "queryKeys.forecasting",
   "queryKeys.portal",
   "queryKeys.auditLogs",
@@ -349,10 +338,8 @@ describe("delete mutations cancel/remove detail before broad invalidation", () =
   const deleteHookFiles = [
     "use-products.ts",
     "use-categories.ts",
-    "use-suppliers.ts",
     "use-orders.ts",
     "use-invoices.ts",
-    "use-warehouses.ts",
     "use-product-reviews.ts",
     "use-support-tickets.ts",
     "use-user-management.ts",
@@ -402,13 +389,6 @@ describe("invalidateAfterOrderGraphChange", () => {
       expect(content).not.toMatch(/invalidateAllRelatedQueries\s*\(/);
     });
   }
-});
-
-describe("invalidateAfterStockChange", () => {
-  it("use-stock-allocation.ts refreshes product detail quantity", () => {
-    const content = readRepoFile("hooks/queries/use-stock-allocation.ts");
-    expect(content).toContain("invalidateAfterStockChange");
-  });
 });
 
 describe("cancelOrRemoveDetailQuery helper", () => {

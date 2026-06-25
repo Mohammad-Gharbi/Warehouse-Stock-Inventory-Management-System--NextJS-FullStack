@@ -166,14 +166,6 @@ export async function invalidateCache(pattern: string): Promise<number> {
  * Cache key generators for common entities
  */
 export const cacheKeys = {
-  stockAllocation: {
-    list: (userId: string) => `stock-allocation:list:${userId}`,
-    byProduct: (productId: string) => `stock-allocation:product:${productId}`,
-    byWarehouse: (warehouseId: string) =>
-      `stock-allocation:warehouse:${warehouseId}`,
-    summary: (userId: string) => `stock-allocation:summary:${userId}`,
-    pattern: "stock-allocation:*",
-  },
   /**
    * Product cache keys
    */
@@ -199,19 +191,6 @@ export const cacheKeys = {
     },
     detail: (id: string) => `categories:detail:${id}`,
     pattern: "categories:*",
-  },
-
-  /**
-   * Supplier cache keys
-   */
-  suppliers: {
-    all: "suppliers:all",
-    list: (filters?: Record<string, unknown>) => {
-      const filterStr = filters ? JSON.stringify(filters) : "default";
-      return `suppliers:list:${filterStr}`;
-    },
-    detail: (id: string) => `suppliers:detail:${id}`,
-    pattern: "suppliers:*",
   },
 
   /**
@@ -336,16 +315,8 @@ export const cacheKeys = {
   },
 
   /**
-   * Admin Supplier Portal cache keys (per admin userId)
-   */
-  supplierPortal: {
-    overview: (userId: string) => `supplierPortal:overview:${userId}`,
-    pattern: "supplierPortal:*",
-  },
-
-  /**
-   * Portal (supplier/client logged-in dashboard) cache keys
-   * Used by GET /api/portal/supplier and similar
+   * Portal (client logged-in dashboard) cache keys
+   * Used by GET /api/portal/client and similar
    */
   portal: {
     pattern: "portal:*",
@@ -365,7 +336,6 @@ export async function invalidateAllServerCaches(): Promise<void> {
   await Promise.all([
     invalidateCache(cacheKeys.products.pattern),
     invalidateCache(cacheKeys.categories.pattern),
-    invalidateCache(cacheKeys.suppliers.pattern),
     invalidateCache(cacheKeys.orders.pattern),
     invalidateCache(cacheKeys.invoices.pattern),
     invalidateCache(cacheKeys.dashboard.pattern),
@@ -373,11 +343,9 @@ export async function invalidateAllServerCaches(): Promise<void> {
     invalidateCache(cacheKeys.supportTickets.pattern),
     invalidateCache(cacheKeys.productReviews.pattern),
     invalidateCache(cacheKeys.userManagement.pattern),
-    invalidateCache(cacheKeys.stockAllocation.pattern),
     invalidateCache(cacheKeys.history.pattern),
     invalidateCache(cacheKeys.portal.pattern),
     invalidateCache(cacheKeys.clientPortal.pattern),
-    invalidateCache(cacheKeys.supplierPortal.pattern),
     invalidateCache(cacheKeys.sessions.pattern),
     invalidateCache("forecasting:*"),
     invalidateCache("system-config:*"),

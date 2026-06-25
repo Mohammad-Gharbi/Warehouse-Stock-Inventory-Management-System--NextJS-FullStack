@@ -36,12 +36,8 @@ export async function GET(request: NextRequest) {
     const [
       admins,
       clientsCount,
-      supplierActive,
-      supplierInactive,
       categoryActive,
       categoryInactive,
-      warehouseActive,
-      warehouseInactive,
     ] = await Promise.all([
       prisma.user.findMany({
         where: { role: { in: ["admin", "user"] } },
@@ -49,12 +45,8 @@ export async function GET(request: NextRequest) {
         orderBy: { name: "asc" },
       }),
       prisma.user.count({ where: { role: "client" } }),
-      prisma.supplier.count({ where: { status: true } }),
-      prisma.supplier.count({ where: { status: false } }),
       prisma.category.count({ where: { status: true } }),
       prisma.category.count({ where: { status: false } }),
-      prisma.warehouse.count({ where: { status: true } }),
-      prisma.warehouse.count({ where: { status: false } }),
     ]);
 
     const meta: ClientBrowseMeta = {
@@ -66,9 +58,7 @@ export async function GET(request: NextRequest) {
       stats: {
         admins: admins.length,
         clients: clientsCount,
-        suppliers: { total: supplierActive + supplierInactive, active: supplierActive, inactive: supplierInactive },
         categories: { total: categoryActive + categoryInactive, active: categoryActive, inactive: categoryInactive },
-        warehouses: { total: warehouseActive + warehouseInactive, active: warehouseActive, inactive: warehouseInactive },
       },
     };
 

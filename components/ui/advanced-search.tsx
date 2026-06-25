@@ -40,7 +40,6 @@ const searchFields = [
   { value: "name", label: "Product Name" },
   { value: "sku", label: "SKU" },
   { value: "category", label: "Category" },
-  { value: "supplier", label: "Supplier" },
   { value: "status", label: "Status" },
 ];
 

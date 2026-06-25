@@ -20,7 +20,6 @@ export interface SupportTicket {
   assignedToId: string | null;
   productId: string | null;
   orderId: string | null;
-  supplierId: string | null;
   notes: string | null;
   createdAt: string;
   updatedAt: string | null;
@@ -46,7 +45,6 @@ export interface CreateSupportTicketInput {
   assignedToId?: string | null;
   productId?: string;
   orderId?: string;
-  supplierId?: string;
 }
 
 export interface SupportTicketReply {

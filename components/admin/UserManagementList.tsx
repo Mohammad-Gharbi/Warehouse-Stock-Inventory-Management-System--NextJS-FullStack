@@ -58,9 +58,8 @@ export default function UserManagementList({
   const roleCounts = useMemo(() => {
     const total = allUsers.length;
     const admin = allUsers.filter((u) => u.role === "admin").length;
-    const supplier = allUsers.filter((u) => u.role === "supplier").length;
     const client = allUsers.filter((u) => u.role === "client").length;
-    return { total, admin, supplier, client };
+    return { total, admin, client };
   }, [allUsers]);
 
   return (
@@ -98,13 +97,6 @@ export default function UserManagementList({
               description="Users with role admin"
               icon={Shield}
               variant="blue"
-            />
-            <AnalyticsCard
-              title="Suppliers"
-              value={roleCounts.supplier}
-              description="Users with role supplier"
-              icon={Truck}
-              variant="emerald"
             />
             <AnalyticsCard
               title="Clients"

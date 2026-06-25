@@ -172,7 +172,6 @@ export default function BusinessInsightPage({
         averagePrice: 0,
         totalQuantity: 0,
         categoryDistribution: [],
-        supplierDistribution: [],
         statusDistribution: [],
         priceRangeDistribution: [],
         monthlyTrend: [],
@@ -362,34 +361,6 @@ export default function BusinessInsightPage({
       .sort((a, b) => Number(a.quantity) - Number(b.quantity))
       .slice(0, 5);
 
-    // Supplier distribution (by quantity and value) - same pattern as category
-    const supplierMap = new Map<
-      string,
-      { count: number; quantity: number; value: number }
-    >();
-    filteredProducts.forEach((product) => {
-      const supplier =
-        (product.supplier as string | undefined)?.trim() || "Unknown";
-      const current = supplierMap.get(supplier) || {
-        count: 0,
-        quantity: 0,
-        value: 0,
-      };
-      supplierMap.set(supplier, {
-        count: current.count + 1,
-        quantity: current.quantity + Number(product.quantity),
-        value: current.value + product.price * Number(product.quantity),
-      });
-    });
-    const supplierDistribution = Array.from(supplierMap.entries()).map(
-      ([name, data]) => ({
-        name,
-        value: data.quantity,
-        count: data.count,
-        totalValue: data.value,
-      }),
-    );
-
     return {
       totalProducts,
       totalValue,
@@ -401,7 +372,6 @@ export default function BusinessInsightPage({
       valueDensity,
       stockCoverage,
       categoryDistribution,
-      supplierDistribution,
       statusDistribution,
       priceRangeDistribution,
       monthlyTrend,
@@ -1180,32 +1150,6 @@ export default function BusinessInsightPage({
                       </ResponsiveChartContainer>
                     </ChartCard>
 
-                    {/* Supplier Performance (by value) */}
-                    <ChartCard
-                      title="Supplier Performance"
-                      icon={Users}
-                      variant="orange"
-                    >
-                      <ResponsiveChartContainer>
-                        <BarChart
-                          data={analyticsData.supplierDistribution}
-                          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis />
-                          <Tooltip
-                            formatter={(value) => [
-                              value != null
-                                ? `$${Number(value).toLocaleString()}`
-                                : "$0",
-                              "Value",
-                            ]}
-                          />
-                          <Bar dataKey="totalValue" fill="#FF8042" />
-                        </BarChart>
-                      </ResponsiveChartContainer>
-                    </ChartCard>
                   </div>
                 </TabsContent>
 

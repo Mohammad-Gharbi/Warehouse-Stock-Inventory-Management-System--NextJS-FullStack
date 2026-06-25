@@ -15,7 +15,6 @@ import { Users } from "lucide-react";
 const ROLE_OPTIONS = [
   { id: "user", name: "User" },
   { id: "admin", name: "Admin" },
-  { id: "supplier", name: "Supplier" },
   { id: "client", name: "Client" },
   { id: "retailer", name: "Retailer" },
 ];

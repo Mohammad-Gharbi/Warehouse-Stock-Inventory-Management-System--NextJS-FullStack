@@ -72,11 +72,10 @@ export const productSchema = z.object({
 export type ProductFormData = z.infer<typeof productSchema>;
 
 /**
- * Form submit schema — RHF fields plus category/supplier from separate state
+ * Form submit schema — RHF fields plus category from separate state
  */
 export const productFormSubmitSchema = productSchema.extend({
   categoryId: z.string().min(1, "Category is required"),
-  supplierId: z.string().min(1, "Supplier is required"),
 });
 
 /**
@@ -89,7 +88,6 @@ export const createProductBodySchema = z.object({
   quantity: z.number().int().nonnegative("Quantity cannot be negative"),
   status: productStatusSchema,
   categoryId: z.string().min(1, "Category is required"),
-  supplierId: z.string().min(1, "Supplier is required"),
   imageUrl: optionalImageUrlSchema.optional(),
   imageFileId: z.string().optional(),
   expirationDate: optionalExpirationDateSchema.optional(),
@@ -113,7 +111,6 @@ export const updateProductBodySchema = z.object({
   quantity: z.number().int().nonnegative("Quantity cannot be negative").optional(),
   status: productStatusSchema.optional(),
   categoryId: z.string().min(1, "Category is required").optional(),
-  supplierId: z.string().min(1, "Supplier is required").optional(),
   imageUrl: optionalImageUrlSchema.optional(),
   imageFileId: z.string().optional(),
   expirationDate: optionalExpirationDateSchema.optional(),

@@ -1,24 +1,22 @@
 /**
  * Update Demo User Script
  *
- * Updates the single demo account to the chosen identity: admin, retailer, client, or supplier.
+ * Updates the single demo account to the chosen identity: admin, retailer, or client.
  * Use on VPS or locally to switch the demo account without creating separate users.
  *
  * One-time migration: Run with --to admin (or no args) to migrate your existing
  * test@user.com in the DB to test@admin.com (full privileges). After that, the
- * main demo account is test@admin.com; use --to client, --to retailer, or --to supplier to switch.
+ * main demo account is test@admin.com; use --to client or --to retailer to switch.
  *
  * Usage:
  *   npx tsx scripts/update-demo-user.ts --to admin   (or no args; default = admin)
  *   npx tsx scripts/update-demo-user.ts --to retailer
  *   npx tsx scripts/update-demo-user.ts --to client
- *   npx tsx scripts/update-demo-user.ts --to supplier
  *
  * Options:
  *   --to admin    → email: test@admin.com, name: "Test Admin", role: "admin", password: 12345678 (default)
  *   --to retailer → email: test@retailer.com, name: "Test Retailer", role: "retailer", password: 12345678
  *   --to client   → email: test@client.com, name: "Client/Customer", role: "client", password: 12345678
- *   --to supplier → email: test@supplier.com, name: "Test Supplier", role: "supplier", password: 12345678 (links first Supplier to this user)
  */
 
 import { PrismaClient } from "@prisma/client";
@@ -59,11 +57,6 @@ const TARGETS = {
     name: "Client/Customer",
     role: "client",
   },
-  supplier: {
-    email: "test@supplier.com",
-    name: "Test Supplier",
-    role: "supplier",
-  },
 } as const;
 
 type TargetKey = keyof typeof TARGETS;
@@ -72,32 +65,17 @@ function parseArgs(): TargetKey {
   const withEquals = process.argv.find((a) => a.startsWith("--to="));
   if (withEquals) {
     const value = withEquals.slice("--to=".length);
-    if (
-      value === "admin" ||
-      value === "retailer" ||
-      value === "client" ||
-      value === "supplier"
-    )
+    if (value === "admin" || value === "retailer" || value === "client")
       return value;
   }
   const idx = process.argv.indexOf("--to");
   if (idx !== -1 && process.argv[idx + 1]) {
     const next = process.argv[idx + 1];
-    if (
-      next === "admin" ||
-      next === "retailer" ||
-      next === "client" ||
-      next === "supplier"
-    )
+    if (next === "admin" || next === "retailer" || next === "client")
       return next;
   }
   const first = process.argv[2];
-  if (
-    first === "admin" ||
-    first === "retailer" ||
-    first === "client" ||
-    first === "supplier"
-  )
+  if (first === "admin" || first === "retailer" || first === "client")
     return first;
   return "admin";
 }
@@ -145,31 +123,6 @@ async function main() {
       updatedAt: new Date(),
     },
   });
-
-  if (to === "supplier") {
-    const firstSupplier = await prisma.supplier.findFirst({
-      orderBy: { createdAt: "asc" },
-      select: { id: true, name: true },
-    });
-    if (firstSupplier) {
-      await prisma.supplier.update({
-        where: { id: firstSupplier.id },
-        data: {
-          userId: existing.id,
-          createdBy: existing.id,
-          updatedBy: existing.id,
-          updatedAt: new Date(),
-        },
-      });
-      console.log(
-        `   Linked supplier "${firstSupplier.name}" (${firstSupplier.id}) to this user.`,
-      );
-    } else {
-      console.log(
-        "   ⚠ No supplier in DB — create a supplier as admin, then run --to supplier again to link.",
-      );
-    }
-  }
 
   console.log("✅ Demo user updated successfully.");
   console.log(

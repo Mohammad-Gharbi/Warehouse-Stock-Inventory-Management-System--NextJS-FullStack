@@ -18,20 +18,6 @@ export type {
   UpdateCategoryInput,
 } from "./category";
 
-// Supplier types
-export type {
-  Supplier,
-  CreateSupplierInput,
-  UpdateSupplierInput,
-} from "./supplier";
-
-// Warehouse types
-export type {
-  Warehouse,
-  CreateWarehouseInput,
-  UpdateWarehouseInput,
-} from "./warehouse";
-
 // Auth types
 export type {
   User,
@@ -123,26 +109,13 @@ export type {
   DashboardTopProduct,
   DashboardInvoiceAnalytics,
   DashboardInvoiceStatusDist,
-  DashboardWarehouseAnalytics,
   DashboardProductStatusBreakdown,
   DashboardUserRoleBreakdown,
-  DashboardSupplierStatusBreakdown,
   DashboardCategoryStatusBreakdown,
   DashboardTicketStatusBreakdown,
   DashboardReviewStatusBreakdown,
   DashboardSelfOthersBreakdown,
 } from "./dashboard";
-
-// Stock Allocation types
-export type {
-  StockTransferStatus,
-  StockAllocation,
-  StockTransfer,
-  CreateStockAllocationInput,
-  UpdateStockAllocationInput,
-  CreateStockTransferInput,
-  WarehouseStockSummary,
-} from "./stock-allocation";
 
 // Forecasting types
 export type {
@@ -155,7 +128,6 @@ export type {
 
 // Portal types
 export type {
-  SupplierPortalDashboard,
   ClientPortalDashboard,
   ClientCatalogOverview,
   ClientBrowseMeta,
@@ -209,15 +181,6 @@ export type {
   ClientPortalRecentInvoice,
   ClientPortalClient,
 } from "./client-portal";
-
-// Admin Supplier Portal types
-export type {
-  SupplierPortalStats,
-  SupplierPortalCounts,
-  SupplierPortalRecentProduct,
-  SupplierPortalRecentOrder,
-  SupplierPortalSupplier,
-} from "./supplier-portal";
 
 // System Configuration types
 export type {

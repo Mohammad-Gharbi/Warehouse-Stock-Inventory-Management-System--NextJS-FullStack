@@ -1,16 +1,15 @@
 import { create } from "zustand";
 import axiosInstance from "@/utils/axiosInstance";
-import type { Category, Product, Supplier } from "@/types";
+import type { Category, Product } from "@/types";
 
 /**
  * Product store state interface
- * Manages products, categories, suppliers, and UI state
+ * Manages products, categories, and UI state
  */
 interface ProductState {
   // Data state
   allProducts: Product[];
   categories: Category[];
-  suppliers: Supplier[];
   isLoading: boolean;
 
   // UI state
@@ -33,23 +32,16 @@ interface ProductState {
   addCategory: (category: Category) => void;
   editCategory: (categoryId: string, newCategoryName: string) => void;
   deleteCategory: (categoryId: string) => void;
-
-  // Supplier actions
-  loadSuppliers: () => Promise<void>;
-  addSupplier: (supplier: Supplier) => void;
-  editSupplier: (supplierId: string, newSupplierName: string) => void;
-  deleteSupplier: (supplierId: string) => void;
 }
 
 /**
  * Zustand store for product management
- * Handles CRUD operations for products, categories, and suppliers
+ * Handles CRUD operations for products and categories
  */
 export const useProductStore = create<ProductState>((set) => ({
   // Initial state
   allProducts: [],
   categories: [],
-  suppliers: [],
   isLoading: false,
   selectedProduct: null,
   openDialog: false,
@@ -206,48 +198,6 @@ export const useProductStore = create<ProductState>((set) => ({
   deleteCategory: (categoryId) =>
     set((state) => ({
       categories: state.categories.filter((cat) => cat.id !== categoryId),
-    })),
-
-  /**
-   * Load all suppliers from API
-   */
-  loadSuppliers: async () => {
-    try {
-      const response = await axiosInstance.get("/suppliers");
-      set({ suppliers: response.data ?? [] });
-    } catch (error) {
-      // Error handled silently
-    }
-  },
-
-  /**
-   * Add a new supplier to state
-   */
-  addSupplier: (supplier: Supplier) =>
-    set((state) => ({
-      suppliers: [...state.suppliers, supplier],
-    })),
-
-  /**
-   * Edit an existing supplier
-   */
-  editSupplier: (supplierId: string, newSupplierName: string) =>
-    set((state) => ({
-      suppliers: state.suppliers.map((supplier) =>
-        supplier.id === supplierId
-          ? { ...supplier, name: newSupplierName }
-          : supplier
-      ),
-    })),
-
-  /**
-   * Delete a supplier from state
-   */
-  deleteSupplier: (supplierId: string) =>
-    set((state) => ({
-      suppliers: state.suppliers.filter(
-        (supplier) => supplier.id !== supplierId
-      ),
     })),
 }));
 

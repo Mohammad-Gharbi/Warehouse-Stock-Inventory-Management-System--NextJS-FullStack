@@ -5,19 +5,17 @@
 
 import { prisma } from "@/prisma/client";
 import { mergeProductListWhere } from "@/lib/products/product-query";
-import { getSuppliersForAdminIncludingDemo } from "@/prisma/supplier";
 import type { AdminCounts } from "@/types";
 
 /**
  * Get counts for admin sidebar: orders, invoices, support tickets, product reviews,
- * products, warehouses, suppliers, clients, users.
+ * products, clients, users.
  * Client orders/invoices and product reviews: scoped to product owner (userId).
- * Products, warehouses: scoped to this admin (userId).
- * Suppliers: own + Demo Supplier (same as Supplier Portal and GET /api/suppliers).
+ * Products: scoped to this admin (userId).
  * Clients: users with role client. Users: all users (user management).
  */
 export async function getAdminCounts(userId: string): Promise<AdminCounts> {
-  const [clientOrderIds, supportTicketsCount, productIdsOwned, productsCount, warehousesCount, suppliersForAdmin, clientsCount, usersCount] =
+  const [clientOrderIds, supportTicketsCount, productIdsOwned, productsCount, clientsCount, usersCount] =
     await Promise.all([
       getClientOrderIdsForProductOwner(userId),
       prisma.supportTicket.count({ where: { assignedToId: userId } }),
@@ -26,13 +24,9 @@ export async function getAdminCounts(userId: string): Promise<AdminCounts> {
         select: { id: true },
       }).then((rows) => rows.map((p) => p.id)),
       prisma.product.count({ where: mergeProductListWhere({ userId }) }),
-      prisma.warehouse.count({ where: { userId } }),
-      getSuppliersForAdminIncludingDemo(userId),
       prisma.user.count({ where: { role: "client" } }),
       prisma.user.count(),
     ]);
-
-  const suppliersCount = suppliersForAdmin.length;
 
   const productReviewsCountForOwner =
     productIdsOwned.length > 0
@@ -55,8 +49,6 @@ export async function getAdminCounts(userId: string): Promise<AdminCounts> {
     supportTickets: supportTicketsCount,
     productReviews: productReviewsCountForOwner,
     products: productsCount,
-    warehouses: warehousesCount,
-    suppliers: suppliersCount,
     clients: clientsCount,
     users: usersCount,
   };

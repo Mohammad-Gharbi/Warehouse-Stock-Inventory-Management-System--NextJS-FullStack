@@ -42,8 +42,6 @@ type NavItem = {
     | "supportTickets"
     | "productReviews"
     | "products"
-    | "warehouses"
-    | "suppliers"
     | "clients"
     | "users";
 };
@@ -86,18 +84,6 @@ const MANAGEMENT_ITEMS: NavItem[] = [
     label: "Products",
     icon: Package,
     countKey: "products",
-  },
-  {
-    href: "/admin/warehouses",
-    label: "Warehouses",
-    icon: Warehouse,
-    countKey: "warehouses",
-  },
-  {
-    href: "/admin/supplier-portal",
-    label: "Supplier Portal",
-    icon: Truck,
-    countKey: "suppliers",
   },
   {
     href: "/admin/client-portal",

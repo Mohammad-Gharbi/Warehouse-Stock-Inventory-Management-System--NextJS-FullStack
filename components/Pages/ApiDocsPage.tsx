@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FiCode, FiDatabase, FiKey, FiPackage, FiUsers } from "react-icons/fi";
+import { FiCode, FiDatabase, FiKey, FiPackage } from "react-icons/fi";
 import {
   FileJson,
   Zap,
@@ -11,7 +11,6 @@ import {
   ExternalLink,
   ShoppingCart,
   FileText,
-  Warehouse,
   BarChart3,
   Activity,
   Server,
@@ -307,12 +306,6 @@ export default function ApiDocsPage() {
               required: true,
               description: "Category ID",
             },
-            {
-              name: "supplierId",
-              type: "string",
-              required: true,
-              description: "Supplier ID",
-            },
           ],
           response: {
             success: { status: 201, data: "Product" },
@@ -365,12 +358,6 @@ export default function ApiDocsPage() {
               type: "string",
               required: true,
               description: "Category ID",
-            },
-            {
-              name: "supplierId",
-              type: "string",
-              required: true,
-              description: "Supplier ID",
             },
           ],
           response: {
@@ -471,103 +458,6 @@ export default function ApiDocsPage() {
       ],
     },
     {
-      name: "Suppliers",
-      icon: FiUsers,
-      endpoints: [
-        {
-          method: "GET",
-          path: "/api/suppliers",
-          description: "Get all suppliers for the authenticated user",
-          parameters: [],
-          response: {
-            success: { status: 200, data: "Supplier[]" },
-            error: { status: 401, data: "{ error: string }" },
-          },
-        },
-        {
-          method: "POST",
-          path: "/api/suppliers",
-          description: "Create a new supplier",
-          parameters: [
-            {
-              name: "name",
-              type: "string",
-              required: true,
-              description: "Supplier name",
-            },
-            {
-              name: "email",
-              type: "string",
-              required: false,
-              description: "Supplier email",
-            },
-            {
-              name: "phone",
-              type: "string",
-              required: false,
-              description: "Supplier phone",
-            },
-          ],
-          response: {
-            success: { status: 201, data: "Supplier" },
-            error: { status: 400, data: "{ error: string }" },
-          },
-        },
-        {
-          method: "PUT",
-          path: "/api/suppliers",
-          description: "Update an existing supplier",
-          parameters: [
-            {
-              name: "id",
-              type: "string",
-              required: true,
-              description: "Supplier ID",
-            },
-            {
-              name: "name",
-              type: "string",
-              required: true,
-              description: "Supplier name",
-            },
-            {
-              name: "email",
-              type: "string",
-              required: false,
-              description: "Supplier email",
-            },
-            {
-              name: "phone",
-              type: "string",
-              required: false,
-              description: "Supplier phone",
-            },
-          ],
-          response: {
-            success: { status: 200, data: "Supplier" },
-            error: { status: 400, data: "{ error: string }" },
-          },
-        },
-        {
-          method: "DELETE",
-          path: "/api/suppliers",
-          description: "Delete a supplier",
-          parameters: [
-            {
-              name: "id",
-              type: "string",
-              required: true,
-              description: "Supplier ID",
-            },
-          ],
-          response: {
-            success: { status: 200, data: "{ message: string }" },
-            error: { status: 400, data: "{ error: string }" },
-          },
-        },
-      ],
-    },
-    {
       name: "Orders",
       icon: ShoppingCart,
       endpoints: [
@@ -575,7 +465,7 @@ export default function ApiDocsPage() {
           method: "GET",
           path: "/api/orders",
           description:
-            "List orders for the authenticated user (or client/supplier filtered)",
+            "List orders for the authenticated user (or client filtered)",
           parameters: [],
           response: {
             success: { status: 200, data: "Order[]" },
@@ -748,102 +638,6 @@ export default function ApiDocsPage() {
           response: {
             success: { status: 200, data: "PDF binary" },
             error: { status: 404, data: "{ error: string }" },
-          },
-        },
-      ],
-    },
-    {
-      name: "Warehouses",
-      icon: Warehouse,
-      endpoints: [
-        {
-          method: "GET",
-          path: "/api/warehouses",
-          description: "List warehouses for the authenticated user",
-          parameters: [],
-          response: {
-            success: { status: 200, data: "Warehouse[]" },
-            error: { status: 401, data: "{ error: string }" },
-          },
-        },
-        {
-          method: "POST",
-          path: "/api/warehouses",
-          description: "Create a warehouse",
-          parameters: [
-            {
-              name: "name",
-              type: "string",
-              required: true,
-              description: "Warehouse name",
-            },
-            {
-              name: "type",
-              type: "string",
-              required: false,
-              description: "Type (main, storage, etc.)",
-            },
-            {
-              name: "status",
-              type: "boolean",
-              required: false,
-              description: "Active status",
-            },
-          ],
-          response: {
-            success: { status: 201, data: "Warehouse" },
-            error: { status: 400, data: "{ error: string }" },
-          },
-        },
-        {
-          method: "GET",
-          path: "/api/warehouses/[id]",
-          description: "Get warehouse by ID",
-          parameters: [
-            {
-              name: "id",
-              type: "string",
-              required: true,
-              description: "Warehouse ID",
-            },
-          ],
-          response: {
-            success: { status: 200, data: "Warehouse" },
-            error: { status: 404, data: "{ error: string }" },
-          },
-        },
-        {
-          method: "PUT",
-          path: "/api/warehouses/[id]",
-          description: "Update warehouse",
-          parameters: [
-            {
-              name: "id",
-              type: "string",
-              required: true,
-              description: "Warehouse ID",
-            },
-          ],
-          response: {
-            success: { status: 200, data: "Warehouse" },
-            error: { status: 400, data: "{ error: string }" },
-          },
-        },
-        {
-          method: "DELETE",
-          path: "/api/warehouses/[id]",
-          description: "Delete warehouse",
-          parameters: [
-            {
-              name: "id",
-              type: "string",
-              required: true,
-              description: "Warehouse ID",
-            },
-          ],
-          response: {
-            success: { status: 200, data: "{ message: string }" },
-            error: { status: 400, data: "{ error: string }" },
           },
         },
       ],
@@ -1113,15 +907,9 @@ export default function ApiDocsPage() {
           type: "string",
           description: "Category reference",
         },
-        {
-          name: "supplierId",
-          type: "string",
-          description: "Supplier reference",
-        },
         { name: "userId", type: "string", description: "Owner user ID" },
         { name: "createdAt", type: "Date", description: "Creation timestamp" },
         { name: "category", type: "string", description: "Category name" },
-        { name: "supplier", type: "string", description: "Supplier name" },
       ],
     },
     {
@@ -1129,17 +917,6 @@ export default function ApiDocsPage() {
       fields: [
         { name: "id", type: "string", description: "Unique identifier" },
         { name: "name", type: "string", description: "Category name" },
-        { name: "userId", type: "string", description: "Owner user ID" },
-        { name: "createdAt", type: "Date", description: "Creation timestamp" },
-      ],
-    },
-    {
-      name: "Supplier",
-      fields: [
-        { name: "id", type: "string", description: "Unique identifier" },
-        { name: "name", type: "string", description: "Supplier name" },
-        { name: "email", type: "string", description: "Supplier email" },
-        { name: "phone", type: "string", description: "Supplier phone" },
         { name: "userId", type: "string", description: "Owner user ID" },
         { name: "createdAt", type: "Date", description: "Creation timestamp" },
       ],
@@ -1180,10 +957,8 @@ export default function ApiDocsPage() {
     Authentication: "violet",
     Products: "emerald",
     Categories: "sky",
-    Suppliers: "orange",
     Orders: "blue",
     Invoices: "rose",
-    Warehouses: "teal",
     Dashboard: "amber",
     "Health & System": "emerald",
     "More APIs": "sky",

@@ -8,7 +8,6 @@ import { getSessionFromRequest } from "@/utils/auth";
 import { logger } from "@/lib/logger";
 import { getTrackingUrl } from "@/lib/shippo";
 import { prisma } from "@/prisma/client";
-import { getSupplierByUserId } from "@/prisma/supplier";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
 import { sendShippingNotification } from "@/lib/email";
 import type { ShippingNotificationData } from "@/lib/email/types";
@@ -49,34 +48,21 @@ export async function POST(request: NextRequest) {
 
     const { orderId, trackingNumber, trackingCarrier } = validationResult.data;
 
-    // Fetch order with items and product supplierIds for auth
+    // Fetch order with items (items used for the shipping notification email)
     const order = await prisma.order.findUnique({
       where: { id: orderId },
-      include: {
-        items: {
-          include: {
-            product: { select: { supplierId: true } },
-          },
-        },
-      },
+      include: { items: true },
     });
 
     if (!order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    // Allow: admin, order creator, client, or supplier on this order
+    // Allow: admin, order creator, or client on this order
     const isAdmin = session.role === "admin";
     const isCreator = order.userId === session.id;
     const isClient = order.clientId === session.id;
-    let isSupplierOnOrder = false;
-    if (session.role === "supplier") {
-      const supplier = await getSupplierByUserId(session.id);
-      isSupplierOnOrder =
-        !!supplier &&
-        order.items.some((item) => item.product.supplierId === supplier.id);
-    }
-    if (!isAdmin && !isCreator && !isClient && !isSupplierOnOrder) {
+    if (!isAdmin && !isCreator && !isClient) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

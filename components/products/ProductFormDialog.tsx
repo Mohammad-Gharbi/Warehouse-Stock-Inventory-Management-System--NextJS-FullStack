@@ -26,7 +26,6 @@ import {
   useCreateProduct,
   useUpdateProduct,
   useCategories,
-  useSuppliers,
 } from "@/hooks/queries";
 import { logger } from "@/lib/logger";
 import ProductName from "./form-fields/NameField";
@@ -71,10 +70,8 @@ export default function AddProductDialog({
   const { reset } = methods;
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [selectedSupplier, setSelectedSupplier] = useState<string>("");
-  // Inline validation errors for category/supplier — outside RHF so Zod productSchema cannot cover them
+  // Inline validation error for category — outside RHF so Zod productSchema cannot cover it
   const [categoryError, setCategoryError] = useState<string>("");
-  const [supplierError, setSupplierError] = useState<string>("");
   const dialogCloseRef = useRef<HTMLButtonElement | null>(null);
 
   // Keep UI state in Zustand (openProductDialog, selectedProduct)
@@ -87,15 +84,11 @@ export default function AddProductDialog({
 
   // Use TanStack Query for data fetching
   const { data: categories = [] } = useCategories();
-  const { data: suppliers = [] } = useSuppliers();
 
-  // Filter to only show active categories and suppliers in dropdowns
-  // Include currently selected category/supplier even if inactive (for edit mode)
+  // Filter to only show active categories in dropdown
+  // Include currently selected category even if inactive (for edit mode)
   const activeCategories = categories.filter(
     (category) => category.status !== false || category.id === selectedCategory
-  );
-  const activeSuppliers = suppliers.filter(
-    (supplier) => supplier.status !== false || supplier.id === selectedSupplier
   );
 
   // Use TanStack Query mutations
@@ -116,7 +109,6 @@ export default function AddProductDialog({
           : "",
       });
       setSelectedCategory(selectedProduct.categoryId || "");
-      setSelectedSupplier(selectedProduct.supplierId || "");
     } else {
       // Reset form to default values for adding a new product
       reset({
@@ -129,18 +121,15 @@ export default function AddProductDialog({
         expirationDate: "",
       });
       setSelectedCategory("");
-      setSelectedSupplier("");
     }
-    // Clear inline validation errors on every dialog open/close or product change
+    // Clear inline validation error on every dialog open/close or product change
     setCategoryError("");
-    setSupplierError("");
   }, [selectedProduct, openProductDialog, reset]);
 
   const onSubmit = async (data: ProductFormData) => {
     const submitValidation = productFormSubmitSchema.safeParse({
       ...data,
       categoryId: selectedCategory,
-      supplierId: selectedSupplier,
     });
     if (!submitValidation.success) {
       for (const issue of submitValidation.error.errors) {
@@ -148,14 +137,10 @@ export default function AddProductDialog({
         if (field === "categoryId") {
           setCategoryError(issue.message);
         }
-        if (field === "supplierId") {
-          setSupplierError(issue.message);
-        }
       }
       return;
     }
     setCategoryError("");
-    setSupplierError("");
     // Convert empty strings to 0 for quantity and price
     const quantity =
       typeof data.quantity === "string" && data.quantity === ""
@@ -185,7 +170,6 @@ export default function AddProductDialog({
           quantity: quantity,
           status,
           categoryId: selectedCategory,
-          supplierId: selectedSupplier,
           userId: userId,
           imageUrl: data.imageUrl || undefined,
           imageFileId: data.imageFileId || undefined,
@@ -205,7 +189,6 @@ export default function AddProductDialog({
           quantity: quantity,
           status,
           categoryId: selectedCategory,
-          supplierId: selectedSupplier,
           imageUrl: data.imageUrl || undefined,
           imageFileId: data.imageFileId || undefined,
           expirationDate: expirationDate,
@@ -314,54 +297,6 @@ export default function AddProductDialog({
                 </DeferredSelectGate>
                 {categoryError && (
                   <p className="text-xs text-red-400 mt-1">{categoryError}</p>
-                )}
-              </div>
-              <div className="mt-5 flex flex-col gap-2">
-                <label className="text-sm font-medium text-white/80">
-                  Supplier
-                </label>
-                <DeferredSelectGate
-                  enabled={openProductDialog}
-                  placeholder={
-                    <div
-                      className="flex h-11 w-full items-center rounded-md border border-rose-400/30 bg-white/10 px-3 text-sm text-white/60"
-                      aria-hidden
-                    >
-                      {activeSuppliers.find((s) => s.id === selectedSupplier)
-                        ?.name ?? "Select Supplier"}
-                    </div>
-                  }
-                >
-                  {({ selectRemountKey }) => (
-                    <Select
-                      key={selectRemountKey}
-                      value={selectedSupplier}
-                      onValueChange={(value) => { setSelectedSupplier(value); setSupplierError(""); }}
-                    >
-                      <SelectTrigger className="h-11 w-full border-rose-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-rose-400 focus:ring-rose-500/50 shadow-sm">
-                        <SelectValue placeholder="Select Supplier" />
-                      </SelectTrigger>
-                      <SelectContent
-                        className="border-rose-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
-                        position="popper"
-                        sideOffset={5}
-                        align="start"
-                      >
-                        {activeSuppliers.map((supplier) => (
-                          <SelectItem
-                            key={supplier.id}
-                            value={supplier.id}
-                            className="cursor-pointer text-gray-900 dark:text-white focus:bg-rose-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
-                          >
-                            {supplier.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                </DeferredSelectGate>
-                {supplierError && (
-                  <p className="text-xs text-red-400 mt-1">{supplierError}</p>
                 )}
               </div>
             </div>

@@ -14,7 +14,7 @@ export const productNotDeletedWhere = {
 } satisfies Prisma.ProductWhereInput;
 
 /**
- * Merge catalog filter with additional where fields (userId, supplierId, id, etc.).
+ * Merge catalog filter with additional where fields (userId, id, etc.).
  */
 export function mergeProductListWhere(
   where: Prisma.ProductWhereInput,

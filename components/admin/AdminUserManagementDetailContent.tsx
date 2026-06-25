@@ -33,9 +33,7 @@ import {
   FileText,
   DollarSign,
   Package,
-  Truck,
   Tag,
-  Building2,
 } from "lucide-react";
 import { useUser, useUpdateUser, useDeleteUser } from "@/hooks/queries";
 import { useAuth } from "@/contexts";
@@ -153,7 +151,6 @@ function getDisplayUsername(u: UserForAdmin): string {
 const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   { value: "user", label: "User" },
   { value: "admin", label: "Admin" },
-  { value: "supplier", label: "Supplier" },
   { value: "client", label: "Client" },
   { value: "retailer", label: "Retailer" },
 ];
@@ -162,8 +159,6 @@ function getRoleColor(role: string | null): string {
   switch (role ?? "") {
     case "admin":
       return "bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-300";
-    case "supplier":
-      return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300";
     case "client":
       return "bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-300";
     case "retailer":
@@ -460,9 +455,8 @@ export default function AdminUserManagementDetailContent() {
                 </h3>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
                   Orders, invoices, and activity linked to this user. Revenue =
-                  orders you created + sales from your supplier products;
-                  Spent/Due = orders/invoices where you are the buyer (userId or
-                  clientId).
+                  orders you created; Spent/Due = orders/invoices where you are
+                  the buyer (userId or clientId).
                 </p>
               </div>
             </div>
@@ -545,20 +539,6 @@ export default function AdminUserManagementDetailContent() {
                 </div>
               </Link>
               <Link
-                href="/admin/supplier-portal"
-                className="flex items-center gap-2 p-3 rounded-xl border border-violet-200/40 dark:border-white/10 bg-white/30 dark:bg-white/5 hover:bg-white/50 dark:hover:bg-white/10 transition-colors"
-              >
-                <Truck className="h-5 w-5 text-violet-600 dark:text-violet-400" />
-                <div>
-                  <p className="text-xl font-semibold text-gray-900 dark:text-white">
-                    {overview.supplierCount}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    Suppliers
-                  </p>
-                </div>
-              </Link>
-              <Link
                 href="/admin/products"
                 className="flex items-center gap-2 p-3 rounded-xl border border-violet-200/40 dark:border-white/10 bg-white/30 dark:bg-white/5 hover:bg-white/50 dark:hover:bg-white/10 transition-colors"
               >
@@ -569,20 +549,6 @@ export default function AdminUserManagementDetailContent() {
                   </p>
                   <p className="text-xs text-gray-600 dark:text-gray-400">
                     Categories
-                  </p>
-                </div>
-              </Link>
-              <Link
-                href="/admin/warehouses"
-                className="flex items-center gap-2 p-3 rounded-xl border border-violet-200/40 dark:border-white/10 bg-white/30 dark:bg-white/5 hover:bg-white/50 dark:hover:bg-white/10 transition-colors"
-              >
-                <Building2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
-                <div>
-                  <p className="text-xl font-semibold text-gray-900 dark:text-white">
-                    {overview.warehouseCount}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    Warehouses
                   </p>
                 </div>
               </Link>

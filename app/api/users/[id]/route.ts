@@ -92,10 +92,7 @@ export async function GET(
       ordersForSpentResult,
       invoicesForDueResult,
       productCount,
-      supplierCount,
       categoryCount,
-      warehouseCount,
-      suppliersForUser,
     ] = await Promise.all([
       prisma.order.count({ where: { userId: id } }),
       prisma.order.count({ where: { clientId: id } }),
@@ -116,33 +113,13 @@ export async function GET(
       ordersForSpent,
       invoicesForDue,
       prisma.product.count({ where: { userId: id } }),
-      prisma.supplier.count({ where: { userId: id } }),
       prisma.category.count({ where: { userId: id } }),
-      prisma.warehouse.count({ where: { userId: id } }),
-      prisma.supplier.findMany({
-        where: { userId: id },
-        select: { id: true },
-      }),
     ]);
 
-    const supplierIds = suppliersForUser.map((s) => s.id);
-    const supplierOrderItems =
-      supplierIds.length > 0
-        ? await prisma.orderItem.findMany({
-            where: { product: { supplierId: { in: supplierIds } } },
-            select: { subtotal: true },
-          })
-        : [];
-
-    const revenueFromOrdersCreated = ordersAsCreator.reduce(
+    const totalRevenue = ordersAsCreator.reduce(
       (s, o) => s + (o.total ?? 0),
       0,
     );
-    const supplierRevenue = supplierOrderItems.reduce(
-      (s, i) => s + (i.subtotal ?? 0),
-      0,
-    );
-    const totalRevenue = revenueFromOrdersCreated + supplierRevenue;
     const totalSpent = ordersForSpentResult.reduce(
       (s, o) => s + (o.total ?? 0),
       0,
@@ -158,9 +135,7 @@ export async function GET(
       totalSpent,
       totalDue,
       productCount,
-      supplierCount,
       categoryCount,
-      warehouseCount,
     };
 
     return NextResponse.json({ ...transform(record), overview });

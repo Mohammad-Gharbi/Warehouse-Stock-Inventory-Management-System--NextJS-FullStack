@@ -129,14 +129,6 @@ export function getOpenApiSpec(options: OpenApiSpecOptions): Record<string, unkn
         put: { summary: "Update category", tags: ["Categories"], responses: { "200": { description: "Updated" } } },
         delete: { summary: "Delete category", tags: ["Categories"], responses: { "200": { description: "Deleted" } } },
       },
-      "/api/suppliers": {
-        get: { summary: "List suppliers", tags: ["Suppliers"], responses: { "200": { description: "List of suppliers" } } },
-        post: { summary: "Create supplier", tags: ["Suppliers"], responses: { "201": { description: "Supplier created" } } },
-      },
-      "/api/suppliers/{id}": {
-        put: { summary: "Update supplier", tags: ["Suppliers"], responses: { "200": { description: "Updated" } } },
-        delete: { summary: "Delete supplier", tags: ["Suppliers"], responses: { "200": { description: "Deleted" } } },
-      },
       "/api/orders": {
         get: { summary: "List orders", tags: ["Orders"], responses: { "200": { description: "List of orders" } } },
         post: { summary: "Create order", tags: ["Orders"], responses: { "201": { description: "Order created" } } },

@@ -1,6 +1,6 @@
 /**
  * Products API Route Handler
- * GET: list products (admin by userId, supplier by supplierId); uses Redis cache; supplier response includes productOwnerName.
+ * GET: list products for the authenticated user (admin); uses Redis cache.
  * POST: create product (with optional QR/image); PATCH/DELETE in [id] route.
  */
 
@@ -21,7 +21,6 @@ import {
 } from "@/lib/products/delete-policy";
 import { mergeProductListWhere } from "@/lib/products/product-query";
 import { prisma } from "@/prisma/client";
-import { getSupplierByUserId } from "@/prisma/supplier";
 import { checkAndSendStockAlerts } from "@/lib/email/notifications";
 import { getCache, setCache, invalidateCache, cacheKeys } from "@/lib/cache";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
@@ -57,25 +56,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const isSupplier = session.role === "supplier";
-    let cacheKey: string;
-    let productWhere: { userId: string } | { supplierId: string };
-
-    if (isSupplier) {
-      const supplier = await getSupplierByUserId(session.id);
-      if (!supplier) {
-        return NextResponse.json([]);
-      }
-      // Include withOwnerNames so cached response includes productOwnerName (avoids stale cache without it)
-      cacheKey = cacheKeys.products.list({
-        supplierId: supplier.id,
-        withOwnerNames: true,
-      });
-      productWhere = { supplierId: supplier.id };
-    } else {
-      cacheKey = cacheKeys.products.list({ userId: session.id });
-      productWhere = { userId: session.id };
-    }
+    const cacheKey = cacheKeys.products.list({ userId: session.id });
+    const productWhere: { userId: string } = { userId: session.id };
 
     // Try to get from cache first
     const cachedProducts = await getCache<unknown[]>(cacheKey);
@@ -95,41 +77,15 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
-    // Fetch all categories and suppliers once
+    // Fetch all categories once
     const categoryIds = [...new Set(products.map((p) => p.categoryId))];
-    const supplierIds = [...new Set(products.map((p) => p.supplierId))];
 
-    const categorySupplierPromise = Promise.all([
-      prisma.category.findMany({
-        where: { id: { in: categoryIds } },
-        select: { id: true, name: true },
-      }),
-      prisma.supplier.findMany({
-        where: { id: { in: supplierIds } },
-        select: { id: true, name: true },
-      }),
-    ]);
-
-    // For supplier view: fetch product owner (user) names for "Product Owner" column
-    const ownerPromise = isSupplier
-      ? prisma.user.findMany({
-          where: {
-            id: { in: [...new Set(products.map((p) => p.userId))] },
-          },
-          select: { id: true, name: true },
-        })
-      : Promise.resolve([]);
-
-    const [[categories, suppliers], ownerUsers] = await Promise.all([
-      categorySupplierPromise,
-      ownerPromise,
-    ]);
+    const categories = await prisma.category.findMany({
+      where: { id: { in: categoryIds } },
+      select: { id: true, name: true },
+    });
 
     const categoryMap = new Map(categories.map((c) => [c.id, c.name]));
-    const supplierMap = new Map(suppliers.map((s) => [s.id, s.name]));
-    const ownerNameMap = new Map(
-      ownerUsers.map((u) => [u.id, u.name ?? u.id]),
-    );
 
     // Transform products with lookups
     const transformedProducts = products.map((product) => ({
@@ -141,9 +97,7 @@ export async function GET(request: NextRequest) {
       reservedQuantity: Number(product.reservedQuantity ?? 0),
       status: product.status,
       categoryId: product.categoryId,
-      supplierId: product.supplierId,
       category: categoryMap.get(product.categoryId) || "Unknown",
-      supplier: supplierMap.get(product.supplierId) || "Unknown",
       userId: product.userId,
       createdBy: product.createdBy,
       updatedBy: product.updatedBy || null,
@@ -153,9 +107,6 @@ export async function GET(request: NextRequest) {
       imageUrl: product.imageUrl || null,
       imageFileId: product.imageFileId || null,
       expirationDate: product.expirationDate?.toISOString() || null,
-      ...(isSupplier && {
-        productOwnerName: ownerNameMap.get(product.userId) ?? null,
-      }),
     }));
 
     // Cache the result for 5 minutes
@@ -180,12 +131,6 @@ export async function POST(request: NextRequest) {
     const session = await getSessionFromRequest(request);
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    if (session.role === "supplier") {
-      return NextResponse.json(
-        { error: "Suppliers cannot create products; only admins can." },
-        { status: 403 },
-      );
     }
 
     const userId = session.id;
@@ -212,7 +157,6 @@ export async function POST(request: NextRequest) {
       quantity,
       status,
       categoryId,
-      supplierId,
       imageUrl,
       imageFileId,
       expirationDate,
@@ -241,7 +185,6 @@ export async function POST(request: NextRequest) {
         userId,
         createdBy: userId, // Set createdBy same as userId
         categoryId,
-        supplierId,
         imageUrl: imageUrl || null,
         imageFileId: imageFileId || null,
         expirationDate: expirationDate ? new Date(expirationDate) : null,
@@ -258,12 +201,9 @@ export async function POST(request: NextRequest) {
       details: { productName: product.name, sku: product.sku },
     }).catch(() => {});
 
-    // Fetch category and supplier data for the response
+    // Fetch category data for the response
     const category = await prisma.category.findUnique({
       where: { id: categoryId },
-    });
-    const supplier = await prisma.supplier.findUnique({
-      where: { id: supplierId },
     });
 
     // Generate QR code and upload to ImageKit (async, don't block response)
@@ -333,9 +273,7 @@ export async function POST(request: NextRequest) {
       quantity: Number(product.quantity),
       status: product.status,
       categoryId: product.categoryId,
-      supplierId: product.supplierId,
       category: category?.name || "Unknown",
-      supplier: supplier?.name || "Unknown",
       userId: product.userId,
       createdBy: product.createdBy,
       updatedBy: product.updatedBy || null,
@@ -364,12 +302,6 @@ export async function PUT(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    if (session.role === "supplier") {
-      return NextResponse.json(
-        { error: "Suppliers cannot update products; only admins can." },
-        { status: 403 },
-      );
-    }
 
     const userId = session.id;
     const body = await request.json();
@@ -396,7 +328,6 @@ export async function PUT(request: NextRequest) {
       quantity,
       status,
       categoryId,
-      supplierId,
       imageUrl,
       imageFileId,
       expirationDate,
@@ -449,7 +380,6 @@ export async function PUT(request: NextRequest) {
         ...(quantity !== undefined && { quantity: BigInt(quantity) as any }),
         ...(status && { status }),
         ...(categoryId && { categoryId }),
-        ...(supplierId && { supplierId }),
         ...(imageUrl !== undefined && {
           imageUrl: imageUrl === "" ? null : imageUrl,
         }),
@@ -474,7 +404,6 @@ export async function PUT(request: NextRequest) {
     if (quantity !== undefined && existingProduct.quantity !== BigInt(quantity)) fieldsUpdated.push("Quantity");
     if (status && status !== existingProduct.status) fieldsUpdated.push("Status");
     if (categoryId && categoryId !== existingProduct.categoryId) fieldsUpdated.push("Category");
-    if (supplierId && supplierId !== existingProduct.supplierId) fieldsUpdated.push("Supplier");
     if (imageUrl !== undefined) fieldsUpdated.push("Image");
     if (expirationDate !== undefined) fieldsUpdated.push("Expiration Date");
 
@@ -489,12 +418,9 @@ export async function PUT(request: NextRequest) {
       },
     }).catch(() => {});
 
-    // Fetch category and supplier data for the response
+    // Fetch category data for the response
     const category = await prisma.category.findUnique({
       where: { id: product.categoryId },
-    });
-    const supplier = await prisma.supplier.findUnique({
-      where: { id: product.supplierId },
     });
 
     // Regenerate QR code if SKU or name changed (async, don't block response)
@@ -594,9 +520,7 @@ export async function PUT(request: NextRequest) {
       quantity: Number(product.quantity),
       status: product.status,
       categoryId: product.categoryId,
-      supplierId: product.supplierId,
       category: category?.name || "Unknown",
-      supplier: supplier?.name || "Unknown",
       userId: product.userId,
       createdBy: product.createdBy,
       updatedBy: product.updatedBy || null,
@@ -627,12 +551,6 @@ export async function DELETE(request: NextRequest) {
     const session = await getSessionFromRequest(request);
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    if (session.role === "supplier") {
-      return NextResponse.json(
-        { error: "Suppliers cannot delete products; only admins can." },
-        { status: 403 },
-      );
     }
 
     const userId = session.id;
@@ -801,8 +719,6 @@ export async function DELETE(request: NextRequest) {
         );
       }
     }
-
-    await prisma.stockAllocation.deleteMany({ where: { productId: id } });
 
     await prisma.product.delete({
       where: { id },

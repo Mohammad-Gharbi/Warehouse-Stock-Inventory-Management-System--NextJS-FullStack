@@ -21,24 +21,6 @@ export {
   useDeleteCategory,
 } from "./use-categories";
 
-// Supplier hooks
-export {
-  useSuppliers,
-  useSupplier,
-  useCreateSupplier,
-  useUpdateSupplier,
-  useDeleteSupplier,
-} from "./use-suppliers";
-
-// Warehouse hooks
-export {
-  useWarehouses,
-  useWarehouse,
-  useCreateWarehouse,
-  useUpdateWarehouse,
-  useDeleteWarehouse,
-} from "./use-warehouses";
-
 // Email preferences hooks
 export {
   useEmailPreferences,
@@ -120,17 +102,6 @@ export {
 // Admin Client Portal hooks
 export { useClientPortal } from "./use-client-portal";
 
-// Admin Supplier Portal hooks
-export { useSupplierPortal } from "./use-supplier-portal";
-
-// Stock Allocation hooks
-export {
-  useStockAllocations,
-  useWarehouseStockSummary,
-  useStockByWarehouse,
-  useCreateStockAllocation,
-} from "./use-stock-allocation";
-
 // System Configuration hooks
 export { useSystemConfigs, useUpdateSystemConfigs } from "./use-system-config";
 
@@ -140,9 +111,8 @@ export { useAuditLogs } from "./use-audit-logs";
 // Forecasting hooks
 export { useForecastingSummary } from "./use-forecasting";
 
-// Portal hooks (external supplier/client portals)
+// Portal hooks (external client portal)
 export {
-  useSupplierPortalDashboard,
   useClientPortalDashboard,
   useClientCatalogOverview,
   useClientBrowseMeta,

@@ -5,17 +5,13 @@ import { Button } from "@/components/ui/button";
 import {
   Package,
   Tag,
-  Truck,
   ShoppingCart,
   FileText,
-  Warehouse,
 } from "lucide-react";
 import AddProductDialog from "@/components/products/ProductFormDialog";
 import AddCategoryDialog from "@/components/category/CategoryDialog";
-import AddSupplierDialog from "@/components/supplier/SupplierDialog";
 import OrderDialog from "@/components/orders/OrderDialog";
 import InvoiceDialog from "@/components/invoices/InvoiceDialog";
-import WarehouseDialog from "@/components/warehouses/WarehouseDialog";
 import { Product } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -23,14 +19,12 @@ export type FloatingActionButtonsVariant =
   | "home"
   | "orders"
   | "invoices"
-  | "suppliers"
-  | "warehouses"
   | "categories"
   | "products"
   | "products-client";
 
 interface FloatingActionButtonsProps {
-  /** "home" = all FABs (Product, Category, Supplier, Order); "orders" = Create Order only; "products-client" = Create Order only (client, tied to product owner select) */
+  /** "home" = all FABs (Product, Category, Order); "orders" = Create Order only; "products-client" = Create Order only (client, tied to product owner select) */
   variant?: FloatingActionButtonsVariant;
   allProducts?: Product[];
   userId?: string;
@@ -69,7 +63,6 @@ export default function FloatingActionButtons({
 
   const showProduct = variant === "home" || variant === "products";
   const showCategory = variant === "home" || variant === "categories";
-  const showSupplier = variant === "home" || variant === "suppliers";
   const showOrder = variant === "home" || variant === "orders";
 
   return (
@@ -102,18 +95,6 @@ export default function FloatingActionButtons({
         </div>
       )}
 
-      {/* Add Supplier - home + suppliers */}
-      {showSupplier && (
-        <div className={fabWrapClass(isAnyHovered)}>
-          <AddSupplierDialog>
-            <Button className={fabClass(isAnyHovered)}>
-              <Truck className="h-5 w-5 flex-shrink-0" />
-              <span className={fabLabelClass(isAnyHovered)}>Add Supplier</span>
-            </Button>
-          </AddSupplierDialog>
-        </div>
-      )}
-
       {/* Create Order - home + orders */}
       {showOrder && (
         <div className={fabWrapClass(isAnyHovered)}>
@@ -135,18 +116,6 @@ export default function FloatingActionButtons({
               <span className={fabLabelClass(isAnyHovered)}>Create Order</span>
             </Button>
           </OrderDialog>
-        </div>
-      )}
-
-      {/* Add Warehouse - warehouses only */}
-      {variant === "warehouses" && (
-        <div className={fabWrapClass(isAnyHovered)}>
-          <WarehouseDialog>
-            <Button className={fabClass(isAnyHovered)}>
-              <Warehouse className="h-5 w-5 flex-shrink-0" />
-              <span className={fabLabelClass(isAnyHovered)}>Add Warehouse</span>
-            </Button>
-          </WarehouseDialog>
         </div>
       )}
 

@@ -119,12 +119,7 @@ const InvoiceList = React.memo(
         }
       });
       return Array.from(byId.values());
-    }, [
-      dataSource,
-      user,
-      invoicesQueryDefault.data,
-      invoicesQueryClient.data,
-    ]);
+    }, [dataSource, user, invoicesQueryDefault.data, invoicesQueryClient.data]);
 
     const effectiveDetailBase =
       dataSource === "clientInvoices"
@@ -180,7 +175,12 @@ const InvoiceList = React.memo(
           showSourceBadge: dataSource === "adminCombined",
           showIssuedBy: isClientInvoicesPage,
         }),
-      [handleEditInvoice, effectiveDetailBase, dataSource, isClientInvoicesPage],
+      [
+        handleEditInvoice,
+        effectiveDetailBase,
+        dataSource,
+        isClientInvoicesPage,
+      ],
     );
 
     // Determine loading state - FIXES HYDRATION & FLICKER (same approach as StatisticsSection)
@@ -223,15 +223,6 @@ const InvoiceList = React.memo(
                   ? "My Invoices"
                   : "Invoice Management"}
           </h2>
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-            {isAdminCombined
-              ? "Invoices for your orders and for client orders. Filter by invoice type, status, and search."
-              : isClientInvoices
-                ? "Invoices for orders placed by clients that include your products. View details, send, and track payment."
-                : isClientInvoicesPage
-                  ? "Your invoices, payment status, and order history. View details and track what you owe or have paid."
-                  : "Manage invoices, track payment status, monitor due dates, and handle billing. View invoice history, update statuses, and send invoices to clients."}
-          </p>
         </div>
 
         {/* Store-wide state cards — only on /invoices page (user), same as homepage */}

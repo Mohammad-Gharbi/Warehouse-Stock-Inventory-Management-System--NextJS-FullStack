@@ -1,16 +1,14 @@
 "use client";
 
 /**
- * Home (store overview) for admin: statistics cards and quick links to products, categories, suppliers.
+ * Home (store overview) for admin: statistics cards and quick links to products, categories.
  * Hydrates React Query from server-passed initial data; OAuth flag from SSR + URL cleanup client-side.
  */
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts";
 import ProductList from "@/components/products/ProductList";
-import SupplierList from "@/components/supplier/SupplierList";
 import CategoryList from "@/components/category/CategoryList";
 import { StatisticsSection } from "@/components/home/StatisticsSection";
 import Navbar from "@/components/layouts/Navbar";
@@ -21,13 +19,11 @@ import { queryKeys } from "@/lib/react-query";
 import type {
   ProductForHome,
   CategoryForHome,
-  SupplierForHome,
 } from "@/lib/server/home-data";
 
 export type HomePageProps = {
   initialProducts?: ProductForHome[];
   initialCategories?: CategoryForHome[];
-  initialSuppliers?: SupplierForHome[];
   /** From server searchParams — avoids relying on client-only OAuth detection on first paint */
   initialOAuthSuccess?: boolean;
 };
@@ -39,7 +35,6 @@ export type HomePageProps = {
 export default function HomePage({
   initialProducts,
   initialCategories,
-  initialSuppliers,
   initialOAuthSuccess = false,
 }: HomePageProps = {}) {
   const router = useRouter();
@@ -56,10 +51,7 @@ export default function HomePage({
     if (initialCategories != null) {
       queryClient.setQueryData(queryKeys.categories.lists(), initialCategories);
     }
-    if (initialSuppliers != null) {
-      queryClient.setQueryData(queryKeys.suppliers.lists(), initialSuppliers);
-    }
-  }, [queryClient, initialProducts, initialCategories, initialSuppliers]);
+  }, [queryClient, initialProducts, initialCategories]);
   const [isRefreshingOAuth, setIsRefreshingOAuth] = useState(false);
   const [oauthRefreshComplete, setOauthRefreshComplete] = useState(false);
   // Use ref to track if OAuth has been handled to prevent duplicate processing
@@ -145,19 +137,6 @@ export default function HomePage({
           <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white pb-2">
             Store overview
           </h2>
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-            The cards below show your store-wide metrics as the store owner,
-            including your own activity and activity from clients and others.
-            Numbers update automatically when you or others make changes. For
-            your personal orders, products, and activity only, visit{" "}
-            <Link
-              href="/admin/my-activity"
-              className="font-medium text-sky-600 hover:text-sky-800"
-            >
-              My Activities
-            </Link>
-            .
-          </p>
         </div>
 
         {/* Statistics Section - Warehouse Overview */}
@@ -168,11 +147,6 @@ export default function HomePage({
         {/* Product List Section */}
         <div id="products" className="pb-6 scroll-mt-20">
           <ProductList />
-        </div>
-
-        {/* Supplier List Section */}
-        <div id="suppliers" className="pb-6 scroll-mt-20">
-          <SupplierList />
         </div>
 
         {/* Category List Section */}

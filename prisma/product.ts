@@ -16,7 +16,6 @@ export const createProduct = async (data: {
   status: string;
   userId: string;
   categoryId: string;
-  supplierId: string;
   createdAt: Date;
 }) => {
   return prisma.product.create({
@@ -35,7 +34,7 @@ export const getProductsByUser = async (userId: string) => {
 
 /**
  * Get product by ID with all related data
- * Fetches a single product with category, supplier, creator user, and order items
+ * Fetches a single product with category, creator user, and order items
  *
  * @param productId - Product ID
  * @param userId - User ID (for authorization check)
@@ -82,7 +81,6 @@ export const updateProduct = async (
     quantity?: number;
     status?: string;
     categoryId?: string;
-    supplierId?: string;
     updatedBy?: string;
   }
 ) => {

@@ -69,20 +69,16 @@ async function deleteUser(email?: string) {
     const productCount = await prisma.product.count({
       where: { userId: user.id },
     });
-    const supplierCount = await prisma.supplier.count({
-      where: { userId: user.id },
-    });
     const categoryCount = await prisma.category.count({
       where: { userId: user.id },
     });
 
     console.log("📊 Associated Data:");
     console.log(`   - Products: ${productCount}`);
-    console.log(`   - Suppliers: ${supplierCount}`);
     console.log(`   - Categories: ${categoryCount}`);
     console.log();
 
-    if (productCount > 0 || supplierCount > 0 || categoryCount > 0) {
+    if (productCount > 0 || categoryCount > 0) {
       console.log(
         "⚠️  WARNING: This user has associated data that will NOT be deleted automatically."
       );

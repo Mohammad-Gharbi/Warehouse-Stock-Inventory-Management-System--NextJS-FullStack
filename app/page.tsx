@@ -5,7 +5,6 @@ import HomePage from "@/components/Pages/HomePage";
 import {
   getProductsForUser,
   getCategoriesForUser,
-  getSuppliersForUser,
 } from "@/lib/server/home-data";
 
 /**
@@ -26,17 +25,13 @@ export default async function HomeRoute({
   if (user.role === "client") {
     redirect("/client");
   }
-  if (user.role === "supplier") {
-    redirect("/supplier");
-  }
 
   const params = await searchParams;
   const initialOAuthSuccess = params.oauth_success === "true";
 
-  const [products, categories, suppliers] = await Promise.all([
+  const [products, categories] = await Promise.all([
     getProductsForUser(user.id),
     getCategoriesForUser(user.id),
-    getSuppliersForUser(user.id),
   ]);
 
   return (
@@ -44,7 +39,6 @@ export default async function HomeRoute({
       <HomePage
         initialProducts={products}
         initialCategories={categories}
-        initialSuppliers={suppliers}
         initialOAuthSuccess={initialOAuthSuccess}
       />
     </Suspense>

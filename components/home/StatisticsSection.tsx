@@ -199,28 +199,6 @@ export function StatisticsSection() {
             ]}
           />
           <StatisticsCard
-            title="Total Warehouses"
-            value={stats.counts?.warehouses}
-            description="Storage locations"
-            icon={Warehouse}
-            variant="teal"
-            badges={[
-              { label: "Active", value: stats.warehouseAnalytics?.activeWarehouses ?? 0 },
-              { label: "Inactive", value: stats.warehouseAnalytics?.inactiveWarehouses ?? 0 },
-            ]}
-          />
-          <StatisticsCard
-            title="Total Suppliers"
-            value={stats.counts?.suppliers}
-            description="Suppliers"
-            icon={Truck}
-            variant="emerald"
-            badges={[
-              { label: "Active", value: stats.supplierStatusBreakdown?.active ?? 0 },
-              { label: "Inactive", value: stats.supplierStatusBreakdown?.inactive ?? 0 },
-            ]}
-          />
-          <StatisticsCard
             title="Categories"
             value={stats.counts?.categories}
             description="Product categories"

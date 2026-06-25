@@ -461,56 +461,6 @@ export default function ClientPortalPage() {
                 <>
                   <div>
                     <p className="text-sm font-medium mb-2 flex items-center gap-2">
-                      <Layers className="h-4 w-4 text-sky-500" />
-                      Suppliers
-                    </p>
-                    <div className="overflow-x-auto rounded-md border">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">
-                              Products
-                            </TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {catalog.suppliers.length === 0 ? (
-                            <TableRow>
-                              <TableCell
-                                colSpan={3}
-                                className="text-center text-muted-foreground py-4"
-                              >
-                                No suppliers
-                              </TableCell>
-                            </TableRow>
-                          ) : (
-                            catalog.suppliers.map((s) => (
-                              <TableRow key={s.id}>
-                                <TableCell className="font-medium">
-                                  <Link
-                                    href={`/suppliers/${s.id}`}
-                                    className="text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300"
-                                  >
-                                    {s.name}
-                                  </Link>
-                                </TableCell>
-                                <TableCell>
-                                  <CatalogStatusBadge status={s.status} />
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  {s.productCount}
-                                </TableCell>
-                              </TableRow>
-                            ))
-                          )}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium mb-2 flex items-center gap-2">
                       <Boxes className="h-4 w-4 text-violet-500" />
                       Categories
                     </p>
@@ -584,7 +534,6 @@ export default function ClientPortalPage() {
                             <TableHead>Product Name</TableHead>
                             <TableHead>SKU</TableHead>
                             <TableHead>Category</TableHead>
-                            <TableHead>Supplier</TableHead>
                             <TableHead>Product Owner</TableHead>
                             <TableHead className="text-right">Price</TableHead>
                             <TableHead>Status</TableHead>
@@ -594,7 +543,7 @@ export default function ClientPortalPage() {
                           {catalog.products.length === 0 ? (
                             <TableRow>
                               <TableCell
-                                colSpan={7}
+                                colSpan={6}
                                 className="text-center text-muted-foreground py-4"
                               >
                                 No products
@@ -620,14 +569,6 @@ export default function ClientPortalPage() {
                                     className="text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300"
                                   >
                                     {p.categoryName}
-                                  </Link>
-                                </TableCell>
-                                <TableCell>
-                                  <Link
-                                    href={`/suppliers/${p.supplierId}`}
-                                    className="text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300"
-                                  >
-                                    {p.supplierName}
                                   </Link>
                                 </TableCell>
                                 <TableCell>

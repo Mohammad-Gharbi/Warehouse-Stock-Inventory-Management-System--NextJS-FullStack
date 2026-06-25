@@ -3,7 +3,7 @@
  *
  * Lists all users in the DB with email and role. Use after:
  *   1) Registering your admin account → confirm your user has role "admin"
- *   2) Running create-demo-accounts.ts → confirm 3 users: one admin, one client, one supplier
+ *   2) Running create-demo-accounts.ts → confirm users: one admin, one client
  *
  * Usage:
  *   npx tsx scripts/verify-demo-accounts.ts
@@ -33,16 +33,15 @@ async function main() {
 
   const adminCount = users.filter((u) => u.role === "admin").length;
   const clientCount = users.filter((u) => u.role === "client").length;
-  const supplierCount = users.filter((u) => u.role === "supplier").length;
 
   console.log("\n---");
   console.log(`   Total: ${users.length} user(s)`);
-  console.log(`   admin: ${adminCount}, client: ${clientCount}, supplier: ${supplierCount}`);
+  console.log(`   admin: ${adminCount}, client: ${clientCount}`);
 
   if (users.length === 1 && adminCount === 1) {
     console.log("\n   ✓ One admin account — next: run  npx tsx scripts/create-demo-accounts.ts\n");
-  } else if (users.length >= 3 && adminCount >= 1 && clientCount >= 1 && supplierCount >= 1) {
-    console.log("\n   ✓ Three roles present — you can log in with admin, test@client.com, and test@supplier.com.\n");
+  } else if (users.length >= 2 && adminCount >= 1 && clientCount >= 1) {
+    console.log("\n   ✓ Roles present — you can log in with admin and test@client.com.\n");
   } else {
     console.log("");
   }

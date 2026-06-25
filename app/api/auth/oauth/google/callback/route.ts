@@ -249,12 +249,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Redirect to role-appropriate page directly (avoids double-redirect chain through /)
-      const roleDest =
-        user.role === "client"
-          ? "/client"
-          : user.role === "supplier"
-            ? "/supplier"
-            : "/";
+      const roleDest = user.role === "client" ? "/client" : "/";
 
       const redirectUrl = new URL(roleDest, request.url);
       redirectUrl.searchParams.set("oauth_success", "true");
