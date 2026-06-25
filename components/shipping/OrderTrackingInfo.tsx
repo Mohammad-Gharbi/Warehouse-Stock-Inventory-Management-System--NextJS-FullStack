@@ -121,7 +121,7 @@ export default function OrderTrackingInfo({
   return (
     <article
       className={cn(
-        "rounded-[28px] border border-emerald-400/20 dark:border-emerald-400/30 p-4 sm:p-5 backdrop-blur-sm transition-all duration-300",
+        "rounded-lg border border-emerald-400/20 dark:border-emerald-400/30 p-4 sm:p-5 backdrop-blur-sm transition-all duration-300",
         "bg-white/60 dark:bg-white/5",
         "bg-card ",
         "shadow-sm ",

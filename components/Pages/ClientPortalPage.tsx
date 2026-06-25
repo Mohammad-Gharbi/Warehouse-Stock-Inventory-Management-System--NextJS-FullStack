@@ -179,7 +179,7 @@ export default function ClientPortalPage() {
             </h1>
             <article
               className={cn(
-                "rounded-[28px] border border-white/10 dark:border-white/20 p-4 sm:p-6 backdrop-blur-sm bg-white/60 dark:bg-white/5 shadow-sm ",
+                "rounded-lg border border-white/10 dark:border-white/20 p-4 sm:p-6 backdrop-blur-sm bg-white/60 dark:bg-white/5 shadow-sm ",
               )}
             >
               <p className="text-muted-foreground text-center">
@@ -374,7 +374,7 @@ export default function ClientPortalPage() {
           {dashboard.monthlySpending.length > 0 && (
             <article
               className={cn(
-                "rounded-[28px] border border-emerald-400/20 dark:border-emerald-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
+                "rounded-lg border border-emerald-400/20 dark:border-emerald-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
                 "bg-white/60 dark:bg-white/5",
                 "bg-card ",
                 "shadow-sm ",
@@ -419,7 +419,7 @@ export default function ClientPortalPage() {
           <article
             id="catalog"
             className={cn(
-              "rounded-[28px] border border-sky-400/20 dark:border-sky-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
+              "rounded-lg border border-sky-400/20 dark:border-sky-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
               "bg-white/60 dark:bg-white/5",
               "bg-card ",
               "shadow-sm ",
@@ -605,7 +605,7 @@ export default function ClientPortalPage() {
             {/* Recent Orders — glassmorphic */}
             <article
               className={cn(
-                "rounded-[28px] border border-sky-400/20 dark:border-sky-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
+                "rounded-lg border border-sky-400/20 dark:border-sky-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
                 "bg-white/60 dark:bg-white/5",
                 "bg-card ",
                 "shadow-sm ",
@@ -678,7 +678,7 @@ export default function ClientPortalPage() {
             {/* Recent Invoices — glassmorphic */}
             <article
               className={cn(
-                "rounded-[28px] border border-violet-400/20 dark:border-violet-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
+                "rounded-lg border border-violet-400/20 dark:border-violet-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
                 "bg-white/60 dark:bg-white/5",
                 "bg-card ",
                 "shadow-sm ",
@@ -752,7 +752,7 @@ export default function ClientPortalPage() {
           {/* Quick Links — glassmorphic */}
           <article
             className={cn(
-              "rounded-[28px] border border-violet-400/20 dark:border-violet-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
+              "rounded-lg border border-violet-400/20 dark:border-violet-400/30 p-4 sm:p-6 backdrop-blur-sm transition-all",
               "bg-white/60 dark:bg-white/5",
               "bg-card ",
               "shadow-sm ",

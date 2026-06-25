@@ -44,9 +44,9 @@ export default function HistoryFilters({
   setSelectedStatuses,
 }: HistoryFiltersProps) {
   const importTypeTriggerClass =
-    "h-10 rounded-[28px] border border-rose-400/30 dark:border-rose-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-rose-300/40 dark:hover:border-rose-300/40 ";
+    "h-10 rounded-lg border border-rose-400/30 dark:border-rose-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-rose-300/40 dark:hover:border-rose-300/40 ";
   const statusTriggerClass =
-    "h-10 rounded-[28px] border border-sky-400/30 dark:border-sky-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-sky-300/40 dark:hover:border-sky-300/40 ";
+    "h-10 rounded-lg border border-sky-400/30 dark:border-sky-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-sky-300/40 dark:hover:border-sky-300/40 ";
 
   return (
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
@@ -56,7 +56,7 @@ export default function HistoryFilters({
           placeholder="Search by file name or type..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="h-10 pl-9 pr-10 w-full rounded-[28px] bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-sm"
+          className="h-10 pl-9 pr-10 w-full rounded-lg bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-sm"
         />
         {searchTerm && (
           <Button

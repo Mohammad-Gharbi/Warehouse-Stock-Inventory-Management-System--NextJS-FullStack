@@ -373,7 +373,7 @@ export default function ActivityLogSection({
               placeholder="Search by user, action, entity..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="h-10 pl-9 pr-10 w-full rounded-[28px] bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-sm"
+              className="h-10 pl-9 pr-10 w-full rounded-lg bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-sm"
             />
             {searchTerm && (
               <Button
@@ -390,7 +390,7 @@ export default function ActivityLogSection({
             placeholder={
               <div
                 className={cn(
-                  "w-full sm:w-[180px] h-10 rounded-[28px] border border-sky-400/30 dark:border-sky-400/30",
+                  "w-full sm:w-[180px] h-10 rounded-lg border border-sky-400/30 dark:border-sky-400/30",
                   "bg-card ",
                   "text-gray-700 dark:text-white shadow-sm backdrop-blur-sm",
                   "flex items-center px-3 text-sm",
@@ -409,7 +409,7 @@ export default function ActivityLogSection({
               >
                 <SelectTrigger
                   className={cn(
-                    "w-full sm:w-[180px] h-10 rounded-[28px] border border-sky-400/30 dark:border-sky-400/30",
+                    "w-full sm:w-[180px] h-10 rounded-lg border border-sky-400/30 dark:border-sky-400/30",
                     "bg-card ",
                     "text-gray-700 dark:text-white shadow-sm backdrop-blur-sm",
                     "transition duration-200 hover:border-sky-300/40 ",

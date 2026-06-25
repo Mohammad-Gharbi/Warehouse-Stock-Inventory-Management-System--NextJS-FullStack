@@ -89,7 +89,7 @@ export const UserManagementTable = React.memo(function UserManagementTable({
         <TableSkeleton rows={pagination.pageSize} columns={columns.length} />
       ) : (
         <>
-          <div className="rounded-[28px] border border-violet-400/20 dark:border-white/10 shadow-sm bg-card backdrop-blur-sm overflow-hidden">
+          <div className="rounded-lg border border-violet-400/20 dark:border-white/10 shadow-sm bg-card backdrop-blur-sm overflow-hidden">
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -160,7 +160,7 @@ export const UserManagementTable = React.memo(function UserManagementTable({
                 size="sm"
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
-                className="h-10 rounded-[28px] border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-10 rounded-lg border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <BiFirstPage />
               </Button>
@@ -169,7 +169,7 @@ export const UserManagementTable = React.memo(function UserManagementTable({
                 size="sm"
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
-                className="h-10 rounded-[28px] border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-10 rounded-lg border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <GrFormPrevious />
               </Button>
@@ -181,7 +181,7 @@ export const UserManagementTable = React.memo(function UserManagementTable({
                 size="sm"
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
-                className="h-10 rounded-[28px] border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-10 rounded-lg border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <GrFormNext />
               </Button>
@@ -190,7 +190,7 @@ export const UserManagementTable = React.memo(function UserManagementTable({
                 size="sm"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}
-                className="h-10 rounded-[28px] border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-10 rounded-lg border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <BiLastPage />
               </Button>

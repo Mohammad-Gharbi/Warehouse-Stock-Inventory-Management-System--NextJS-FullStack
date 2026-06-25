@@ -40,14 +40,14 @@ export function InvoiceSourceDropDown({ value, onChange }: InvoiceSourceDropDown
       <PopoverTrigger asChild>
         <Button
           variant="secondary"
-          className="h-10 rounded-[28px] border border-teal-400/30 dark:border-teal-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-teal-300/40"
+          className="h-10 rounded-lg border border-teal-400/30 dark:border-teal-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-teal-300/40"
         >
           <LayoutGrid className="h-4 w-4 mr-1" />
           {getButtonLabel()}
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="p-0 w-52 poppins rounded-[28px] border border-teal-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm shadow-sm"
+        className="p-0 w-52 poppins rounded-lg border border-teal-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm shadow-sm"
         side="bottom"
         align="start"
       >

@@ -128,7 +128,7 @@ export default function RegisterPage() {
             </div>
             <div className="relative z-10 max-w-lg w-full space-y-6">
               {/* Main Welcome Card */}
-              <div className="rounded-[28px] border border-emerald-400/30 dark:border-white/10 bg-card backdrop-blur-sm shadow-sm dark:shadow-lg p-4 sm:p-8">
+              <div className="rounded-lg border border-emerald-400/30 dark:border-white/10 bg-card backdrop-blur-sm shadow-sm dark:shadow-lg p-4 sm:p-8">
                 <h1 className="text-2xl lg:text-2xl font-semibold text-gray-900 dark:text-white mb-3 tracking-tight text-center">
                   Transform Your Warehouse
                 </h1>
@@ -208,7 +208,7 @@ export default function RegisterPage() {
 
           {/* Right Side - Register Form */}
           <div className="w-full lg:w-1/2 flex items-center justify-center p-0 sm:p-8 lg:p-12">
-            <div className="w-full max-w-md space-y-6 rounded-[28px] border border-emerald-400/30 dark:border-white/10 bg-card backdrop-blur-sm shadow-sm dark:shadow-lg p-4 sm:p-8 transition-all duration-300 hover:border-emerald-300/50 dark:hover:border-emerald-300/30">
+            <div className="w-full max-w-md space-y-6 rounded-lg border border-emerald-400/30 dark:border-white/10 bg-card backdrop-blur-sm shadow-sm dark:shadow-lg p-4 sm:p-8 transition-all duration-300 hover:border-emerald-300/50 dark:hover:border-emerald-300/30">
               <div className="space-y-2">
                 <h2 className="text-2xl sm:text-2xl font-semibold text-gray-900 dark:text-white text-center">
                   Create Account

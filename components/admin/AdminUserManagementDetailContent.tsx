@@ -361,7 +361,7 @@ export default function AdminUserManagementDetailContent() {
                           setNameTouched(true);
                         }}
                         disabled={isUpdating}
-                        className="rounded-[28px] border-violet-200/50 dark:border-white/10"
+                        className="rounded-lg border-violet-200/50 dark:border-white/10"
                       />
                       {nameTouched && (
                         <Button
@@ -391,7 +391,7 @@ export default function AdminUserManagementDetailContent() {
                       <div
                         id="um-role"
                         className={cn(
-                          "w-[140px] h-9 rounded-[28px] mt-1 border flex items-center px-2 text-sm",
+                          "w-[140px] h-9 rounded-lg mt-1 border flex items-center px-2 text-sm",
                           getRoleColor(u.role),
                         )}
                         aria-hidden
@@ -413,7 +413,7 @@ export default function AdminUserManagementDetailContent() {
                         <SelectTrigger
                           id="um-role"
                           className={cn(
-                            "w-[140px] rounded-[28px] mt-1",
+                            "w-[140px] rounded-lg mt-1",
                             getRoleColor(u.role),
                           )}
                         >

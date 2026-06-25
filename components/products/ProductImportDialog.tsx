@@ -183,7 +183,7 @@ export function ProductImportDialog({
       <DialogTrigger asChild>
         <Button
           variant="secondary"
-          className="h-10 rounded-[28px] border border-amber-400/30 dark:border-amber-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-amber-300/60 dark:hover:border-amber-300/60 "
+          className="h-10 rounded-lg border border-amber-400/30 dark:border-amber-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-amber-300/60 dark:hover:border-amber-300/60 "
         >
           <Upload className="h-4 w-4" />
           Import Products

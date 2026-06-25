@@ -238,7 +238,7 @@ export default function CategoryFilters({
             placeholder="Search by Category Name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-10 pl-9 pr-10 w-full rounded-[28px] bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-sm"
+            className="h-10 pl-9 pr-10 w-full rounded-lg bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-sky-400/30 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible:border-sky-400 focus-visible:ring-sky-500/50 shadow-sm"
           />
           {searchTerm && (
             <Button
@@ -257,7 +257,7 @@ export default function CategoryFilters({
           <DeferredSelectGate
             placeholder={
               <div
-                className="h-10 w-full sm:w-[180px] rounded-[28px] border border-sky-400/30 bg-card text-gray-700 dark:text-white shadow-sm font-medium flex items-center justify-between px-3 py-2.5 text-sm"
+                className="h-10 w-full sm:w-[180px] rounded-lg border border-sky-400/30 bg-card text-gray-700 dark:text-white shadow-sm font-medium flex items-center justify-between px-3 py-2.5 text-sm"
                 aria-hidden
               >
                 <span>
@@ -279,10 +279,10 @@ export default function CategoryFilters({
                   setStatusFilter(value as StatusFilter)
                 }
               >
-                <SelectTrigger className="h-10 w-full sm:w-[180px] rounded-[28px] border border-sky-400/30 dark:border-sky-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-sky-300/40 dark:hover:border-sky-300/40 font-medium">
+                <SelectTrigger className="h-10 w-full sm:w-[180px] rounded-lg border border-sky-400/30 dark:border-sky-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-sky-300/40 dark:hover:border-sky-300/40 font-medium">
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
-                <SelectContent className="rounded-[28px] border border-sky-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm shadow-sm">
+                <SelectContent className="rounded-lg border border-sky-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm shadow-sm">
                   <SelectItem value="all" className="text-gray-700 dark:text-white/80 focus:bg-sky-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white">
                     All Categories
                   </SelectItem>
@@ -304,7 +304,7 @@ export default function CategoryFilters({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="h-10 w-full sm:w-auto flex items-center gap-2 rounded-[28px] border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-violet-300/40 dark:hover:border-violet-300/40 "
+                className="h-10 w-full sm:w-auto flex items-center gap-2 rounded-lg border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-violet-300/40 dark:hover:border-violet-300/40 "
               >
                 <Download className="h-4 w-4" />
                 Export Categories
@@ -313,7 +313,7 @@ export default function CategoryFilters({
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="rounded-[28px] border border-violet-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm"
+              className="rounded-lg border border-violet-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm"
             >
               <DropdownMenuItem
                 onClick={exportToCSV}

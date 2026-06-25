@@ -1016,7 +1016,7 @@ export default function OrderDialog({
                       type="button"
                       onClick={handleAddItem}
                       variant="secondary"
-                      className="h-10 rounded-[28px] border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-violet-300/60 dark:hover:border-violet-300/60 "
+                      className="h-10 rounded-lg border border-violet-400/30 dark:border-violet-400/30 bg-card text-gray-700 dark:text-white shadow-sm backdrop-blur-sm transition duration-200 hover:border-violet-300/60 dark:hover:border-violet-300/60 "
                     >
                       <Plus className="h-4 w-4 mr-1" />
                       Add Item

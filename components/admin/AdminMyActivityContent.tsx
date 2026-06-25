@@ -271,7 +271,7 @@ export default function AdminMyActivityContent() {
             </div>
             <article
               className={cn(
-                "rounded-[28px] border border-gray-300/30 dark:border-white/10",
+                "rounded-lg border border-gray-300/30 dark:border-white/10",
                 "bg-card ",
                 "p-4 sm:p-6 backdrop-blur-sm overflow-hidden",
               )}
@@ -409,7 +409,7 @@ export default function AdminMyActivityContent() {
 
             <article
               className={cn(
-                "rounded-[28px] border border-teal-400/30 dark:border-teal-400/30",
+                "rounded-lg border border-teal-400/30 dark:border-teal-400/30",
                 "bg-card ",
                 "shadow-sm ",
                 "p-4 sm:p-6 backdrop-blur-sm overflow-hidden",
@@ -432,7 +432,7 @@ export default function AdminMyActivityContent() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className={cn(
-                      "h-10 pl-9 pr-4 w-full rounded-[28px]",
+                      "h-10 pl-9 pr-4 w-full rounded-lg",
                       "bg-white/10 dark:bg-white/5 backdrop-blur-sm",
                       "border border-sky-400/30 dark:border-white/20",
                       "text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40",

@@ -125,7 +125,7 @@ export default function SupportTicketsPageContent({
                 trigger={
                   <Button
                     className={cn(
-                      "h-10 rounded-[28px] border border-sky-400/30 dark:border-sky-400/30",
+                      "h-10 rounded-lg border border-sky-400/30 dark:border-sky-400/30",
                       "bg-card ",
                       "text-white shadow-sm backdrop-blur-sm",
                       "hover:border-sky-300/50 ",
