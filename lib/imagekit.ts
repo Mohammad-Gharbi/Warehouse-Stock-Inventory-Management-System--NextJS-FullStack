@@ -220,6 +220,74 @@ export async function deleteProductImageFromImageKit(
 }
 
 /**
+ * Upload an order's Bon de commande (purchase order) document to ImageKit.
+ * Accepts arbitrary file types (PDF, images, Office docs).
+ * @param file - File buffer
+ * @param fileName - Name for the uploaded file (extension preserved)
+ * @param folder - Folder path in ImageKit (default: /techmaster-store/bon-de-commande/)
+ * @returns Promise with ImageKit upload result containing URL and fileId
+ */
+export async function uploadOrderDocumentToImageKit(
+  file: Buffer,
+  fileName: string,
+  folder: string = "/techmaster-store/bon-de-commande/"
+): Promise<{ url: string; fileId: string }> {
+  try {
+    const imagekit = getImageKitInstance();
+
+    const safeFileName = fileName.replace(/[^a-zA-Z0-9-_.]/g, "_");
+    const filePayload = await toFile(file, safeFileName);
+
+    const result = await imagekit.files.upload({
+      file: filePayload,
+      fileName: safeFileName,
+      folder,
+      useUniqueFileName: true,
+      overwriteFile: false,
+    });
+
+    if (!result.url || !result.fileId) {
+      throw new Error("ImageKit upload failed: Missing URL or fileId");
+    }
+
+    return {
+      url: result.url,
+      fileId: result.fileId,
+    };
+  } catch (error) {
+    throw new Error(
+      `Failed to upload order document to ImageKit: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
+  }
+}
+
+/**
+ * Delete an order's Bon de commande document from ImageKit.
+ * 404 (already deleted) is ignored; other errors are thrown.
+ * @param fileId - ImageKit file ID
+ * @returns Promise<void>
+ */
+export async function deleteOrderDocumentFromImageKit(
+  fileId: string,
+): Promise<void> {
+  try {
+    const imagekit = getImageKitInstance();
+    await imagekit.files.delete(fileId);
+  } catch (error) {
+    if (isImageKitNotFoundError(error)) {
+      return;
+    }
+    throw new Error(
+      `Failed to delete order document from ImageKit: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
+    );
+  }
+}
+
+/**
  * Best-effort ImageKit cleanup before hard-deleting a product row.
  * 404 (already deleted) is ignored; other errors are thrown to the caller.
  */

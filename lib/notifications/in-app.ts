@@ -173,6 +173,79 @@ export async function createClientOrderReceivedNotification(
 }
 
 /**
+ * Notify the client that they must upload a Bon de commande within 48h of placing the order.
+ *
+ * @param userId - Client (buyer) to notify
+ * @param orderId - Order ID for link
+ * @param orderNumber - Order number for display
+ * @param deadline - Upload deadline (createdAt + 48h)
+ */
+export async function createBonDeCommandeRequiredNotification(
+  userId: string,
+  orderId: string,
+  orderNumber: string,
+  deadline: Date,
+): Promise<void> {
+  await createInAppNotification({
+    userId,
+    type: "bon_de_commande_required",
+    title: `Bon de commande required - ${orderNumber}`,
+    message: `Please upload the Bon de commande for order ${orderNumber} within 48 hours (by ${deadline.toLocaleString()}).`,
+    link: `/orders/${orderId}`,
+    metadata: { orderId },
+  });
+}
+
+/**
+ * Notify a product owner/admin that the client uploaded the Bon de commande for an order.
+ *
+ * @param productOwnerUserId - Product owner/admin to notify
+ * @param orderId - Order ID for link
+ * @param orderNumber - Order number for display
+ * @param buyerDisplay - Buyer name/email (e.g. "Jane Doe (jane@example.com)")
+ */
+export async function createBonDeCommandeUploadedNotification(
+  productOwnerUserId: string,
+  orderId: string,
+  orderNumber: string,
+  buyerDisplay: string,
+): Promise<void> {
+  await createInAppNotification({
+    userId: productOwnerUserId,
+    type: "bon_de_commande_uploaded",
+    title: "Bon de commande uploaded",
+    message: `${buyerDisplay} uploaded the Bon de commande for order ${orderNumber}.`,
+    link: `/admin/client-orders/${orderId}`,
+    metadata: { orderId },
+  });
+}
+
+/**
+ * Notify a product owner/admin that an order is past its 48h Bon de commande deadline
+ * with no document uploaded.
+ *
+ * @param productOwnerUserId - Product owner/admin to notify
+ * @param orderId - Order ID for link
+ * @param orderNumber - Order number for display
+ * @param buyerDisplay - Buyer name/email (e.g. "Jane Doe (jane@example.com)")
+ */
+export async function createBonDeCommandeOverdueNotification(
+  productOwnerUserId: string,
+  orderId: string,
+  orderNumber: string,
+  buyerDisplay: string,
+): Promise<void> {
+  await createInAppNotification({
+    userId: productOwnerUserId,
+    type: "bon_de_commande_overdue",
+    title: "Bon de commande overdue",
+    message: `Order ${orderNumber} from ${buyerDisplay} is past the 48h deadline with no Bon de commande uploaded.`,
+    link: `/admin/client-orders/${orderId}`,
+    metadata: { orderId },
+  });
+}
+
+/**
  * Notify product owner when someone submits a review for their product.
  *
  * @param productOwnerUserId - Product owner to notify

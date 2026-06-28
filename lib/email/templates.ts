@@ -16,6 +16,7 @@ import type {
 // Re-export order-related email templates from separate file
 export {
   generateOrderConfirmationEmail,
+  generateBonDeCommandeRequestEmail,
   generateInvoiceEmail,
   generateShippingNotificationEmail,
   generateOrderStatusUpdateEmail,

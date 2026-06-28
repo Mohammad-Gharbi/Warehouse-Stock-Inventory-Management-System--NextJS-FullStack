@@ -133,6 +133,19 @@ export interface OrderConfirmationData {
 }
 
 /**
+ * Bon de commande (purchase order) request email data
+ * Sent to the client when an order is placed, asking them to upload the document within 48h.
+ */
+export interface BonDeCommandeRequestData {
+  orderNumber: string;
+  clientName: string;
+  /** Human-readable deadline (createdAt + 48h) */
+  deadline: string;
+  /** Link to the order detail page where the document is uploaded */
+  orderUrl: string;
+}
+
+/**
  * Invoice email data
  */
 export interface InvoiceEmailData {

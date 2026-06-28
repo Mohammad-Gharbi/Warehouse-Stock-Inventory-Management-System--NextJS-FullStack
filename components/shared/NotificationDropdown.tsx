@@ -51,6 +51,11 @@ function getNotificationIcon(type: NotificationType) {
     case "order_status_update":
     case "client_order_received":
       return ShoppingCart;
+    case "bon_de_commande_required":
+    case "bon_de_commande_uploaded":
+      return FileText;
+    case "bon_de_commande_overdue":
+      return AlertCircle;
     case "product_review_submitted":
       return Star;
     case "shipping_notification":
@@ -83,6 +88,12 @@ function getNotificationColor(type: NotificationType): string {
       return "text-blue-600 dark:text-blue-400";
     case "client_order_received":
       return "text-violet-600 dark:text-violet-400";
+    case "bon_de_commande_required":
+      return "text-amber-600 dark:text-amber-400";
+    case "bon_de_commande_uploaded":
+      return "text-green-600 dark:text-green-400";
+    case "bon_de_commande_overdue":
+      return "text-red-600 dark:text-red-400";
     case "product_review_submitted":
       return "text-amber-600 dark:text-amber-400";
     case "shipping_notification":

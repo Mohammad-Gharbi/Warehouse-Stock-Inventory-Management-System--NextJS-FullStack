@@ -10,6 +10,7 @@
 import type {
   EmailContent,
   OrderConfirmationData,
+  BonDeCommandeRequestData,
   InvoiceEmailData,
   ShippingNotificationData,
   OrderStatusUpdateData,
@@ -232,6 +233,107 @@ Order Summary:
 ${tax ? `- Tax: ${formatCurrency(tax)}\n` : ""}${shipping ? `- Shipping: ${formatCurrency(shipping)}\n` : ""}- Total: ${formatCurrency(total)}
 
 ${shippingAddress ? `Shipping Address:\n${shippingAddress.street}\n${shippingAddress.city}${shippingAddress.state ? `, ${shippingAddress.state}` : ""} ${shippingAddress.zipCode}\n${shippingAddress.country}\n\n` : ""}We'll send you another email when your order ships. If you have any questions, please contact our support team.
+
+---
+This is an automated email from Techmaster Store. Please do not reply to this email.
+  `.trim();
+
+  return {
+    subject,
+    htmlContent,
+    textContent,
+  };
+}
+
+/**
+ * Generate Bon de commande request email
+ * Sent to the client when an order is placed, asking them to upload the document within 48h.
+ *
+ * @param data - Bon de commande request data
+ * @returns EmailContent - Email content with HTML and text versions
+ */
+export function generateBonDeCommandeRequestEmail(
+  data: BonDeCommandeRequestData
+): EmailContent {
+  const { orderNumber, clientName, deadline, orderUrl } = data;
+
+  const subject = generateUniqueSubject(
+    `Action required: upload your Bon de commande for order ${orderNumber}`
+  );
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>Bon de commande required</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f5f5f5;">
+      <tr>
+        <td align="center" style="padding: 20px 0;">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <tr>
+              <td style="padding: 30px;">
+                <h1 style="color: #b7791f; margin: 0 0 20px 0; font-size: 24px; font-weight: 600; line-height: 1.2;">📄 Bon de commande required</h1>
+
+                <p style="font-size: 16px; line-height: 1.6; color: #333333; margin: 0 0 20px 0;">Hello ${clientName}, thank you for placing order <strong>${orderNumber}</strong>.</p>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #fff8e1; border-left: 4px solid #f1c40f; border-radius: 4px; margin: 20px 0;">
+                  <tr>
+                    <td style="padding: 15px;">
+                      <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #7d6608;">
+                        Please upload your <strong>Bon de commande</strong> (purchase order document) within <strong>48 hours</strong>.
+                        <br>Deadline: <strong>${deadline}</strong>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 30px 0;">
+                  <tr>
+                    <td style="border-radius: 4px; background-color: #27ae60;">
+                      <a href="${orderUrl}" style="display: inline-block; padding: 12px 24px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 4px;">Upload Bon de commande</a>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="font-size: 14px; line-height: 1.6; color: #666666; margin: 20px 0 0 0;">
+                  If the button does not work, copy and paste this link into your browser:<br>
+                  <a href="${orderUrl}" style="color: #2980b9;">${orderUrl}</a>
+                </p>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 30px 0 0 0;">
+                  <tr>
+                    <td style="border-top: 1px solid #eeeeee; padding: 30px 0 0 0;">
+                      <p style="font-size: 12px; line-height: 1.5; color: #999999; margin: 0;">
+                        This is an automated email from Techmaster Store. Please do not reply to this email.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+  `.trim();
+
+  const textContent = `
+Bon de commande required - Order ${orderNumber}
+
+Hello ${clientName}, thank you for placing order ${orderNumber}.
+
+Please upload your Bon de commande (purchase order document) within 48 hours.
+Deadline: ${deadline}
+
+Upload here: ${orderUrl}
 
 ---
 This is an automated email from Techmaster Store. Please do not reply to this email.

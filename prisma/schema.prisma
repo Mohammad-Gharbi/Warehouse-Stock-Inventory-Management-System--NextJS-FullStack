@@ -141,6 +141,12 @@ model Order {
   shippedAt             DateTime?   @db.Timestamptz(6)
   deliveredAt           DateTime?   @db.Timestamptz(6)
   cancelledAt           DateTime?   @db.Timestamptz(6)
+  bonDeCommandeUrl        String?
+  bonDeCommandeFileId     String?
+  bonDeCommandeFileName   String?
+  bonDeCommandeUploadedAt DateTime? @db.Timestamptz(6)
+  bonDeCommandeDeadline   DateTime? @db.Timestamptz(6)
+  bonDeCommandeFlaggedAt  DateTime? @db.Timestamptz(6)
   stripePaymentIntentId String?
   createdAt             DateTime    @default(now()) @db.Timestamptz(6)
   updatedAt             DateTime?   @db.Timestamptz(6)

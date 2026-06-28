@@ -93,6 +93,18 @@ export interface Order {
   shippedAt?: Date | null;
   deliveredAt?: Date | null;
   cancelledAt?: Date | null;
+  /** Bon de commande (purchase order) document URL once uploaded */
+  bonDeCommandeUrl?: string | null;
+  /** ImageKit file ID of the uploaded Bon de commande (for replace/delete) */
+  bonDeCommandeFileId?: string | null;
+  /** Original file name of the uploaded Bon de commande */
+  bonDeCommandeFileName?: string | null;
+  /** When the client uploaded the Bon de commande */
+  bonDeCommandeUploadedAt?: string | Date | null;
+  /** Deadline (createdAt + 48h) by which the Bon de commande must be uploaded */
+  bonDeCommandeDeadline?: string | Date | null;
+  /** When the order was flagged for admin/product owner due to a missing Bon de commande */
+  bonDeCommandeFlaggedAt?: string | Date | null;
   createdAt: Date;
   updatedAt?: Date | null;
   createdBy: string;

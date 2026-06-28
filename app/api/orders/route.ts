@@ -14,8 +14,12 @@ import {
 import { createOrderSchema } from "@/lib/validations";
 import { getCache, setCache, cacheKeys } from "@/lib/cache";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
-import { sendOrderConfirmation } from "@/lib/email/notifications";
-import { createOrderNotification, createClientOrderReceivedNotification } from "@/lib/notifications/in-app";
+import { sendOrderConfirmation, sendBonDeCommandeRequest } from "@/lib/email/notifications";
+import {
+  createOrderNotification,
+  createClientOrderReceivedNotification,
+  createBonDeCommandeRequiredNotification,
+} from "@/lib/notifications/in-app";
 import { prisma } from "@/prisma/client";
 import { createAuditLog } from "@/prisma/audit-log";
 import type { CreateOrderInput } from "@/types";
@@ -130,6 +134,12 @@ export async function GET(request: NextRequest) {
       shippedAt: order.shippedAt?.toISOString() || null,
       deliveredAt: order.deliveredAt?.toISOString() || null,
       cancelledAt: order.cancelledAt?.toISOString() || null,
+      bonDeCommandeUrl: order.bonDeCommandeUrl ?? null,
+      bonDeCommandeFileId: order.bonDeCommandeFileId ?? null,
+      bonDeCommandeFileName: order.bonDeCommandeFileName ?? null,
+      bonDeCommandeUploadedAt: order.bonDeCommandeUploadedAt?.toISOString() || null,
+      bonDeCommandeDeadline: order.bonDeCommandeDeadline?.toISOString() || null,
+      bonDeCommandeFlaggedAt: order.bonDeCommandeFlaggedAt?.toISOString() || null,
       createdAt: order.createdAt.toISOString(),
       updatedAt: order.updatedAt?.toISOString() || null,
       createdBy: order.createdBy,
@@ -236,6 +246,48 @@ export async function POST(request: NextRequest) {
       logger.error("Failed to create in-app notification for order:", error);
     });
 
+    // Bon de commande: notify the client (in-app + email) that they must upload the
+    // purchase-order document within 48h (async, non-blocking).
+    if (order.bonDeCommandeDeadline) {
+      const deadline = order.bonDeCommandeDeadline;
+      createBonDeCommandeRequiredNotification(
+        userId,
+        order.id,
+        order.orderNumber,
+        deadline,
+      ).catch((error) => {
+        logger.error(
+          "Failed to create Bon de commande required notification:",
+          error,
+        );
+      });
+
+      // Resolve the buyer's account email for the request email.
+      prisma.user
+        .findUnique({
+          where: { id: order.userId },
+          select: { name: true, email: true },
+        })
+        .then((buyer) => {
+          if (!buyer?.email) return;
+          const baseUrl =
+            process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+          return sendBonDeCommandeRequest(
+            {
+              orderNumber: order.orderNumber,
+              clientName: buyer.name || "Customer",
+              deadline: deadline.toLocaleString(),
+              orderUrl: `${baseUrl}/orders/${order.id}`,
+            },
+            buyer.email,
+            buyer.name || undefined,
+          );
+        })
+        .catch((error) => {
+          logger.error("Failed to send Bon de commande request email:", error);
+        });
+    }
+
     // Notify product owners that a client placed an order containing their products (async, non-blocking)
     const productIds = order.items.map((item) => item.productId);
     if (productIds.length > 0) {
@@ -337,6 +389,12 @@ export async function POST(request: NextRequest) {
       shippedAt: order.shippedAt?.toISOString() || null,
       deliveredAt: order.deliveredAt?.toISOString() || null,
       cancelledAt: order.cancelledAt?.toISOString() || null,
+      bonDeCommandeUrl: order.bonDeCommandeUrl ?? null,
+      bonDeCommandeFileId: order.bonDeCommandeFileId ?? null,
+      bonDeCommandeFileName: order.bonDeCommandeFileName ?? null,
+      bonDeCommandeUploadedAt: order.bonDeCommandeUploadedAt?.toISOString() || null,
+      bonDeCommandeDeadline: order.bonDeCommandeDeadline?.toISOString() || null,
+      bonDeCommandeFlaggedAt: order.bonDeCommandeFlaggedAt?.toISOString() || null,
       createdAt: order.createdAt.toISOString(),
       updatedAt: order.updatedAt?.toISOString() || null,
       createdBy: order.createdBy,

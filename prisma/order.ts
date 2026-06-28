@@ -136,6 +136,8 @@ export async function createOrder(data: CreateOrderInput, userId: string) {
         : Prisma.DbNull,
       notes: data.notes || null,
       paymentMethod: data.paymentMethod || null,
+      // Client must upload a Bon de commande within 48h of placing the order.
+      bonDeCommandeDeadline: new Date(Date.now() + 48 * 60 * 60 * 1000),
       createdBy: userId,
       items: {
         create: orderItemsData,

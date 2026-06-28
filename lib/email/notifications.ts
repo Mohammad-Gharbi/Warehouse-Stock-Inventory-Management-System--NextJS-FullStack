@@ -11,6 +11,7 @@ import {
   generateLowStockAlertEmail,
   generateStockOutNotificationEmail,
   generateOrderConfirmationEmail,
+  generateBonDeCommandeRequestEmail,
   generateInvoiceEmail,
   generateShippingNotificationEmail,
   generateOrderStatusUpdateEmail,
@@ -20,6 +21,7 @@ import type {
   LowStockAlertData,
   StockOutNotificationData,
   OrderConfirmationData,
+  BonDeCommandeRequestData,
   InvoiceEmailData,
   ShippingNotificationData,
   OrderStatusUpdateData,
@@ -455,6 +457,71 @@ export async function sendOrderConfirmation(
   } catch (error) {
     // Log error but don't throw - email failure shouldn't break the main operation
     logger.error("Error sending order confirmation email", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      orderNumber: data.orderNumber,
+      recipientEmail,
+    });
+  }
+}
+
+/**
+ * Send Bon de commande request email
+ * Sent to the client when an order is placed, asking them to upload the document within 48h.
+ * Sent directly via Brevo (not queued). Fails silently — must not break order creation.
+ *
+ * @param data - Bon de commande request data
+ * @param recipientEmail - Client email address
+ * @param recipientName - Client name (optional)
+ * @returns Promise<void> - Resolves when email is sent (or fails silently)
+ */
+export async function sendBonDeCommandeRequest(
+  data: BonDeCommandeRequestData,
+  recipientEmail: string,
+  recipientName?: string
+): Promise<void> {
+  if (!isBrevoConfigured()) {
+    logger.warn(
+      "Brevo email service is not configured, skipping Bon de commande request email"
+    );
+    return;
+  }
+
+  if (!recipientEmail) {
+    logger.warn(
+      "No recipient email provided, skipping Bon de commande request email"
+    );
+    return;
+  }
+
+  try {
+    const emailContent = generateBonDeCommandeRequestEmail(data);
+
+    const result = await sendEmailViaBrevo({
+      to: {
+        email: recipientEmail,
+        name: recipientName || data.clientName,
+      },
+      subject: emailContent.subject,
+      htmlContent: emailContent.htmlContent,
+      textContent: emailContent.textContent,
+      tags: ["bon_de_commande", "order", "action_required"],
+    });
+
+    if (result.success) {
+      logger.info("Bon de commande request email sent successfully", {
+        messageId: result.messageId,
+        orderNumber: data.orderNumber,
+        recipientEmail,
+      });
+    } else {
+      logger.error("Failed to send Bon de commande request email", {
+        error: result.error,
+        orderNumber: data.orderNumber,
+        recipientEmail,
+      });
+    }
+  } catch (error) {
+    logger.error("Error sending Bon de commande request email", {
       error: error instanceof Error ? error.message : "Unknown error",
       orderNumber: data.orderNumber,
       recipientEmail,

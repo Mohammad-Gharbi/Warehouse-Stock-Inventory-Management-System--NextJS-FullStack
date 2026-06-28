@@ -48,6 +48,7 @@ const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
 import type { Order } from "@/types";
 import { cn } from "@/lib/utils";
 import OrderDialog from "@/components/orders/OrderDialog";
+import BonDeCommandeUpload from "@/components/orders/BonDeCommandeUpload";
 import { AlertDialogWrapper } from "@/components/dialogs";
 import { PaymentDialog } from "@/components/payments";
 import { OrderTrackingInfo, ShippingManagement } from "@/components/shipping";
@@ -627,6 +628,16 @@ export default function OrderDetailPage() {
               ))}
             </div>
           </GlassCard>
+
+          {/* Bon de commande (purchase order document) */}
+          <BonDeCommandeUpload
+            order={order}
+            canUpload={
+              user?.role === "admin" ||
+              order.clientId === user?.id ||
+              order.userId === user?.id
+            }
+          />
 
           {/* Order Summary */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
