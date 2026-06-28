@@ -11,7 +11,13 @@ import {
   cancelOrRemoveDetailQuery,
 } from "@/lib/react-query";
 import { useToast } from "@/hooks/use-toast";
-import type { Order, CreateOrderInput, UpdateOrderInput } from "@/types";
+import type {
+  Order,
+  CreateOrderInput,
+  UpdateOrderInput,
+  DeliverOrderInput,
+  DeliverOrderResponse,
+} from "@/types";
 
 /**
  * Fetch all orders
@@ -127,6 +133,52 @@ export function useUpdateOrder() {
         title: "Order Update Failed",
         description:
           getErrorMessage(error) || "Failed to update order. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+}
+
+/**
+ * Validate & deliver order mutation.
+ * Assigns digital activation keys from the pool and/or attaches tracking, marks
+ * the order delivered, and notifies the client (in-app + email).
+ */
+export function useDeliverOrder() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: DeliverOrderInput;
+    }): Promise<DeliverOrderResponse> => {
+      const response = await apiClient.orders.deliver(id, data);
+      return response.data;
+    },
+    onSuccess: (data: DeliverOrderResponse) => {
+      // Refetch the order detail so keys / tracking / status appear immediately.
+      queryClient.refetchQueries({
+        queryKey: queryKeys.orders.detail(data.orderId),
+      });
+      invalidateAfterOrderGraphChange(queryClient);
+
+      const parts: string[] = [];
+      if (data.digitalItems > 0) parts.push("activation keys sent");
+      if (data.physicalItems > 0) parts.push("tracking sent");
+      toast({
+        title: "Order Delivered",
+        description: `Order delivered${parts.length ? ` — ${parts.join(" & ")}` : ""}.`,
+      });
+    },
+    onError: (error: unknown) => {
+      toast({
+        title: "Delivery Failed",
+        description:
+          getErrorMessage(error) || "Failed to deliver order. Please try again.",
         variant: "destructive",
       });
     },

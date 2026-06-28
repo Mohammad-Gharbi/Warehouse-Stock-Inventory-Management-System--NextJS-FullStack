@@ -19,6 +19,8 @@ const productApiNameSchema = z
 
 const productStatusSchema = z.enum(["Available", "Stock Low", "Stock Out"]);
 
+const productTypeSchema = z.enum(["physical", "digital"]);
+
 const optionalImageUrlSchema = z
   .string()
   .url("Invalid image URL")
@@ -115,6 +117,7 @@ export const productSchema = z.object({
     .or(z.literal("")),
   paymentTerms: optionalPaymentTermsSchema,
   orderFormFields: z.array(orderFormFieldFormSchema).optional(),
+  productType: productTypeSchema.default("physical"),
 });
 
 /**
@@ -144,6 +147,7 @@ export const createProductBodySchema = z.object({
   expirationDate: optionalExpirationDateSchema.optional(),
   paymentTerms: optionalPaymentTermsSchema.optional(),
   orderFormFields: orderFormFieldsSchema.optional(),
+  productType: productTypeSchema.optional(),
 });
 
 /**
@@ -169,6 +173,18 @@ export const updateProductBodySchema = z.object({
   expirationDate: optionalExpirationDateSchema.optional(),
   paymentTerms: optionalPaymentTermsSchema.optional().or(z.null()),
   orderFormFields: orderFormFieldsSchema.optional(),
+  productType: productTypeSchema.optional(),
+});
+
+/**
+ * API request body for POST /api/products/:id/license-keys
+ * Accepts a list of activation/license keys (one per line in the UI).
+ */
+export const addLicenseKeysSchema = z.object({
+  keys: z
+    .array(z.string().trim().min(1, "Key cannot be empty").max(255))
+    .min(1, "At least one key is required")
+    .max(1000, "Too many keys in a single request"),
 });
 
 /**

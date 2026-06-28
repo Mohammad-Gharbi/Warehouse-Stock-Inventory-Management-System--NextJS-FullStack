@@ -7,6 +7,8 @@
 export type {
   Product,
   ProductStatus,
+  ProductType,
+  ProductLicenseKeySummary,
   OrderFormFieldType,
   OrderFormFieldDef,
   CreateProductInput,
@@ -44,6 +46,8 @@ export type {
   BillingAddress,
   CreateOrderInput,
   UpdateOrderInput,
+  DeliverOrderInput,
+  DeliverOrderResponse,
   OrderFilters,
 } from "./order";
 

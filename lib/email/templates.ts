@@ -20,6 +20,7 @@ export {
   generateInvoiceEmail,
   generateShippingNotificationEmail,
   generateOrderStatusUpdateEmail,
+  generateDigitalDeliveryEmail,
 } from "./templates-order";
 
 /**

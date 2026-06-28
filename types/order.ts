@@ -2,6 +2,8 @@
  * Order-related type definitions
  */
 
+import type { ProductType } from "./product";
+
 /**
  * Order status types
  */
@@ -63,6 +65,10 @@ export interface OrderItem {
   createdAt: Date;
   /** Category ID for link to category detail (from product) */
   categoryId?: string | null;
+  /** Fulfillment type of the underlying product ("physical" | "digital") */
+  productType?: ProductType | null;
+  /** Activation/license keys assigned to this item on delivery (digital products only) */
+  activationKeys?: string[] | null;
 }
 
 /**
@@ -160,6 +166,29 @@ export interface UpdateOrderInput {
   deliveredAt?: Date;
   cancelledAt?: Date;
   notes?: string;
+}
+
+/**
+ * Validate & deliver order input.
+ * Digital items are fulfilled from the key pool server-side; tracking details are
+ * required when the order contains physical items.
+ */
+export interface DeliverOrderInput {
+  trackingNumber?: string;
+  trackingCarrier?: string;
+  trackingUrl?: string;
+}
+
+/**
+ * Validate & deliver order response
+ */
+export interface DeliverOrderResponse {
+  success: boolean;
+  orderId: string;
+  status: "delivered";
+  deliveredAt: string;
+  digitalItems: number;
+  physicalItems: number;
 }
 
 /**

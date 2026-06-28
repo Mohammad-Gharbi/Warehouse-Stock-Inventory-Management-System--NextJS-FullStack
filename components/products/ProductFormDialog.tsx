@@ -35,6 +35,8 @@ import Price from "./form-fields/PriceField";
 import ImageField from "./form-fields/ImageField";
 import ExpirationDateField from "./form-fields/ExpirationDateField";
 import PaymentTermsField from "./form-fields/PaymentTermsField";
+import ProductTypeField from "./form-fields/ProductTypeField";
+import LicenseKeysField from "./form-fields/LicenseKeysField";
 import OrderFormBuilder from "./form-fields/OrderFormBuilder";
 import { Product, OrderFormFieldDef } from "@/types";
 import {
@@ -69,10 +71,12 @@ export default function AddProductDialog({
       expirationDate: "",
       paymentTerms: "",
       orderFormFields: [],
+      productType: "physical",
     },
   });
 
-  const { reset } = methods;
+  const { reset, watch } = methods;
+  const productType = watch("productType");
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   // Inline validation error for category — outside RHF so Zod productSchema cannot cover it
@@ -115,6 +119,7 @@ export default function AddProductDialog({
           : "",
         paymentTerms: selectedProduct.paymentTerms || "",
         orderFormFields: selectedProduct.orderFormFields || [],
+        productType: selectedProduct.productType || "physical",
       });
       setSelectedCategory(selectedProduct.categoryId || "");
     } else {
@@ -129,6 +134,7 @@ export default function AddProductDialog({
         expirationDate: "",
         paymentTerms: "",
         orderFormFields: [],
+        productType: "physical",
       });
       setSelectedCategory("");
     }
@@ -220,6 +226,7 @@ export default function AddProductDialog({
           expirationDate: expirationDate || undefined,
           paymentTerms,
           orderFormFields: cleanedOrderFormFields,
+          productType: data.productType,
         });
 
         // Close dialog on success (toast is handled by mutation hook)
@@ -240,6 +247,7 @@ export default function AddProductDialog({
           expirationDate: expirationDate,
           paymentTerms: paymentTerms ?? null,
           orderFormFields: cleanedOrderFormFields,
+          productType: data.productType,
         });
 
         // Close dialog on success (toast is handled by mutation hook)
@@ -347,7 +355,14 @@ export default function AddProductDialog({
                   <p className="text-xs text-red-400 mt-1">{categoryError}</p>
                 )}
               </div>
+              <ProductTypeField />
               <PaymentTermsField />
+              {selectedProduct && productType === "digital" && (
+                <LicenseKeysField
+                  productId={selectedProduct.id}
+                  enabled={openProductDialog}
+                />
+              )}
               <OrderFormBuilder />
             </div>
             <DialogFooter className="mt-9 mb-4 flex flex-col sm:flex-row items-center gap-4">

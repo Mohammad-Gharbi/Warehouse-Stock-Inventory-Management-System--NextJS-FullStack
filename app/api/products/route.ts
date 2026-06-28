@@ -112,6 +112,7 @@ export async function GET(request: NextRequest) {
       paymentTerms: product.paymentTerms || null,
       orderFormFields:
         (product.orderFormFields as OrderFormFieldDef[] | null) || null,
+      productType: product.productType,
     }));
 
     // Cache the result for 5 minutes
@@ -167,6 +168,7 @@ export async function POST(request: NextRequest) {
       expirationDate,
       paymentTerms,
       orderFormFields,
+      productType,
     } = validationResult.data;
 
     // Check if SKU already exists
@@ -202,6 +204,7 @@ export async function POST(request: NextRequest) {
                 JSON.stringify(orderFormFields),
               ) as Prisma.InputJsonValue)
             : Prisma.DbNull,
+        productType: productType || "physical",
         createdAt: new Date(),
         updatedAt: null, // Set to null on creation - will be set when updated
       },
@@ -297,6 +300,7 @@ export async function POST(request: NextRequest) {
       paymentTerms: product.paymentTerms || null,
       orderFormFields:
         (product.orderFormFields as OrderFormFieldDef[] | null) || null,
+      productType: product.productType,
     };
 
     return NextResponse.json(transformedProduct, { status: 201 });
@@ -350,6 +354,7 @@ export async function PUT(request: NextRequest) {
       expirationDate,
       paymentTerms,
       orderFormFields,
+      productType,
     } = validationResult.data;
 
     // Verify product belongs to user
@@ -422,6 +427,7 @@ export async function PUT(request: NextRequest) {
                 ) as Prisma.InputJsonValue)
               : Prisma.DbNull,
         }),
+        ...(productType && { productType }),
         updatedBy: session.id, // Track who updated the product
         updatedAt: new Date(), // Update timestamp
       },
@@ -565,6 +571,7 @@ export async function PUT(request: NextRequest) {
       paymentTerms: product.paymentTerms || null,
       orderFormFields:
         (product.orderFormFields as OrderFormFieldDef[] | null) || null,
+      productType: product.productType,
     };
 
     return NextResponse.json(transformedProduct);

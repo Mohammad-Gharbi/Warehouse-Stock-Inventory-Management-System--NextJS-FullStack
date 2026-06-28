@@ -123,6 +123,26 @@ export const updateOrderSchema = z.object({
 });
 
 /**
+ * Validate & deliver order schema.
+ * Digital items are fulfilled from the key pool server-side; the admin only
+ * supplies tracking details, which are required when the order has physical items.
+ */
+export const deliverOrderSchema = z.object({
+  trackingNumber: z.string().trim().optional(),
+  trackingCarrier: z.string().trim().optional(),
+  trackingUrl: z
+    .string()
+    .url("Invalid tracking URL")
+    .optional()
+    .or(z.literal("")),
+});
+
+/**
+ * Deliver order form data type
+ */
+export type DeliverOrderFormData = z.infer<typeof deliverOrderSchema>;
+
+/**
  * Create order form data type
  */
 export type CreateOrderFormData = z.infer<typeof createOrderSchema>;

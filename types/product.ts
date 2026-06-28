@@ -8,6 +8,23 @@
 export type ProductStatus = "Available" | "Stock Low" | "Stock Out";
 
 /**
+ * Product fulfillment type
+ * - physical: shipped with a tracking number
+ * - digital: delivered via a pre-loaded activation/license key
+ */
+export type ProductType = "physical" | "digital";
+
+/**
+ * Summary of a digital product's license-key pool
+ */
+export interface ProductLicenseKeySummary {
+  /** Keys still available for assignment */
+  available: number;
+  /** Total keys ever added to the pool */
+  total: number;
+}
+
+/**
  * Field type for a custom per-product order-form field
  */
 export type OrderFormFieldType = "text" | "textarea" | "number" | "select";
@@ -51,6 +68,8 @@ export interface Product {
   paymentTerms?: string | null;
   /** Custom fields shown in this product's order form */
   orderFormFields?: OrderFormFieldDef[] | null;
+  /** Fulfillment type — "physical" (tracking) or "digital" (activation key). Defaults to "physical". */
+  productType?: ProductType;
   /** Set when product is archived (soft-deleted) due to order history */
   deletedAt?: Date | null;
   deletedBy?: string | null;
@@ -96,6 +115,7 @@ export interface CreateProductInput {
   expirationDate?: string; // ISO date string
   paymentTerms?: string;
   orderFormFields?: OrderFormFieldDef[];
+  productType?: ProductType;
 }
 
 /**
@@ -114,4 +134,5 @@ export interface UpdateProductInput {
   expirationDate?: string | null; // ISO date string or null to clear
   paymentTerms?: string | null;
   orderFormFields?: OrderFormFieldDef[] | null;
+  productType?: ProductType;
 }

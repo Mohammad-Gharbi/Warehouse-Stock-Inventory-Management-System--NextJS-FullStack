@@ -34,8 +34,15 @@ export {
   useClientOrders,
   useCreateOrder,
   useUpdateOrder,
+  useDeliverOrder,
   useDeleteOrder,
 } from "./use-orders";
+
+// Product license-key hooks
+export {
+  useProductLicenseKeys,
+  useAddLicenseKeys,
+} from "./use-license-keys";
 
 // Notification hooks
 export {

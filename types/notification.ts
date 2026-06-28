@@ -11,6 +11,7 @@ export type NotificationType =
   | "order_confirmation"
   | "order_status_update"
   | "shipping_notification"
+  | "digital_keys_delivered"
   | "client_order_received"
   | "bon_de_commande_required"
   | "bon_de_commande_uploaded"

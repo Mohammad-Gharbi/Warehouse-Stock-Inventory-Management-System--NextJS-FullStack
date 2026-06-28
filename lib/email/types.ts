@@ -68,6 +68,7 @@ export type EmailNotificationType =
   | "order_confirmation"
   | "invoice_email"
   | "shipping_notification"
+  | "digital_delivery"
   | "order_status_update";
 
 /**
@@ -196,6 +197,23 @@ export interface ShippingNotificationData {
     quantity: number;
   }>;
   trackingUrl?: string; // Shippo tracking URL
+}
+
+/**
+ * Digital delivery email data
+ * Sent to the client when an order's digital products are delivered, carrying the
+ * activation/license key(s) for each digital item.
+ */
+export interface DigitalDeliveryData {
+  orderNumber: string;
+  clientName: string;
+  /** Link to the order detail page where keys are also shown in-app */
+  orderUrl: string;
+  /** One entry per digital order item, each with its assigned activation key(s) */
+  items: Array<{
+    productName: string;
+    keys: string[];
+  }>;
 }
 
 /**

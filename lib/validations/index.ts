@@ -15,6 +15,7 @@ export {
   calculateProductStatus,
   orderFormFieldSchema,
   orderFormFieldsSchema,
+  addLicenseKeysSchema,
   type ProductFormData,
 } from "./product";
 
@@ -66,12 +67,14 @@ export {
 export {
   createOrderSchema,
   updateOrderSchema,
+  deliverOrderSchema,
   shippingAddressSchema,
   billingAddressSchema,
   orderItemSchema,
   paymentMethodSchema,
   type CreateOrderFormData,
   type UpdateOrderFormData,
+  type DeliverOrderFormData,
 } from "./order";
 
 // Invoice validations

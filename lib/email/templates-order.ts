@@ -14,6 +14,7 @@ import type {
   InvoiceEmailData,
   ShippingNotificationData,
   OrderStatusUpdateData,
+  DigitalDeliveryData,
 } from "./types";
 
 /**
@@ -755,6 +756,125 @@ ${shippingAddress.city}${shippingAddress.state ? `, ${shippingAddress.state}` : 
 ${shippingAddress.country}
 
 You can track your package using the tracking number above. If you have any questions, please contact our support team.
+
+---
+This is an automated email from Techmaster Store. Please do not reply to this email.
+  `.trim();
+
+  return {
+    subject,
+    htmlContent,
+    textContent,
+  };
+}
+
+/**
+ * Generate digital delivery email
+ * Sent to the client when an order's digital products are delivered, carrying the
+ * activation/license key(s) for each digital item.
+ *
+ * @param data - Digital delivery data
+ * @returns EmailContent - Email content with HTML and text versions
+ */
+export function generateDigitalDeliveryEmail(
+  data: DigitalDeliveryData
+): EmailContent {
+  const { orderNumber, clientName, orderUrl, items } = data;
+
+  const subject = generateUniqueSubject(
+    `Your activation keys for order ${orderNumber}`
+  );
+
+  const itemsHtml = items
+    .map(
+      (item) => `
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f3effb; border-left: 4px solid #8e44ad; border-radius: 4px; margin: 16px 0;">
+          <tr>
+            <td style="padding: 15px;">
+              <p style="margin: 0 0 10px 0; font-weight: 600; color: #5b2c83; font-size: 16px;">${item.productName}</p>
+              ${item.keys
+                .map(
+                  (key) => `
+                <p style="margin: 6px 0; font-family: 'Courier New', monospace; font-size: 16px; font-weight: 700; color: #333333; background-color: #ffffff; border: 1px dashed #8e44ad; border-radius: 4px; padding: 10px 12px; word-break: break-all;">${key}</p>`
+                )
+                .join("")}
+            </td>
+          </tr>
+        </table>`
+    )
+    .join("");
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>Your Activation Keys</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f5f5f5;">
+      <tr>
+        <td align="center" style="padding: 20px 0;">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <tr>
+              <td style="padding: 30px;">
+                <h1 style="color: #8e44ad; margin: 0 0 20px 0; font-size: 24px; font-weight: 600; line-height: 1.2;">🔑 Your Activation Keys</h1>
+
+                <p style="font-size: 16px; line-height: 1.6; color: #333333; margin: 0 0 20px 0;">Hello ${clientName}, your digital products from order <strong>${orderNumber}</strong> have been delivered. Your activation key(s) are below.</p>
+
+                ${itemsHtml}
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 30px 0;">
+                  <tr>
+                    <td style="border-radius: 4px; background-color: #8e44ad;">
+                      <a href="${orderUrl}" style="display: inline-block; padding: 12px 24px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 4px;">View order &amp; keys</a>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="font-size: 14px; line-height: 1.6; color: #666666; margin: 20px 0 0 0;">
+                  Keep these keys safe — they are also available any time on your order page. If you have any questions, please contact our support team.
+                </p>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 30px 0 0 0;">
+                  <tr>
+                    <td style="border-top: 1px solid #eeeeee; padding: 30px 0 0 0;">
+                      <p style="font-size: 12px; line-height: 1.5; color: #999999; margin: 0;">
+                        This is an automated email from Techmaster Store. Please do not reply to this email.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+  `.trim();
+
+  const itemsText = items
+    .map(
+      (item) =>
+        `${item.productName}:\n${item.keys.map((k) => `  ${k}`).join("\n")}`
+    )
+    .join("\n\n");
+
+  const textContent = `
+Your Activation Keys - Order ${orderNumber}
+
+Hello ${clientName}, your digital products from order ${orderNumber} have been delivered. Your activation key(s) are below.
+
+${itemsText}
+
+View order & keys: ${orderUrl}
+
+Keep these keys safe — they are also available any time on your order page.
 
 ---
 This is an automated email from Techmaster Store. Please do not reply to this email.

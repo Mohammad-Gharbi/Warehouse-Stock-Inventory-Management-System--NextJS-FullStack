@@ -36,8 +36,11 @@ import {
   Package,
   Pencil,
   Truck,
+  KeyRound,
+  CheckCircle,
 } from "lucide-react";
 import { useOrder, useUpdateOrder, useDeleteOrder } from "@/hooks/queries";
+import DeliverOrderDialog from "@/components/orders/DeliverOrderDialog";
 import {
   ClientDateTime,
   ClientRelativeTime,
@@ -574,6 +577,25 @@ export default function AdminOrderDetailContent({
                       Quantity: {item.quantity} × $
                       {Number(item.price).toFixed(2)}
                     </p>
+                    {item.activationKeys && item.activationKeys.length > 0 && (
+                      <div className="mt-3 rounded-lg border border-violet-300/40 dark:border-violet-400/20 bg-violet-50/60 dark:bg-violet-500/10 p-3">
+                        <p className="flex items-center gap-1.5 text-xs font-medium text-violet-700 dark:text-violet-300 mb-2">
+                          <KeyRound className="h-3.5 w-3.5" />
+                          Activation key
+                          {item.activationKeys.length > 1 ? "s" : ""}
+                        </p>
+                        <ul className="space-y-1.5">
+                          {item.activationKeys.map((key, idx) => (
+                            <li
+                              key={idx}
+                              className="font-mono text-sm font-semibold text-gray-900 dark:text-white break-all select-all rounded-md border border-violet-300/40 dark:border-violet-400/20 bg-white/70 dark:bg-white/5 px-2.5 py-1.5"
+                            >
+                              {key}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                   <div className="text-left sm:text-right mt-2 sm:mt-0 flex flex-col items-end gap-2">
                     <p className="font-semibold text-sky-600 dark:text-sky-400 text-lg">
@@ -880,6 +902,42 @@ export default function AdminOrderDetailContent({
             </div>
           </div>
         </GlassCard>
+
+        {/* Validate & Deliver — available once the Bon de commande is uploaded */}
+        {order.bonDeCommandeUploadedAt &&
+          order.status !== "delivered" &&
+          order.status !== "cancelled" && (
+            <GlassCard variant="emerald">
+              <div className="flex items-center gap-3 mb-2">
+                <div
+                  className={cn(
+                    "p-2.5 rounded-xl border",
+                    variantConfig.emerald.iconBg,
+                    "dark:border-emerald-400/30 dark:bg-emerald-500/20",
+                  )}
+                >
+                  <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Validate &amp; Deliver
+                </h3>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                Deliver this order: digital products are fulfilled from their
+                license-key pool (sent to the client in-app and by email); physical
+                products are delivered with a tracking number.
+              </p>
+              <DeliverOrderDialog
+                order={order}
+                trigger={
+                  <Button className="gap-2 rounded-xl border border-emerald-400/30 bg-card text-white shadow-sm hover:border-emerald-300/50">
+                    <CheckCircle className="h-4 w-4" />
+                    Validate &amp; Deliver
+                  </Button>
+                }
+              />
+            </GlassCard>
+          )}
 
         {/* Shipping & Tracking — auto generate + manual; when generated show OrderTrackingInfo above */}
         {order.status !== "cancelled" && (

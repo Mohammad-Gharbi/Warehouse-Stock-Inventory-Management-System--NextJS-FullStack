@@ -156,8 +156,13 @@ export async function GET(
           price: number;
           subtotal: number;
           customFields?: unknown;
+          activationKeys?: unknown;
           createdAt: Date;
-          product?: { categoryId?: string | null; supplierId?: string | null };
+          product?: {
+            categoryId?: string | null;
+            supplierId?: string | null;
+            productType?: string | null;
+          };
         }) => ({
           id: item.id,
           orderId: item.orderId,
@@ -168,9 +173,11 @@ export async function GET(
           price: item.price,
           subtotal: item.subtotal,
           customFields: item.customFields ?? null,
+          activationKeys: (item.activationKeys as string[] | null) ?? null,
           createdAt: item.createdAt.toISOString(),
           categoryId: item.product?.categoryId ?? null,
           supplierId: item.product?.supplierId ?? null,
+          productType: item.product?.productType ?? null,
         }),
       ),
     };

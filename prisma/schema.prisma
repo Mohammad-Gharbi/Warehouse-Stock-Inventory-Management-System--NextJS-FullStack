@@ -170,6 +170,7 @@ model OrderItem {
   price       Float
   subtotal    Float
   customFields Json?
+  activationKeys Json?
   createdAt   DateTime @default(now()) @db.Timestamptz(6)
   order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   product     Product  @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -209,13 +210,32 @@ model Product {
   expirationDate   DateTime?   @db.Timestamptz(6)
   paymentTerms     String?
   orderFormFields  Json?
+  productType      String      @default("physical")
   deletedAt        DateTime?   @db.Timestamptz(6)
   deletedBy        String?     @db.Uuid
   orderItems       OrderItem[]
+  licenseKeys      ProductLicenseKey[]
 
   @@index([deletedAt])
   @@index([userId, deletedAt, createdAt])
   @@index([categoryId])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model ProductLicenseKey {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productId   String    @db.Uuid
+  key         String
+  status      String    @default("available")
+  orderId     String?   @db.Uuid
+  orderItemId String?   @db.Uuid
+  assignedAt  DateTime? @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  createdBy   String    @db.Uuid
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([productId, key])
+  @@index([productId, status])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.

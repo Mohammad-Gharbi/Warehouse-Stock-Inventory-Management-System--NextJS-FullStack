@@ -148,6 +148,38 @@ export async function createOrderNotification(
 }
 
 /**
+ * Notify the client that their order's digital products were delivered, carrying the
+ * activation/license key(s) in-app. Keys are listed in the message and shown in full
+ * on the linked order page.
+ *
+ * @param userId - Client (buyer) to notify
+ * @param orderId - Order ID for link
+ * @param orderNumber - Order number for display
+ * @param keys - All activation keys delivered for this order's digital items
+ */
+export async function createDigitalDeliveryNotification(
+  userId: string,
+  orderId: string,
+  orderNumber: string,
+  keys: string[],
+): Promise<void> {
+  const keyCount = keys.length;
+  const preview =
+    keyCount === 1
+      ? `Your activation key: ${keys[0]}`
+      : `Your ${keyCount} activation keys: ${keys.join(", ")}`;
+
+  await createInAppNotification({
+    userId,
+    type: "digital_keys_delivered",
+    title: `Activation key${keyCount > 1 ? "s" : ""} delivered - ${orderNumber}`,
+    message: `${preview}. View them on your order page.`,
+    link: `/orders/${orderId}`,
+    metadata: { orderId },
+  });
+}
+
+/**
  * Notify a product owner that a client placed an order containing their products.
  * Used after order creation: for each product owner (excluding the order placer), create one notification.
  *

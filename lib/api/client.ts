@@ -19,6 +19,7 @@ import {
 } from "./errors";
 import type {
   Product,
+  ProductLicenseKeySummary,
   Category,
   CreateProductInput,
   UpdateProductInput,
@@ -32,6 +33,8 @@ import type {
   Order,
   CreateOrderInput,
   UpdateOrderInput,
+  DeliverOrderInput,
+  DeliverOrderResponse,
   Notification,
   UpdateNotificationInput,
   NotificationFilters,
@@ -284,6 +287,39 @@ class ApiClient {
         success: boolean;
         mode?: "soft" | "hard";
       }>(`${API_ENDPOINTS.products.base}?id=${id}`);
+      return {
+        data: response.data,
+        status: response.status,
+        statusText: response.statusText,
+      };
+    },
+
+    /**
+     * Get a digital product's license-key pool summary (available / total)
+     */
+    getLicenseKeys: async (
+      id: string,
+    ): Promise<ApiResponse<ProductLicenseKeySummary>> => {
+      const response = await this.client.get<ProductLicenseKeySummary>(
+        `${API_ENDPOINTS.products.base}/${id}/license-keys`,
+      );
+      return {
+        data: response.data,
+        status: response.status,
+        statusText: response.statusText,
+      };
+    },
+
+    /**
+     * Add license keys to a digital product's pool
+     */
+    addLicenseKeys: async (
+      id: string,
+      keys: string[],
+    ): Promise<ApiResponse<ProductLicenseKeySummary & { added: number }>> => {
+      const response = await this.client.post<
+        ProductLicenseKeySummary & { added: number }
+      >(`${API_ENDPOINTS.products.base}/${id}/license-keys`, { keys });
       return {
         data: response.data,
         status: response.status,
@@ -1039,6 +1075,26 @@ class ApiClient {
     delete: async (id: string): Promise<ApiResponse<Order>> => {
       const response = await this.client.delete<Order>(
         `${API_ENDPOINTS.orders.base}/${id}`,
+      );
+      return {
+        data: response.data,
+        status: response.status,
+        statusText: response.statusText,
+      };
+    },
+
+    /**
+     * Validate & deliver an order.
+     * Digital items are fulfilled from the key pool server-side; physical items
+     * require tracking details.
+     */
+    deliver: async (
+      id: string,
+      data: DeliverOrderInput,
+    ): Promise<ApiResponse<DeliverOrderResponse>> => {
+      const response = await this.client.post<DeliverOrderResponse>(
+        `${API_ENDPOINTS.orders.base}/${id}/deliver`,
+        data,
       );
       return {
         data: response.data,

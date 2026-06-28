@@ -16,6 +16,7 @@ import {
   generateShippingNotificationEmail,
   generateOrderStatusUpdateEmail,
   generatePartnerStatusEmail,
+  generateDigitalDeliveryEmail,
 } from "./templates";
 import type {
   LowStockAlertData,
@@ -26,6 +27,7 @@ import type {
   ShippingNotificationData,
   OrderStatusUpdateData,
   PartnerStatusEmailData,
+  DigitalDeliveryData,
 } from "./types";
 import { isEmailNotificationEnabled } from "./preferences";
 import { queueEmailNotification } from "./queue";
@@ -522,6 +524,72 @@ export async function sendBonDeCommandeRequest(
     }
   } catch (error) {
     logger.error("Error sending Bon de commande request email", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      orderNumber: data.orderNumber,
+      recipientEmail,
+    });
+  }
+}
+
+/**
+ * Send digital delivery email
+ * Sent to the client when their order's digital products are delivered, carrying the
+ * activation/license key(s). Sent directly via Brevo (not queued). Fails silently —
+ * must not break the deliver flow.
+ *
+ * @param data - Digital delivery data (per-item keys)
+ * @param recipientEmail - Client email address
+ * @param recipientName - Client name (optional)
+ * @returns Promise<void> - Resolves when email is sent (or fails silently)
+ */
+export async function sendDigitalDeliveryEmail(
+  data: DigitalDeliveryData,
+  recipientEmail: string,
+  recipientName?: string
+): Promise<void> {
+  if (!isBrevoConfigured()) {
+    logger.warn(
+      "Brevo email service is not configured, skipping digital delivery email"
+    );
+    return;
+  }
+
+  if (!recipientEmail) {
+    logger.warn(
+      "No recipient email provided, skipping digital delivery email"
+    );
+    return;
+  }
+
+  try {
+    const emailContent = generateDigitalDeliveryEmail(data);
+
+    const result = await sendEmailViaBrevo({
+      to: {
+        email: recipientEmail,
+        name: recipientName || data.clientName,
+      },
+      subject: emailContent.subject,
+      htmlContent: emailContent.htmlContent,
+      textContent: emailContent.textContent,
+      tags: ["digital_delivery", "order", "activation_key"],
+    });
+
+    if (result.success) {
+      logger.info("Digital delivery email sent successfully", {
+        messageId: result.messageId,
+        orderNumber: data.orderNumber,
+        recipientEmail,
+      });
+    } else {
+      logger.error("Failed to send digital delivery email", {
+        error: result.error,
+        orderNumber: data.orderNumber,
+        recipientEmail,
+      });
+    }
+  } catch (error) {
+    logger.error("Error sending digital delivery email", {
       error: error instanceof Error ? error.message : "Unknown error",
       orderNumber: data.orderNumber,
       recipientEmail,

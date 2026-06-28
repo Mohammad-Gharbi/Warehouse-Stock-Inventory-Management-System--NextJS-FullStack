@@ -31,14 +31,16 @@ export const createProduct = async (data: {
   createdAt: Date;
   paymentTerms?: string | null;
   orderFormFields?: OrderFormFieldDef[] | null;
+  productType?: string;
 }) => {
-  const { paymentTerms, orderFormFields, ...rest } = data;
+  const { paymentTerms, orderFormFields, productType, ...rest } = data;
   return prisma.product.create({
     data: {
       ...rest,
       createdBy: data.userId, // Set createdBy same as userId
       paymentTerms: paymentTerms || null,
       orderFormFields: toOrderFormFieldsJson(orderFormFields),
+      ...(productType && { productType }),
     },
   });
 };
@@ -101,9 +103,10 @@ export const updateProduct = async (
     updatedBy?: string;
     paymentTerms?: string | null;
     orderFormFields?: OrderFormFieldDef[] | null;
+    productType?: string;
   }
 ) => {
-  const { paymentTerms, orderFormFields, ...rest } = data;
+  const { paymentTerms, orderFormFields, productType, ...rest } = data;
   return prisma.product.update({
     where: { id },
     data: {
@@ -113,6 +116,7 @@ export const updateProduct = async (
       ...(orderFormFields !== undefined && {
         orderFormFields: toOrderFormFieldsJson(orderFormFields),
       }),
+      ...(productType && { productType }),
       updatedAt: new Date(), // Always update timestamp
     },
   });
