@@ -14,6 +14,7 @@ import {
   generateInvoiceEmail,
   generateShippingNotificationEmail,
   generateOrderStatusUpdateEmail,
+  generatePartnerStatusEmail,
 } from "./templates";
 import type {
   LowStockAlertData,
@@ -22,6 +23,7 @@ import type {
   InvoiceEmailData,
   ShippingNotificationData,
   OrderStatusUpdateData,
+  PartnerStatusEmailData,
 } from "./types";
 import { isEmailNotificationEnabled } from "./preferences";
 import { queueEmailNotification } from "./queue";
@@ -630,6 +632,70 @@ export async function sendShippingNotification(
     logger.error("Error sending shipping notification email", {
       error: error instanceof Error ? error.message : "Unknown error",
       orderNumber: data.orderNumber,
+      recipientEmail,
+    });
+  }
+}
+
+/**
+ * Send partner request status update email (approved / rejected).
+ * Sent directly via Brevo (low-volume admin action — bypasses the queue).
+ * Fails silently so an email problem never breaks the approval flow.
+ *
+ * @param data - Partner status email data
+ * @param recipientEmail - Applicant email address
+ * @param recipientName - Applicant name (optional)
+ * @returns Promise<void> - Resolves when email is sent (or fails silently)
+ */
+export async function sendPartnerStatusUpdate(
+  data: PartnerStatusEmailData,
+  recipientEmail: string,
+  recipientName?: string
+): Promise<void> {
+  if (!isBrevoConfigured()) {
+    logger.warn(
+      "Brevo email service is not configured, skipping partner status email"
+    );
+    return;
+  }
+
+  if (!recipientEmail) {
+    logger.warn("No recipient email provided, skipping partner status email");
+    return;
+  }
+
+  try {
+    const emailContent = generatePartnerStatusEmail(data);
+
+    const result = await sendEmailViaBrevo({
+      to: {
+        email: recipientEmail,
+        name: recipientName || data.contactName,
+      },
+      subject: emailContent.subject,
+      htmlContent: emailContent.htmlContent,
+      textContent: emailContent.textContent,
+      tags: ["partner_status", "partner", data.status],
+    });
+
+    if (result.success) {
+      logger.info("Partner status email sent successfully", {
+        messageId: result.messageId,
+        companyName: data.companyName,
+        status: data.status,
+        recipientEmail,
+      });
+    } else {
+      logger.error("Failed to send partner status email", {
+        error: result.error,
+        companyName: data.companyName,
+        recipientEmail,
+      });
+    }
+  } catch (error) {
+    logger.error("Error sending partner status email", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      companyName: data.companyName,
       recipientEmail,
     });
   }

@@ -361,6 +361,14 @@ export default function RegisterPage() {
                     Sign in
                   </Link>
                 </p>
+                <p className="text-gray-600 dark:text-white/70 mt-2">
+                  <Link
+                    href="/partner-signup"
+                    className="text-emerald-600 dark:text-sky-400 hover:text-emerald-700 dark:hover:text-sky-300 transition-colors font-medium"
+                  >
+                    Devenir partenaire
+                  </Link>
+                </p>
               </div>
             </div>
           </div>

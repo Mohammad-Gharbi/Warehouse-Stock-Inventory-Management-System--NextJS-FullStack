@@ -267,6 +267,56 @@ export async function createSupportTicketRepliedNotification(
 }
 
 /**
+ * Notify an admin that a new partner account request was submitted.
+ *
+ * @param adminUserId - Admin user to notify
+ * @param requestId - Partner request ID for link
+ * @param companyName - Company name for message
+ * @param applicantDisplay - Applicant name/email for message
+ */
+export async function createPartnerRequestSubmittedNotification(
+  adminUserId: string,
+  requestId: string,
+  companyName: string,
+  applicantDisplay: string,
+): Promise<void> {
+  await createInAppNotification({
+    userId: adminUserId,
+    type: "partner_request_submitted",
+    title: "New partner request",
+    message: `${applicantDisplay} requested a partner account for "${companyName}".`,
+    link: `/admin/partner-requests/${requestId}`,
+    metadata: { partnerRequestId: requestId, companyName },
+  });
+}
+
+/**
+ * Notify an applicant that their partner request was approved or rejected.
+ *
+ * @param applicantUserId - Applicant user to notify
+ * @param requestId - Partner request ID for link/metadata
+ * @param companyName - Company name for message
+ * @param status - Decision ("approved" | "rejected")
+ */
+export async function createPartnerRequestDecisionNotification(
+  applicantUserId: string,
+  requestId: string,
+  companyName: string,
+  status: "approved" | "rejected",
+): Promise<void> {
+  const approved = status === "approved";
+  await createInAppNotification({
+    userId: applicantUserId,
+    type: approved ? "partner_request_approved" : "partner_request_rejected",
+    title: approved ? "Partner request approved" : "Partner request rejected",
+    message: approved
+      ? `Your partner account for "${companyName}" has been approved.`
+      : `Your partner account request for "${companyName}" was not approved.`,
+    metadata: { partnerRequestId: requestId, companyName },
+  });
+}
+
+/**
  * Create import notification
  *
  * @param type - Notification type (import_complete, import_failed)

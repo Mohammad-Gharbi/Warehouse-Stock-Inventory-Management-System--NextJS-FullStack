@@ -14,6 +14,7 @@ import {
   Store,
   Truck,
   Users,
+  Handshake,
   Mail,
   LogOut,
   User,
@@ -96,6 +97,11 @@ const MANAGEMENT_ITEMS: NavItem[] = [
     label: "User Management",
     icon: Users,
     countKey: "users",
+  },
+  {
+    href: "/admin/partner-requests",
+    label: "Partner Requests",
+    icon: Handshake,
   },
   {
     href: "/admin/activity-history",

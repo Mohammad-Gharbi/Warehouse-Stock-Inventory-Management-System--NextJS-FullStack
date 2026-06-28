@@ -209,6 +209,27 @@ model Product {
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model PartnerRequest {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String    @db.Uuid
+  companyName String
+  rc          String
+  nif         String
+  nis         String
+  contact     String
+  status      String    @default("pending")
+  reviewNotes String?
+  reviewedBy  String?   @db.Uuid
+  reviewedAt  DateTime? @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime? @db.Timestamptz(6)
+
+  @@index([status])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model ProductReview {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   productId   String    @db.Uuid

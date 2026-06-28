@@ -17,6 +17,9 @@ export type NotificationType =
   | "invoice_sent"
   | "support_ticket_created"
   | "support_ticket_replied"
+  | "partner_request_submitted"
+  | "partner_request_approved"
+  | "partner_request_rejected"
   | "system_alert"
   | "import_complete"
   | "import_failed";

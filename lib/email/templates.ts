@@ -9,6 +9,7 @@ import type {
   EmailContent,
   InventoryReportData,
   LowStockAlertData,
+  PartnerStatusEmailData,
   StockOutNotificationData,
 } from "./types";
 
@@ -270,6 +271,123 @@ Action Required: Please restock this item immediately to resume sales.
 
 ---
 This is an automated email from Techmaster Store. Please do not reply to this email.
+  `.trim();
+
+  return {
+    subject,
+    htmlContent,
+    textContent,
+  };
+}
+
+/**
+ * Generate partner request status update email (approved / rejected).
+ *
+ * @param data - Partner status email data
+ * @returns EmailContent - Email content with HTML and text versions
+ */
+export function generatePartnerStatusEmail(
+  data: PartnerStatusEmailData
+): EmailContent {
+  const { companyName, contactName, status, reviewNotes, actionUrl } = data;
+  const approved = status === "approved";
+
+  const headline = approved
+    ? "Votre compte partenaire a été approuvé"
+    : "Votre demande de partenariat n'a pas été retenue";
+  const accent = approved ? "#27ae60" : "#e74c3c";
+  const intro = approved
+    ? `Bonne nouvelle ! Votre demande de compte partenaire pour <strong>${companyName}</strong> a été approuvée. Votre compte a été mis à niveau et vous pouvez désormais accéder à votre espace.`
+    : `Nous vous remercions de votre intérêt. Après examen, votre demande de compte partenaire pour <strong>${companyName}</strong> n'a pas été approuvée.`;
+
+  const subject = generateUniqueSubject(
+    approved
+      ? `Compte partenaire approuvé : ${companyName}`
+      : `Demande de partenariat : ${companyName}`
+  );
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>${headline}</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f5f5f5;">
+      <tr>
+        <td align="center" style="padding: 20px 0;">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <tr>
+              <td style="padding: 30px;">
+                <h1 style="color: ${accent}; margin: 0 0 20px 0; font-size: 24px; font-weight: 600; line-height: 1.2;">${headline}</h1>
+
+                <p style="font-size: 16px; line-height: 1.6; color: #333333; margin: 0 0 16px 0;">Bonjour ${contactName},</p>
+
+                <p style="font-size: 16px; line-height: 1.6; color: #333333; margin: 0 0 20px 0;">${intro}</p>
+
+                ${
+                  reviewNotes
+                    ? `<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f8f9fa; border-left: 4px solid ${accent}; border-radius: 4px; margin: 20px 0;">
+                  <tr>
+                    <td style="padding: 15px;">
+                      <p style="margin: 0 0 6px 0; font-weight: 600; color: #333333;">Note :</p>
+                      <p style="margin: 0; color: #666666; line-height: 1.6;">${reviewNotes}</p>
+                    </td>
+                  </tr>
+                </table>`
+                    : ""
+                }
+
+                ${
+                  approved && actionUrl
+                    ? `<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 24px 0;">
+                  <tr>
+                    <td style="border-radius: 6px; background-color: ${accent};">
+                      <a href="${actionUrl}" style="display: inline-block; padding: 12px 24px; font-size: 16px; color: #ffffff; text-decoration: none; font-weight: 600;">Accéder à mon espace</a>
+                    </td>
+                  </tr>
+                </table>`
+                    : ""
+                }
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 30px 0 0 0;">
+                  <tr>
+                    <td style="border-top: 1px solid #eeeeee; padding: 30px 0 0 0;">
+                      <p style="font-size: 12px; line-height: 1.5; color: #999999; margin: 0;">
+                        Ceci est un e-mail automatique de Techmaster Store. Merci de ne pas y répondre.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+  `.trim();
+
+  const textContent = `
+${headline}
+
+Bonjour ${contactName},
+
+${
+    approved
+      ? `Votre demande de compte partenaire pour ${companyName} a été approuvée. Votre compte a été mis à niveau.`
+      : `Votre demande de compte partenaire pour ${companyName} n'a pas été approuvée.`
+  }
+${reviewNotes ? `\nNote : ${reviewNotes}\n` : ""}${
+    approved && actionUrl ? `\nAccéder à mon espace : ${actionUrl}\n` : ""
+  }
+---
+Ceci est un e-mail automatique de Techmaster Store. Merci de ne pas y répondre.
   `.trim();
 
   return {

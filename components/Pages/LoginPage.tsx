@@ -216,6 +216,14 @@ export default function LoginPage() {
             Sign up
           </Link>
         </div>
+        <div className="mt-2 text-center text-sm text-muted-foreground">
+          <Link
+            href="/partner-signup"
+            className="font-medium text-primary hover:underline"
+          >
+            Devenir partenaire
+          </Link>
+        </div>
       </div>
     </div>
   );

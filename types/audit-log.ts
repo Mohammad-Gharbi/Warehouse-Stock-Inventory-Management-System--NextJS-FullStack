@@ -25,6 +25,7 @@ export type AuditEntityType =
   | "ticket"
   | "review"
   | "system_config"
+  | "partner"
   | "auth";
 
 export interface AuditLog {

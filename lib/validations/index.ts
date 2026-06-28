@@ -96,6 +96,16 @@ export {
   type UpdateProductReviewFormData,
 } from "./product-review";
 
+// Partner Request validations
+export {
+  partnerCompanySchema,
+  partnerSignupSchema,
+  partnerSignupBodySchema,
+  updatePartnerRequestSchema,
+  type PartnerSignupFormData,
+  type UpdatePartnerRequestFormData,
+} from "./partner";
+
 // User Management (admin) validations
 export {
   updateUserAdminSchema,

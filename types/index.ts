@@ -93,6 +93,15 @@ export type {
   ReviewEligibilitySlot,
 } from "./product-review";
 
+// Partner Request types
+export type {
+  PartnerRequest,
+  PartnerRequestStatus,
+  CreatePartnerRequestInput,
+  UpdatePartnerRequestInput,
+  PartnerRequestFilters,
+} from "./partner-request";
+
 // Dashboard (admin overview) types
 export type {
   DashboardStats,

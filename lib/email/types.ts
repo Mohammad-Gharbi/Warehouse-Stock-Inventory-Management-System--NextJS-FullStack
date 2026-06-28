@@ -200,6 +200,18 @@ export interface OrderStatusUpdateData {
 }
 
 /**
+ * Partner request status update email data
+ */
+export interface PartnerStatusEmailData {
+  companyName: string;
+  contactName: string;
+  status: "approved" | "rejected";
+  reviewNotes?: string | null;
+  /** Link the recipient can follow (e.g. login) */
+  actionUrl?: string;
+}
+
+/**
  * Email notification options
  */
 export interface EmailNotificationOptions {
