@@ -95,6 +95,8 @@ export async function GET(request: NextRequest) {
       imageUrl: p.imageUrl || null,
       imageFileId: p.imageFileId || null,
       expirationDate: p.expirationDate?.toISOString() || null,
+      paymentTerms: p.paymentTerms || null,
+      orderFormFields: p.orderFormFields ?? null,
     }));
 
     return NextResponse.json({

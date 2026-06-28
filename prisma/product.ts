@@ -3,7 +3,19 @@
  * getProductById enforces userId so only the owner can access; used by API and server data.
  */
 import { prisma } from "@/prisma/client";
+import { Prisma } from "@prisma/client";
 import { mergeProductListWhere } from "@/lib/products/product-query";
+import type { OrderFormFieldDef } from "@/types/product";
+
+/**
+ * Serialize an order-form-fields array to a Prisma JSON value (DbNull when empty).
+ */
+const toOrderFormFieldsJson = (
+  fields?: OrderFormFieldDef[] | null,
+): Prisma.InputJsonValue | typeof Prisma.DbNull =>
+  fields && fields.length > 0
+    ? (JSON.parse(JSON.stringify(fields)) as Prisma.InputJsonValue)
+    : Prisma.DbNull;
 
 /**
  * Create a new product with audit fields
@@ -17,11 +29,16 @@ export const createProduct = async (data: {
   userId: string;
   categoryId: string;
   createdAt: Date;
+  paymentTerms?: string | null;
+  orderFormFields?: OrderFormFieldDef[] | null;
 }) => {
+  const { paymentTerms, orderFormFields, ...rest } = data;
   return prisma.product.create({
     data: {
-      ...data,
+      ...rest,
       createdBy: data.userId, // Set createdBy same as userId
+      paymentTerms: paymentTerms || null,
+      orderFormFields: toOrderFormFieldsJson(orderFormFields),
     },
   });
 };
@@ -82,13 +99,20 @@ export const updateProduct = async (
     status?: string;
     categoryId?: string;
     updatedBy?: string;
+    paymentTerms?: string | null;
+    orderFormFields?: OrderFormFieldDef[] | null;
   }
 ) => {
+  const { paymentTerms, orderFormFields, ...rest } = data;
   return prisma.product.update({
     where: { id },
     data: {
-      ...data,
+      ...rest,
       ...(data.updatedBy && { updatedBy: data.updatedBy }),
+      ...(paymentTerms !== undefined && { paymentTerms: paymentTerms || null }),
+      ...(orderFormFields !== undefined && {
+        orderFormFields: toOrderFormFieldsJson(orderFormFields),
+      }),
       updatedAt: new Date(), // Always update timestamp
     },
   });

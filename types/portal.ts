@@ -151,6 +151,8 @@ export interface ClientBrowseProductsResponse {
     imageUrl: string | null;
     imageFileId: string | null;
     expirationDate: string | null;
+    paymentTerms: string | null;
+    orderFormFields: import("./product").OrderFormFieldDef[] | null;
   }>;
   categories: Array<{ id: string; name: string }>;
   /** Product owner info (when client browses by ownerId); used for empty-state messaging */

@@ -7,6 +7,7 @@
 import { getCache, setCache, cacheKeys } from "@/lib/cache";
 import { mergeProductListWhere } from "@/lib/products/product-query";
 import { prisma } from "@/prisma/client";
+import type { OrderFormFieldDef } from "@/types/product";
 
 /** Product shape returned by products API GET (dates as ISO strings) */
 export type ProductForHome = {
@@ -27,6 +28,8 @@ export type ProductForHome = {
   imageUrl: string | null;
   imageFileId: string | null;
   expirationDate: string | null;
+  paymentTerms: string | null;
+  orderFormFields: OrderFormFieldDef[] | null;
 };
 
 /** Category shape returned by categories API GET (dates as ISO strings) */
@@ -86,6 +89,9 @@ export async function getProductsForUser(userId: string): Promise<ProductForHome
     imageUrl: product.imageUrl ?? null,
     imageFileId: product.imageFileId ?? null,
     expirationDate: product.expirationDate?.toISOString() ?? null,
+    paymentTerms: product.paymentTerms ?? null,
+    orderFormFields:
+      (product.orderFormFields as OrderFormFieldDef[] | null) ?? null,
   }));
 
   await setCache(cacheKey, transformed, 300);

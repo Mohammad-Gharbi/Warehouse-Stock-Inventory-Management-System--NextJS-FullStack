@@ -172,6 +172,8 @@ export async function GET(
       imageUrl: product.imageUrl || null,
       imageFileId: product.imageFileId || null,
       expirationDate: product.expirationDate?.toISOString() || null,
+      paymentTerms: product.paymentTerms || null,
+      orderFormFields: product.orderFormFields ?? null,
       // Statistics
       statistics: {
         totalQuantitySold,

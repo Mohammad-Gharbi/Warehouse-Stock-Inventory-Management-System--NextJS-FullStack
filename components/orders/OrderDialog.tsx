@@ -57,7 +57,9 @@ import type {
   Order,
   OrderStatus,
   PaymentStatus,
+  PaymentMethod,
   Product,
+  OrderFormFieldDef,
   ShippingAddress,
   BillingAddress,
   CreateOrderInput,
@@ -84,7 +86,9 @@ interface OrderFormData {
   items: Array<{
     productId: string;
     quantity?: number | undefined;
+    customFields?: Record<string, string>;
   }>;
+  paymentMethod?: PaymentMethod;
   shippingAddress?: {
     street: string;
     city: string;
@@ -126,6 +130,15 @@ const paymentStatusOptions: Array<{ value: PaymentStatus; label: string }> = [
   { value: "paid", label: "Paid" },
   { value: "partial", label: "Partial" },
   { value: "refunded", label: "Refunded" },
+];
+
+/**
+ * Offline payment method options (stored only, no processing)
+ */
+const paymentMethodOptions: Array<{ value: PaymentMethod; label: string }> = [
+  { value: "virement", label: "Virement" },
+  { value: "cheque", label: "Chèque" },
+  { value: "especes", label: "Espèces" },
 ];
 
 /** Tax: 7% of subtotal (hardcoded). */
@@ -247,7 +260,8 @@ export default function OrderDialog({
   const createFormMethods = useForm<OrderFormData>({
     resolver: zodResolver(createOrderSchema),
     defaultValues: {
-      items: [{ productId: "", quantity: undefined }],
+      items: [{ productId: "", quantity: undefined, customFields: {} }],
+      paymentMethod: undefined,
       useSameAddress: true,
       shippingAddress: {
         street: "",
@@ -337,7 +351,8 @@ export default function OrderDialog({
   useEffect(() => {
     if (!open && !editingOrder) {
       createReset({
-        items: [{ productId: "", quantity: undefined }],
+        items: [{ productId: "", quantity: undefined, customFields: {} }],
+        paymentMethod: undefined,
         useSameAddress: true,
         shippingAddress: {
           street: "",
@@ -429,17 +444,51 @@ export default function OrderDialog({
         );
       };
 
+      // Validate required custom fields per product and collect cleaned answers
+      const missingRequired: string[] = [];
+      const cleanedCustomFieldsByItem = validItems.map((item) => {
+        const product = availableProducts.find((p) => p.id === item.productId);
+        const defs = (product?.orderFormFields ?? []) as OrderFormFieldDef[];
+        // Store answers keyed by label (denormalized snapshot, like productName/sku)
+        // so the order stays self-describing even if the product's form changes later.
+        const answers: Record<string, string> = {};
+        for (const def of defs) {
+          const raw = item.customFields?.[def.key];
+          const val = typeof raw === "string" ? raw.trim() : "";
+          if (val) answers[def.label] = val;
+          else if (def.required) {
+            missingRequired.push(
+              `${product?.name ?? "Produit"} — ${def.label}`,
+            );
+          }
+        }
+        return answers;
+      });
+
+      if (missingRequired.length > 0) {
+        toast({
+          title: "Champs obligatoires manquants",
+          description: missingRequired.join(". "),
+          variant: "destructive",
+        });
+        return;
+      }
+
       // Prepare order data matching CreateOrderInput type
       // Convert empty addresses to undefined to pass validation
       const orderData: CreateOrderInput = {
-        items: validItems.map((item) => {
+        items: validItems.map((item, i) => {
           const qty =
             item.quantity !== undefined && item.quantity !== null
               ? Number(item.quantity)
               : 0;
+          const answers = cleanedCustomFieldsByItem[i] ?? {};
           return {
             productId: item.productId,
             quantity: qty,
+            ...(Object.keys(answers).length > 0
+              ? { customFields: answers }
+              : {}),
           };
         }),
         shippingAddress: hasValidAddress(data.shippingAddress)
@@ -452,6 +501,7 @@ export default function OrderDialog({
         shipping: fees.shippingAmount,
         discount: fees.discountAmount,
         notes: data.notes || undefined,
+        paymentMethod: data.paymentMethod || undefined,
       };
 
       // Create order using TanStack Query mutation
@@ -461,7 +511,8 @@ export default function OrderDialog({
       setOpen(false);
       // Reset form after successful submission
       createReset({
-        items: [{ productId: "", quantity: 1 }],
+        items: [{ productId: "", quantity: 1, customFields: {} }],
+        paymentMethod: undefined,
         useSameAddress: true,
         shippingAddress: {
           street: "",
@@ -491,7 +542,11 @@ export default function OrderDialog({
 
   // Add new order item
   const handleAddItem = () => {
-    append({ productId: "", quantity: undefined as number | undefined });
+    append({
+      productId: "",
+      quantity: undefined as number | undefined,
+      customFields: {},
+    });
   };
 
   // Remove order item
@@ -1085,6 +1140,11 @@ export default function OrderDialog({
                                         `items.${index}.quantity`,
                                         1,
                                       );
+                                      // Reset answers — custom fields differ per product
+                                      createSetValue(
+                                        `items.${index}.customFields`,
+                                        {},
+                                      );
                                     }}
                                     disabled={
                                       isClientCreatingOrder &&
@@ -1236,6 +1296,95 @@ export default function OrderDialog({
                             </div>
                           </div>
                         )}
+
+                        {/* Custom order-form fields specific to the selected product */}
+                        {selectedProduct?.orderFormFields &&
+                          selectedProduct.orderFormFields.length > 0 && (
+                            <div className="pt-3 border-t border-violet-400/20 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              {selectedProduct.orderFormFields.map(
+                                (cf: OrderFormFieldDef) => {
+                                  const fieldName =
+                                    `items.${index}.customFields.${cf.key}` as const;
+                                  const value =
+                                    (createWatch(fieldName) as string) ?? "";
+                                  return (
+                                    <div
+                                      key={cf.key}
+                                      className={`flex flex-col gap-2 ${
+                                        cf.type === "textarea"
+                                          ? "sm:col-span-2"
+                                          : ""
+                                      }`}
+                                    >
+                                      <Label className="text-white/80 text-sm">
+                                        {cf.label}
+                                        {cf.required && (
+                                          <span className="text-red-400">
+                                            {" "}
+                                            *
+                                          </span>
+                                        )}
+                                      </Label>
+                                      {cf.type === "textarea" ? (
+                                        <textarea
+                                          value={value}
+                                          onChange={(e) =>
+                                            createSetValue(
+                                              fieldName,
+                                              e.target.value,
+                                            )
+                                          }
+                                          rows={2}
+                                          className="w-full rounded-md border border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 focus:outline-none shadow-sm"
+                                        />
+                                      ) : cf.type === "select" ? (
+                                        <Select
+                                          value={value || ""}
+                                          onValueChange={(v) =>
+                                            createSetValue(fieldName, v)
+                                          }
+                                        >
+                                          <SelectTrigger className="h-11 w-full border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 text-white shadow-sm">
+                                            <SelectValue placeholder="Sélectionner" />
+                                          </SelectTrigger>
+                                          <SelectContent
+                                            className="border-violet-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
+                                            position="popper"
+                                          >
+                                            {(cf.options ?? []).map((opt) => (
+                                              <SelectItem
+                                                key={opt}
+                                                value={opt}
+                                                className="cursor-pointer text-gray-900 dark:text-white focus:bg-violet-100 dark:focus:bg-white/10"
+                                              >
+                                                {opt}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      ) : (
+                                        <Input
+                                          type={
+                                            cf.type === "number"
+                                              ? "number"
+                                              : "text"
+                                          }
+                                          value={value}
+                                          onChange={(e) =>
+                                            createSetValue(
+                                              fieldName,
+                                              e.target.value,
+                                            )
+                                          }
+                                          className="h-11 border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 text-white placeholder:text-white/40 focus:border-violet-400 focus-visible:border-violet-400 focus:ring-violet-500/50 focus-visible:ring-violet-500/50 shadow-sm"
+                                        />
+                                      )}
+                                    </div>
+                                  );
+                                },
+                              )}
+                            </div>
+                          )}
                       </div>
                     );
                   })}
@@ -1391,12 +1540,65 @@ export default function OrderDialog({
                   </div>
                 </div>
 
-                {/* Notes */}
+                {/* Payment Method (offline — stored only) */}
+                <div className="flex flex-col gap-2">
+                  <Label className="text-white/80 text-base font-semibold">
+                    Mode de paiement
+                  </Label>
+                  <DeferredSelectGate
+                    enabled={open}
+                    placeholder={
+                      <div
+                        className="flex h-11 w-full items-center rounded-md border border-violet-400/30 bg-white/10 px-3 text-sm text-white/60"
+                        aria-hidden
+                      >
+                        {paymentMethodOptions.find(
+                          (o) => o.value === createWatch("paymentMethod"),
+                        )?.label ?? "Sélectionner un mode de paiement"}
+                      </div>
+                    }
+                  >
+                    {({ selectRemountKey }) => (
+                      <Select
+                        key={selectRemountKey}
+                        value={createWatch("paymentMethod") || ""}
+                        onValueChange={(value) =>
+                          createSetValue(
+                            "paymentMethod",
+                            value as PaymentMethod,
+                          )
+                        }
+                      >
+                        <SelectTrigger className="h-11 w-full border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-500/50 shadow-sm">
+                          <SelectValue placeholder="Sélectionner un mode de paiement" />
+                        </SelectTrigger>
+                        <SelectContent
+                          className="border-violet-400/20 dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
+                          position="popper"
+                          sideOffset={5}
+                          align="start"
+                        >
+                          {paymentMethodOptions.map((option) => (
+                            <SelectItem
+                              key={option.value}
+                              value={option.value}
+                              className="cursor-pointer text-gray-900 dark:text-white focus:bg-violet-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
+                            >
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </DeferredSelectGate>
+                </div>
+
+                {/* Comments */}
                 <div>
                   <FormField
                     name="notes"
-                    label="Order Notes"
-                    placeholder="Additional notes or instructions..."
+                    label="Commentaires"
+                    placeholder="Commentaires ou instructions supplémentaires..."
                     labelClassName="text-white/80"
                     inputClassName="border-violet-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus-visible:border-violet-400 focus-visible:ring-violet-500/50 shadow-sm"
                   />

@@ -94,6 +94,12 @@ export async function createOrder(data: CreateOrderInput, userId: string) {
       quantity: item.quantity,
       price,
       subtotal: lineSubtotal,
+      customFields:
+        item.customFields && Object.keys(item.customFields).length > 0
+          ? (JSON.parse(
+              JSON.stringify(item.customFields),
+            ) as Prisma.InputJsonValue)
+          : Prisma.DbNull,
     });
 
     productsToReserve.push({ id: item.productId, qty: item.quantity });
@@ -129,6 +135,7 @@ export async function createOrder(data: CreateOrderInput, userId: string) {
           ) as Prisma.InputJsonValue)
         : Prisma.DbNull,
       notes: data.notes || null,
+      paymentMethod: data.paymentMethod || null,
       createdBy: userId,
       items: {
         create: orderItemsData,

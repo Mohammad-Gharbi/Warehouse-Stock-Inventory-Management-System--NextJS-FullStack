@@ -7,6 +7,8 @@
 export type {
   Product,
   ProductStatus,
+  OrderFormFieldType,
+  OrderFormFieldDef,
   CreateProductInput,
   UpdateProductInput,
 } from "./product";
@@ -37,6 +39,7 @@ export type {
   OrderItem,
   OrderStatus,
   PaymentStatus,
+  PaymentMethod,
   ShippingAddress,
   BillingAddress,
   CreateOrderInput,

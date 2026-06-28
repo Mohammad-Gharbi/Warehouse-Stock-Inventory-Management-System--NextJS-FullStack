@@ -13,6 +13,8 @@ export {
   updateProductSchema,
   generateProductQrCodeBodySchema,
   calculateProductStatus,
+  orderFormFieldSchema,
+  orderFormFieldsSchema,
   type ProductFormData,
 } from "./product";
 
@@ -67,6 +69,7 @@ export {
   shippingAddressSchema,
   billingAddressSchema,
   orderItemSchema,
+  paymentMethodSchema,
   type CreateOrderFormData,
   type UpdateOrderFormData,
 } from "./order";

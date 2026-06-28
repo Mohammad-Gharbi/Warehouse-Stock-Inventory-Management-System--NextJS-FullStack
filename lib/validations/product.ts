@@ -31,6 +31,55 @@ const optionalExpirationDateSchema = z
   .or(z.literal(""))
   .or(z.null());
 
+const optionalPaymentTermsSchema = z
+  .string()
+  .max(2000, "Les modalités de paiement doivent faire 2000 caractères ou moins")
+  .optional()
+  .or(z.literal(""));
+
+/**
+ * Definition of a single custom order-form field attached to a product.
+ * `options` is required (non-empty) only when type is "select".
+ */
+export const orderFormFieldSchema = z
+  .object({
+    key: z.string().min(1, "Field key is required"),
+    label: z
+      .string()
+      .min(1, "Field label is required")
+      .max(100, "Label must be 100 characters or less"),
+    type: z.enum(["text", "textarea", "number", "select"]),
+    required: z.boolean(),
+    options: z.array(z.string().min(1)).optional(),
+  })
+  .superRefine((field, ctx) => {
+    if (field.type === "select") {
+      if (!field.options || field.options.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "A select field needs at least one option",
+          path: ["options"],
+        });
+      }
+    }
+  });
+
+export const orderFormFieldsSchema = z.array(orderFormFieldSchema);
+
+/**
+ * Lenient field schema used by the RHF form resolver so an in-progress row
+ * (empty label, select without options yet) never silently blocks submit.
+ * Final shape is enforced by `orderFormFieldsSchema` in the API body schemas
+ * and cleaned in the dialog's submit handler.
+ */
+const orderFormFieldFormSchema = z.object({
+  key: z.string(),
+  label: z.string(),
+  type: z.enum(["text", "textarea", "number", "select"]),
+  required: z.boolean(),
+  options: z.array(z.string()).optional(),
+});
+
 /**
  * Product form validation schema
  * Used for creating and updating products
@@ -64,6 +113,8 @@ export const productSchema = z.object({
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format. Use YYYY-MM-DD format")
     .optional()
     .or(z.literal("")),
+  paymentTerms: optionalPaymentTermsSchema,
+  orderFormFields: z.array(orderFormFieldFormSchema).optional(),
 });
 
 /**
@@ -91,6 +142,8 @@ export const createProductBodySchema = z.object({
   imageUrl: optionalImageUrlSchema.optional(),
   imageFileId: z.string().optional(),
   expirationDate: optionalExpirationDateSchema.optional(),
+  paymentTerms: optionalPaymentTermsSchema.optional(),
+  orderFormFields: orderFormFieldsSchema.optional(),
 });
 
 /**
@@ -114,6 +167,8 @@ export const updateProductBodySchema = z.object({
   imageUrl: optionalImageUrlSchema.optional(),
   imageFileId: z.string().optional(),
   expirationDate: optionalExpirationDateSchema.optional(),
+  paymentTerms: optionalPaymentTermsSchema.optional().or(z.null()),
+  orderFormFields: orderFormFieldsSchema.optional(),
 });
 
 /**

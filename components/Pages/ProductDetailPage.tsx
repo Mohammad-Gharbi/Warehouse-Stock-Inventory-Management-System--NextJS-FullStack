@@ -629,6 +629,45 @@ export default function ProductDetailPage({
                     </div>
                   )}
 
+                  {/* Modalités de paiement */}
+                  {product.paymentTerms && (
+                    <div className="pt-3 mt-3 border-t border-teal-400/20">
+                      <p className="text-sm text-gray-600 dark:text-white/60 mb-1">
+                        Modalités de paiement
+                      </p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white whitespace-pre-wrap">
+                        {product.paymentTerms}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Custom order-form fields */}
+                  {product.orderFormFields &&
+                    product.orderFormFields.length > 0 && (
+                      <div className="pt-3 mt-3 border-t border-teal-400/20">
+                        <p className="text-sm text-gray-600 dark:text-white/60 mb-1">
+                          Champs du formulaire de commande
+                        </p>
+                        <ul className="list-disc pl-5 space-y-0.5">
+                          {product.orderFormFields.map((f) => (
+                            <li
+                              key={f.key}
+                              className="text-sm font-medium text-gray-900 dark:text-white"
+                            >
+                              {f.label}
+                              {f.required && (
+                                <span className="text-red-400"> *</span>
+                              )}
+                              <span className="text-gray-500 dark:text-white/50 font-normal">
+                                {" "}
+                                ({f.type})
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
                   {/* Creator Information */}
                   {product.creator && (
                     <div className="pt-3 mt-3 border-t border-teal-400/20">

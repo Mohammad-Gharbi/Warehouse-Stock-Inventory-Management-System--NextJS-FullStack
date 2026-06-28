@@ -8,6 +8,23 @@
 export type ProductStatus = "Available" | "Stock Low" | "Stock Out";
 
 /**
+ * Field type for a custom per-product order-form field
+ */
+export type OrderFormFieldType = "text" | "textarea" | "number" | "select";
+
+/**
+ * Definition of a single custom field that appears in a product's order form.
+ * Stored on Product.orderFormFields (JSON). Buyer answers are keyed by `key`.
+ */
+export interface OrderFormFieldDef {
+  key: string; // stable identifier (generated when the field is added)
+  label: string;
+  type: OrderFormFieldType;
+  required: boolean;
+  options?: string[]; // only for type === "select"
+}
+
+/**
  * Product interface matching Prisma schema
  */
 export interface Product {
@@ -30,6 +47,10 @@ export interface Product {
   imageUrl?: string; // ImageKit URL for product image
   imageFileId?: string; // ImageKit file ID for cleanup when updating/deleting
   expirationDate?: Date | null; // Product expiration date (optional, for perishable items)
+  /** Free-text "Modalités de paiement" shown to buyers */
+  paymentTerms?: string | null;
+  /** Custom fields shown in this product's order form */
+  orderFormFields?: OrderFormFieldDef[] | null;
   /** Set when product is archived (soft-deleted) due to order history */
   deletedAt?: Date | null;
   deletedBy?: string | null;
@@ -73,6 +94,8 @@ export interface CreateProductInput {
   imageUrl?: string;
   imageFileId?: string;
   expirationDate?: string; // ISO date string
+  paymentTerms?: string;
+  orderFormFields?: OrderFormFieldDef[];
 }
 
 /**
@@ -89,4 +112,6 @@ export interface UpdateProductInput {
   imageUrl?: string;
   imageFileId?: string;
   expirationDate?: string | null; // ISO date string or null to clear
+  paymentTerms?: string | null;
+  orderFormFields?: OrderFormFieldDef[] | null;
 }

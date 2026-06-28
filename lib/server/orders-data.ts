@@ -22,6 +22,7 @@ type OrderItemForPage = {
   quantity: number;
   price: number;
   subtotal: number;
+  customFields: Record<string, string> | null;
   createdAt: string;
 };
 
@@ -41,6 +42,7 @@ export type OrderForPage = {
   shippingAddress: unknown;
   billingAddress: unknown;
   notes: string | null;
+  paymentMethod: string | null;
   trackingNumber: string | null;
   trackingUrl: string | null;
   estimatedDelivery: string | null;
@@ -101,6 +103,7 @@ export async function getOrdersForUser(
     shippingAddress: order.shippingAddress,
     billingAddress: order.billingAddress,
     notes: order.notes,
+    paymentMethod: order.paymentMethod ?? null,
     trackingNumber: order.trackingNumber,
     trackingUrl: order.trackingUrl,
     estimatedDelivery: order.estimatedDelivery?.toISOString() || null,
@@ -120,6 +123,8 @@ export async function getOrdersForUser(
       quantity: item.quantity,
       price: item.price,
       subtotal: item.subtotal,
+      customFields:
+        (item.customFields as Record<string, string> | null) ?? null,
       createdAt: item.createdAt.toISOString(),
     })),
     placedByName,
@@ -171,6 +176,7 @@ export async function getClientOrdersForProductOwner(
       shippingAddress: order.shippingAddress,
       billingAddress: order.billingAddress,
       notes: order.notes,
+      paymentMethod: order.paymentMethod ?? null,
       trackingNumber: order.trackingNumber,
       trackingUrl: order.trackingUrl,
       estimatedDelivery: order.estimatedDelivery?.toISOString() || null,
@@ -190,6 +196,8 @@ export async function getClientOrdersForProductOwner(
         quantity: item.quantity,
         price: item.price,
         subtotal: item.subtotal,
+        customFields:
+          (item.customFields as Record<string, string> | null) ?? null,
         createdAt: item.createdAt.toISOString(),
       })),
       placedByName,
@@ -254,6 +262,7 @@ export async function getOrdersForClientId(
       shippingAddress: order.shippingAddress,
       billingAddress: order.billingAddress,
       notes: order.notes,
+      paymentMethod: order.paymentMethod ?? null,
       trackingNumber: order.trackingNumber,
       trackingUrl: order.trackingUrl,
       estimatedDelivery: order.estimatedDelivery?.toISOString() || null,
@@ -273,6 +282,8 @@ export async function getOrdersForClientId(
         quantity: item.quantity,
         price: item.price,
         subtotal: item.subtotal,
+        customFields:
+          (item.customFields as Record<string, string> | null) ?? null,
         createdAt: item.createdAt.toISOString(),
       })),
       productOwnerName: owner?.name ?? owner?.email ?? null,

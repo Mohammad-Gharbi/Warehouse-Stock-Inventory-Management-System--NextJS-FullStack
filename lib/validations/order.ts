@@ -28,11 +28,17 @@ export const billingAddressSchema = z.object({
 });
 
 /**
+ * Offline payment method chosen at order time (stored only, no processing)
+ */
+export const paymentMethodSchema = z.enum(["virement", "cheque", "especes"]);
+
+/**
  * Order item schema
  */
 export const orderItemSchema = z.object({
   productId: z.string().min(1, "Product ID is required"),
   quantity: z.number().int().positive("Quantity must be a positive integer"),
+  customFields: z.record(z.string()).optional(),
 });
 
 /**
@@ -63,6 +69,7 @@ export const createOrderSchema = z.object({
   shipping: z.number().nonnegative("Shipping must be non-negative").optional(),
   discount: z.number().nonnegative("Discount must be non-negative").optional(),
   notes: z.string().optional(),
+  paymentMethod: paymentMethodSchema.optional(),
 });
 
 /**

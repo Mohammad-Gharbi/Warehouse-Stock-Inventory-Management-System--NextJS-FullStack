@@ -19,6 +19,11 @@ export type OrderStatus =
 export type PaymentStatus = "unpaid" | "paid" | "refunded" | "partial";
 
 /**
+ * Offline payment method chosen at order time (stored only, no processing)
+ */
+export type PaymentMethod = "virement" | "cheque" | "especes";
+
+/**
  * Shipping address interface
  */
 export interface ShippingAddress {
@@ -53,6 +58,8 @@ export interface OrderItem {
   quantity: number;
   price: number;
   subtotal: number;
+  /** Buyer's answers to the product's custom order-form fields, keyed by field key */
+  customFields?: Record<string, string> | null;
   createdAt: Date;
   /** Category ID for link to category detail (from product) */
   categoryId?: string | null;
@@ -77,6 +84,7 @@ export interface Order {
   shippingAddress?: ShippingAddress | null;
   billingAddress?: BillingAddress | null;
   notes?: string | null;
+  paymentMethod?: PaymentMethod | null;
   trackingNumber?: string | null;
   trackingCarrier?: string | null;
   trackingUrl?: string | null;
@@ -113,6 +121,7 @@ export interface CreateOrderInput {
   items: Array<{
     productId: string;
     quantity: number;
+    customFields?: Record<string, string>;
   }>;
   shippingAddress?: ShippingAddress;
   billingAddress?: BillingAddress;
@@ -120,6 +129,7 @@ export interface CreateOrderInput {
   shipping?: number;
   discount?: number;
   notes?: string;
+  paymentMethod?: PaymentMethod;
 }
 
 /**

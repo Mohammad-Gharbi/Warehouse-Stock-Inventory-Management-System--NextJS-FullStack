@@ -34,7 +34,9 @@ import Quantity from "./form-fields/QuantityField";
 import Price from "./form-fields/PriceField";
 import ImageField from "./form-fields/ImageField";
 import ExpirationDateField from "./form-fields/ExpirationDateField";
-import { Product } from "@/types";
+import PaymentTermsField from "./form-fields/PaymentTermsField";
+import OrderFormBuilder from "./form-fields/OrderFormBuilder";
+import { Product, OrderFormFieldDef } from "@/types";
 import {
   productSchema,
   productFormSubmitSchema,
@@ -42,6 +44,7 @@ import {
   type ProductFormData,
 } from "@/lib/validations";
 import { DeferredSelectGate } from "@/components/shared";
+import { useToast } from "@/hooks/use-toast";
 
 interface AddProductDialogProps {
   allProducts: Product[];
@@ -64,6 +67,8 @@ export default function AddProductDialog({
       imageUrl: "",
       imageFileId: "",
       expirationDate: "",
+      paymentTerms: "",
+      orderFormFields: [],
     },
   });
 
@@ -73,6 +78,7 @@ export default function AddProductDialog({
   // Inline validation error for category — outside RHF so Zod productSchema cannot cover it
   const [categoryError, setCategoryError] = useState<string>("");
   const dialogCloseRef = useRef<HTMLButtonElement | null>(null);
+  const { toast } = useToast();
 
   // Keep UI state in Zustand (openProductDialog, selectedProduct)
   const {
@@ -107,6 +113,8 @@ export default function AddProductDialog({
         expirationDate: selectedProduct.expirationDate
           ? new Date(selectedProduct.expirationDate).toISOString().split("T")[0]
           : "",
+        paymentTerms: selectedProduct.paymentTerms || "",
+        orderFormFields: selectedProduct.orderFormFields || [],
       });
       setSelectedCategory(selectedProduct.categoryId || "");
     } else {
@@ -119,6 +127,8 @@ export default function AddProductDialog({
         imageUrl: "",
         imageFileId: "",
         expirationDate: "",
+        paymentTerms: "",
+        orderFormFields: [],
       });
       setSelectedCategory("");
     }
@@ -160,6 +170,40 @@ export default function AddProductDialog({
         ? new Date(data.expirationDate).toISOString()
         : null;
 
+    // Clean custom order-form fields: drop empty-label rows, normalize options
+    const cleanedOrderFormFields: OrderFormFieldDef[] = (
+      data.orderFormFields || []
+    )
+      .map((f) => ({
+        key: f.key,
+        label: f.label.trim(),
+        type: f.type,
+        required: !!f.required,
+        ...(f.type === "select"
+          ? {
+              options: (f.options || [])
+                .map((o) => o.trim())
+                .filter((o) => o.length > 0),
+            }
+          : {}),
+      }))
+      .filter((f) => f.label.length > 0);
+
+    // A "select" field must have at least one option
+    const invalidSelect = cleanedOrderFormFields.find(
+      (f) => f.type === "select" && (!f.options || f.options.length === 0),
+    );
+    if (invalidSelect) {
+      toast({
+        title: "Champ invalide",
+        description: `Le champ « ${invalidSelect.label} » est une liste de choix et doit avoir au moins une option.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const paymentTerms = data.paymentTerms?.trim() || undefined;
+
     try {
       if (!selectedProduct) {
         // Create new product using TanStack Query mutation
@@ -174,6 +218,8 @@ export default function AddProductDialog({
           imageUrl: data.imageUrl || undefined,
           imageFileId: data.imageFileId || undefined,
           expirationDate: expirationDate || undefined,
+          paymentTerms,
+          orderFormFields: cleanedOrderFormFields,
         });
 
         // Close dialog on success (toast is handled by mutation hook)
@@ -192,6 +238,8 @@ export default function AddProductDialog({
           imageUrl: data.imageUrl || undefined,
           imageFileId: data.imageFileId || undefined,
           expirationDate: expirationDate,
+          paymentTerms: paymentTerms ?? null,
+          orderFormFields: cleanedOrderFormFields,
         });
 
         // Close dialog on success (toast is handled by mutation hook)
@@ -299,6 +347,8 @@ export default function AddProductDialog({
                   <p className="text-xs text-red-400 mt-1">{categoryError}</p>
                 )}
               </div>
+              <PaymentTermsField />
+              <OrderFormBuilder />
             </div>
             <DialogFooter className="mt-9 mb-4 flex flex-col sm:flex-row items-center gap-4">
               <DialogClose asChild>

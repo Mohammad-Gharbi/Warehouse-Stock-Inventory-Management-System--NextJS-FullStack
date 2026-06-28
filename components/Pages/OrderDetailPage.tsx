@@ -37,7 +37,14 @@ import {
   ClientRelativeTime,
   PageContentWrapper,
 } from "@/components/shared";
-import type { OrderStatus, PaymentStatus } from "@/types";
+import type { OrderStatus, PaymentStatus, PaymentMethod } from "@/types";
+
+/** Display labels for offline payment methods */
+const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
+  virement: "Virement",
+  cheque: "Chèque",
+  especes: "Espèces",
+};
 import type { Order } from "@/types";
 import { cn } from "@/lib/utils";
 import OrderDialog from "@/components/orders/OrderDialog";
@@ -584,6 +591,23 @@ export default function OrderDetailPage() {
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                       Quantity: {item.quantity} × ${item.price.toFixed(2)}
                     </p>
+                    {item.customFields &&
+                      Object.keys(item.customFields).length > 0 && (
+                        <dl className="mt-2 space-y-0.5">
+                          {Object.entries(item.customFields).map(
+                            ([key, value]) => (
+                              <div key={key} className="flex gap-1 text-sm">
+                                <dt className="text-gray-600 dark:text-gray-400">
+                                  {key}:
+                                </dt>
+                                <dd className="font-medium text-gray-900 dark:text-white">
+                                  {value}
+                                </dd>
+                              </div>
+                            ),
+                          )}
+                        </dl>
+                      )}
                   </div>
                   <div className="text-left sm:text-right mt-2 sm:mt-0 flex flex-col items-end gap-2">
                     <p className="font-semibold text-sky-600 dark:text-sky-400 text-lg">
@@ -699,10 +723,21 @@ export default function OrderDetailPage() {
                     )}
                   </div>
                 )}
+                {order.paymentMethod && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Mode de paiement
+                    </span>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {PAYMENT_METHOD_LABELS[order.paymentMethod] ??
+                        order.paymentMethod}
+                    </span>
+                  </div>
+                )}
                 {order.notes && (
                   <div className="p-3 rounded-xl bg-card border border-teal-200/30 dark:border-teal-400/10">
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                      Notes:
+                      Commentaires :
                     </p>
                     <p className="text-sm text-gray-900 dark:text-white">
                       {order.notes}

@@ -120,6 +120,7 @@ export async function GET(
       shippingAddress: order.shippingAddress,
       billingAddress: order.billingAddress,
       notes: order.notes,
+      paymentMethod: order.paymentMethod ?? null,
       trackingNumber: order.trackingNumber,
       trackingCarrier: order.trackingCarrier ?? null,
       trackingUrl: order.trackingUrl,
@@ -148,6 +149,7 @@ export async function GET(
           quantity: number;
           price: number;
           subtotal: number;
+          customFields?: unknown;
           createdAt: Date;
           product?: { categoryId?: string | null; supplierId?: string | null };
         }) => ({
@@ -159,6 +161,7 @@ export async function GET(
           quantity: item.quantity,
           price: item.price,
           subtotal: item.subtotal,
+          customFields: item.customFields ?? null,
           createdAt: item.createdAt.toISOString(),
           categoryId: item.product?.categoryId ?? null,
           supplierId: item.product?.supplierId ?? null,
@@ -592,6 +595,7 @@ export async function DELETE(
       shippingAddress: order.shippingAddress,
       billingAddress: order.billingAddress,
       notes: order.notes,
+      paymentMethod: order.paymentMethod ?? null,
       trackingNumber: order.trackingNumber,
       trackingCarrier: order.trackingCarrier ?? null,
       trackingUrl: order.trackingUrl,

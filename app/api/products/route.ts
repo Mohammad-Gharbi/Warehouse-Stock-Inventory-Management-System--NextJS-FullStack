@@ -21,6 +21,8 @@ import {
 } from "@/lib/products/delete-policy";
 import { mergeProductListWhere } from "@/lib/products/product-query";
 import { prisma } from "@/prisma/client";
+import { Prisma } from "@prisma/client";
+import type { OrderFormFieldDef } from "@/types/product";
 import { checkAndSendStockAlerts } from "@/lib/email/notifications";
 import { getCache, setCache, invalidateCache, cacheKeys } from "@/lib/cache";
 import { withRateLimit, defaultRateLimits } from "@/lib/api/rate-limit";
@@ -107,6 +109,9 @@ export async function GET(request: NextRequest) {
       imageUrl: product.imageUrl || null,
       imageFileId: product.imageFileId || null,
       expirationDate: product.expirationDate?.toISOString() || null,
+      paymentTerms: product.paymentTerms || null,
+      orderFormFields:
+        (product.orderFormFields as OrderFormFieldDef[] | null) || null,
     }));
 
     // Cache the result for 5 minutes
@@ -160,6 +165,8 @@ export async function POST(request: NextRequest) {
       imageUrl,
       imageFileId,
       expirationDate,
+      paymentTerms,
+      orderFormFields,
     } = validationResult.data;
 
     // Check if SKU already exists
@@ -188,6 +195,13 @@ export async function POST(request: NextRequest) {
         imageUrl: imageUrl || null,
         imageFileId: imageFileId || null,
         expirationDate: expirationDate ? new Date(expirationDate) : null,
+        paymentTerms: paymentTerms || null,
+        orderFormFields:
+          orderFormFields && orderFormFields.length > 0
+            ? (JSON.parse(
+                JSON.stringify(orderFormFields),
+              ) as Prisma.InputJsonValue)
+            : Prisma.DbNull,
         createdAt: new Date(),
         updatedAt: null, // Set to null on creation - will be set when updated
       },
@@ -280,6 +294,9 @@ export async function POST(request: NextRequest) {
       createdAt: product.createdAt.toISOString(),
       updatedAt: product.updatedAt?.toISOString() || null,
       qrCodeUrl: product.qrCodeUrl || null,
+      paymentTerms: product.paymentTerms || null,
+      orderFormFields:
+        (product.orderFormFields as OrderFormFieldDef[] | null) || null,
     };
 
     return NextResponse.json(transformedProduct, { status: 201 });
@@ -331,6 +348,8 @@ export async function PUT(request: NextRequest) {
       imageUrl,
       imageFileId,
       expirationDate,
+      paymentTerms,
+      orderFormFields,
     } = validationResult.data;
 
     // Verify product belongs to user
@@ -392,6 +411,17 @@ export async function PUT(request: NextRequest) {
               ? null
               : new Date(expirationDate),
         }),
+        ...(paymentTerms !== undefined && {
+          paymentTerms: paymentTerms === "" || paymentTerms === null ? null : paymentTerms,
+        }),
+        ...(orderFormFields !== undefined && {
+          orderFormFields:
+            orderFormFields && orderFormFields.length > 0
+              ? (JSON.parse(
+                  JSON.stringify(orderFormFields),
+                ) as Prisma.InputJsonValue)
+              : Prisma.DbNull,
+        }),
         updatedBy: session.id, // Track who updated the product
         updatedAt: new Date(), // Update timestamp
       },
@@ -406,6 +436,8 @@ export async function PUT(request: NextRequest) {
     if (categoryId && categoryId !== existingProduct.categoryId) fieldsUpdated.push("Category");
     if (imageUrl !== undefined) fieldsUpdated.push("Image");
     if (expirationDate !== undefined) fieldsUpdated.push("Expiration Date");
+    if (paymentTerms !== undefined) fieldsUpdated.push("Payment Terms");
+    if (orderFormFields !== undefined) fieldsUpdated.push("Order Form");
 
     createAuditLog({
       userId: session.id,
@@ -530,6 +562,9 @@ export async function PUT(request: NextRequest) {
       imageUrl: product.imageUrl || null,
       imageFileId: product.imageFileId || null,
       expirationDate: product.expirationDate?.toISOString() || null,
+      paymentTerms: product.paymentTerms || null,
+      orderFormFields:
+        (product.orderFormFields as OrderFormFieldDef[] | null) || null,
     };
 
     return NextResponse.json(transformedProduct);
