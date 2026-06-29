@@ -147,6 +147,16 @@ model Order {
   bonDeCommandeUploadedAt DateTime? @db.Timestamptz(6)
   bonDeCommandeDeadline   DateTime? @db.Timestamptz(6)
   bonDeCommandeFlaggedAt  DateTime? @db.Timestamptz(6)
+  receptionConfirmedAt      DateTime? @db.Timestamptz(6)
+  invoiceDocumentUrl        String?
+  invoiceDocumentFileId     String?
+  invoiceDocumentFileName   String?
+  invoiceDocumentUploadedAt DateTime? @db.Timestamptz(6)
+  virementDocumentUrl        String?
+  virementDocumentFileId     String?
+  virementDocumentFileName   String?
+  virementDocumentUploadedAt DateTime? @db.Timestamptz(6)
+  chequeReadySignalledAt     DateTime? @db.Timestamptz(6)
   stripePaymentIntentId String?
   createdAt             DateTime    @default(now()) @db.Timestamptz(6)
   updatedAt             DateTime?   @db.Timestamptz(6)
@@ -154,6 +164,7 @@ model Order {
   updatedBy             String?     @db.Uuid
   invoice               Invoice?
   items                 OrderItem[]
+  messages              OrderMessage[]
 
   @@index([userId, status, createdAt])
   @@index([clientId])
@@ -177,6 +188,22 @@ model OrderItem {
 
   @@index([orderId])
   @@index([productId])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model OrderMessage {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId            String   @db.Uuid
+  senderId           String   @db.Uuid
+  body               String
+  attachmentUrl      String?
+  attachmentFileId   String?
+  attachmentFileName String?
+  createdAt          DateTime @default(now()) @db.Timestamptz(6)
+  order              Order    @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  sender             User     @relation(fields: [senderId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([orderId, createdAt])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -360,6 +387,7 @@ model User {
   role             user_role      @default(user)
   emailPreferences Json?
   notifications    Notification[]
+  orderMessages    OrderMessage[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.

@@ -41,6 +41,9 @@ import {
 } from "lucide-react";
 import { useOrder, useUpdateOrder, useDeleteOrder } from "@/hooks/queries";
 import DeliverOrderDialog from "@/components/orders/DeliverOrderDialog";
+import ConfirmReceptionCard from "@/components/orders/ConfirmReceptionCard";
+import InvoiceDocumentUpload from "@/components/orders/InvoiceDocumentUpload";
+import OrderMessagesThread from "@/components/orders/OrderMessagesThread";
 import {
   ClientDateTime,
   ClientRelativeTime,
@@ -938,6 +941,15 @@ export default function AdminOrderDetailContent({
               />
             </GlassCard>
           )}
+
+        {/* Reception confirmation status (read-only for admin) — once delivered */}
+        <ConfirmReceptionCard order={order} canConfirm={false} />
+
+        {/* Invoice document — admin uploads, client downloads */}
+        <InvoiceDocumentUpload order={order} canUpload />
+
+        {/* Order conversation — shared between buyer, product owner(s) and admin */}
+        <OrderMessagesThread order={order} />
 
         {/* Shipping & Tracking — auto generate + manual; when generated show OrderTrackingInfo above */}
         {order.status !== "cancelled" && (

@@ -98,6 +98,8 @@ export const queryKeys = {
       [...queryKeys.orders.lists(), filters] as const,
     details: () => [...queryKeys.orders.all, "detail"] as const,
     detail: (id: string) => [...queryKeys.orders.details(), id] as const,
+    messages: (id: string) =>
+      [...queryKeys.orders.detail(id), "messages"] as const,
   },
 
   // Admin client orders (orders containing my products)

@@ -11,11 +11,27 @@ import type {
   EmailContent,
   OrderConfirmationData,
   BonDeCommandeRequestData,
+  InvoiceReadyData,
+  PaymentProofData,
   InvoiceEmailData,
   ShippingNotificationData,
   OrderStatusUpdateData,
   DigitalDeliveryData,
+  OrderMessageEmailData,
 } from "./types";
+
+/**
+ * Escape HTML special characters in user-supplied text so it renders safely inside an
+ * email template (the message body is free-form, user-authored content).
+ */
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
 /**
  * Generate unique subject with timestamp and random number to avoid spam
@@ -335,6 +351,212 @@ Please upload your Bon de commande (purchase order document) within 48 hours.
 Deadline: ${deadline}
 
 Upload here: ${orderUrl}
+
+---
+This is an automated email from Techmaster Store. Please do not reply to this email.
+  `.trim();
+
+  return {
+    subject,
+    htmlContent,
+    textContent,
+  };
+}
+
+/**
+ * Generate invoice document ready email
+ * Sent to the client when the admin/product owner uploads the invoice document for a delivered
+ * order, inviting them to download it from the order page.
+ *
+ * @param data - Invoice ready data
+ * @returns EmailContent - Email content with HTML and text versions
+ */
+export function generateInvoiceReadyEmail(data: InvoiceReadyData): EmailContent {
+  const { orderNumber, clientName, orderUrl, invoiceFileName } = data;
+
+  const subject = generateUniqueSubject(
+    `Your invoice for order ${orderNumber} is ready`
+  );
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>Your invoice is ready</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f5f5f5;">
+      <tr>
+        <td align="center" style="padding: 20px 0;">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <tr>
+              <td style="padding: 30px;">
+                <h1 style="color: #6b46c1; margin: 0 0 20px 0; font-size: 24px; font-weight: 600; line-height: 1.2;">🧾 Your invoice is ready</h1>
+
+                <p style="font-size: 16px; line-height: 1.6; color: #333333; margin: 0 0 20px 0;">Hello ${clientName}, the invoice for your order <strong>${orderNumber}</strong> is now available.</p>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f3effd; border-left: 4px solid #8b5cf6; border-radius: 4px; margin: 20px 0;">
+                  <tr>
+                    <td style="padding: 15px;">
+                      <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #4c1d95;">
+                        Invoice document: <strong>${invoiceFileName}</strong>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 30px 0;">
+                  <tr>
+                    <td style="border-radius: 4px; background-color: #6b46c1;">
+                      <a href="${orderUrl}" style="display: inline-block; padding: 12px 24px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 4px;">View &amp; download invoice</a>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="font-size: 14px; line-height: 1.6; color: #666666; margin: 20px 0 0 0;">
+                  If the button does not work, copy and paste this link into your browser:<br>
+                  <a href="${orderUrl}" style="color: #2980b9;">${orderUrl}</a>
+                </p>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 30px 0 0 0;">
+                  <tr>
+                    <td style="border-top: 1px solid #eeeeee; padding: 30px 0 0 0;">
+                      <p style="font-size: 12px; line-height: 1.5; color: #999999; margin: 0;">
+                        This is an automated email from Techmaster Store. Please do not reply to this email.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+  `.trim();
+
+  const textContent = `
+Your invoice is ready - Order ${orderNumber}
+
+Hello ${clientName}, the invoice for your order ${orderNumber} is now available.
+
+Invoice document: ${invoiceFileName}
+
+View & download here: ${orderUrl}
+
+---
+This is an automated email from Techmaster Store. Please do not reply to this email.
+  `.trim();
+
+  return {
+    subject,
+    htmlContent,
+    textContent,
+  };
+}
+
+/**
+ * Generate payment proof submitted email
+ * Sent to the admin/product owner when the client submits proof of an offline payment
+ * (uploads an ordre de virement, or signals their cheque is ready) so they can validate it.
+ *
+ * @param data - Payment proof data
+ * @returns EmailContent - Email content with HTML and text versions
+ */
+export function generatePaymentProofEmail(data: PaymentProofData): EmailContent {
+  const { orderNumber, recipientName, buyerDisplay, method, documentFileName, orderUrl } =
+    data;
+
+  const isVirement = method === "virement";
+  const headline = isVirement
+    ? "Ordre de virement received"
+    : "Cheque ready for collection";
+  const detailLine = isVirement
+    ? `${buyerDisplay} uploaded an ordre de virement${
+        documentFileName ? `: <strong>${documentFileName}</strong>` : ""
+      } for order <strong>${orderNumber}</strong>.`
+    : `${buyerDisplay} signalled that their cheque is ready for order <strong>${orderNumber}</strong>.`;
+  const detailLineText = isVirement
+    ? `${buyerDisplay} uploaded an ordre de virement${
+        documentFileName ? `: ${documentFileName}` : ""
+      } for order ${orderNumber}.`
+    : `${buyerDisplay} signalled that their cheque is ready for order ${orderNumber}.`;
+
+  const subject = generateUniqueSubject(
+    `Payment proof submitted for order ${orderNumber}`
+  );
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>${headline}</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f5f5f5;">
+      <tr>
+        <td align="center" style="padding: 20px 0;">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <tr>
+              <td style="padding: 30px;">
+                <h1 style="color: #6b46c1; margin: 0 0 20px 0; font-size: 24px; font-weight: 600; line-height: 1.2;">💳 ${headline}</h1>
+
+                <p style="font-size: 16px; line-height: 1.6; color: #333333; margin: 0 0 20px 0;">Hello ${
+                  recipientName || "there"
+                }, ${detailLine}</p>
+
+                <p style="font-size: 15px; line-height: 1.6; color: #4c1d95; margin: 0 0 20px 0;">Please review and validate the payment from the invoices section.</p>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 30px 0;">
+                  <tr>
+                    <td style="border-radius: 4px; background-color: #6b46c1;">
+                      <a href="${orderUrl}" style="display: inline-block; padding: 12px 24px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 4px;">Review order</a>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="font-size: 14px; line-height: 1.6; color: #666666; margin: 20px 0 0 0;">
+                  If the button does not work, copy and paste this link into your browser:<br>
+                  <a href="${orderUrl}" style="color: #2980b9;">${orderUrl}</a>
+                </p>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 30px 0 0 0;">
+                  <tr>
+                    <td style="border-top: 1px solid #eeeeee; padding: 30px 0 0 0;">
+                      <p style="font-size: 12px; line-height: 1.5; color: #999999; margin: 0;">
+                        This is an automated email from Techmaster Store. Please do not reply to this email.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+  `.trim();
+
+  const textContent = `
+${headline} - Order ${orderNumber}
+
+Hello ${recipientName || "there"}, ${detailLineText}
+
+Please review and validate the payment from the invoices section.
+
+Review order: ${orderUrl}
 
 ---
 This is an automated email from Techmaster Store. Please do not reply to this email.
@@ -1037,6 +1259,117 @@ ${statusMessage ? `Message: ${statusMessage}\n\n` : ""}${orderUrl ? `View Order 
 
 ---
 This is an automated email from Techmaster Store. Please do not reply to this email.
+  `.trim();
+
+  return {
+    subject,
+    htmlContent,
+    textContent,
+  };
+}
+
+/**
+ * Generate order message email
+ * Sent to each other participant of an order when someone posts a message in the order's
+ * conversation thread. Carries the message body and a link back to the order to reply in-app.
+ *
+ * @param data - Order message email data
+ * @returns EmailContent - Email content with HTML and text versions
+ */
+export function generateOrderMessageEmail(
+  data: OrderMessageEmailData
+): EmailContent {
+  const { orderNumber, recipientName, senderName, messageBody, orderUrl, attachmentName } =
+    data;
+
+  const subject = generateUniqueSubject(
+    `New message on order ${orderNumber}`
+  );
+
+  // Message body is user-authored — escape it and preserve line breaks for HTML.
+  const safeBodyHtml = escapeHtml(messageBody).replace(/\n/g, "<br>");
+  const attachmentHtml = attachmentName
+    ? `<p style="margin: 12px 0 0 0; font-size: 14px; color: #4c1d95;">📎 Attachment: <strong>${escapeHtml(
+        attachmentName
+      )}</strong> (available on the order page)</p>`
+    : "";
+  const attachmentText = attachmentName
+    ? `\nAttachment: ${attachmentName} (available on the order page)\n`
+    : "";
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>New message on your order</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f5f5f5;">
+      <tr>
+        <td align="center" style="padding: 20px 0;">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <tr>
+              <td style="padding: 30px;">
+                <h1 style="color: #2563eb; margin: 0 0 20px 0; font-size: 24px; font-weight: 600; line-height: 1.2;">💬 New message on order ${orderNumber}</h1>
+
+                <p style="font-size: 16px; line-height: 1.6; color: #333333; margin: 0 0 20px 0;">Hello ${recipientName || "there"}, <strong>${senderName}</strong> sent a message about order <strong>${orderNumber}</strong>:</p>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 4px; margin: 20px 0;">
+                  <tr>
+                    <td style="padding: 15px;">
+                      <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #1e3a8a;">${safeBodyHtml}</p>
+                      ${attachmentHtml}
+                    </td>
+                  </tr>
+                </table>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 30px 0;">
+                  <tr>
+                    <td style="border-radius: 4px; background-color: #2563eb;">
+                      <a href="${orderUrl}" style="display: inline-block; padding: 12px 24px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 4px;">View &amp; reply</a>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="font-size: 14px; line-height: 1.6; color: #666666; margin: 20px 0 0 0;">
+                  If the button does not work, copy and paste this link into your browser:<br>
+                  <a href="${orderUrl}" style="color: #2980b9;">${orderUrl}</a>
+                </p>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 30px 0 0 0;">
+                  <tr>
+                    <td style="border-top: 1px solid #eeeeee; padding: 30px 0 0 0;">
+                      <p style="font-size: 12px; line-height: 1.5; color: #999999; margin: 0;">
+                        This is an automated email from Techmaster Store. Please do not reply to this email — open the order to respond.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+  `.trim();
+
+  const textContent = `
+New message on order ${orderNumber}
+
+Hello ${recipientName || "there"}, ${senderName} sent a message about order ${orderNumber}:
+
+${messageBody}
+${attachmentText}
+View & reply: ${orderUrl}
+
+---
+This is an automated email from Techmaster Store. Please do not reply to this email — open the order to respond.
   `.trim();
 
   return {

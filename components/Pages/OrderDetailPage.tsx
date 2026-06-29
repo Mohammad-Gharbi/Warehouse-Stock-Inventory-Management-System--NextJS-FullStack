@@ -51,6 +51,11 @@ import type { Order } from "@/types";
 import { cn } from "@/lib/utils";
 import OrderDialog from "@/components/orders/OrderDialog";
 import BonDeCommandeUpload from "@/components/orders/BonDeCommandeUpload";
+import ConfirmReceptionCard from "@/components/orders/ConfirmReceptionCard";
+import InvoiceDocumentUpload from "@/components/orders/InvoiceDocumentUpload";
+import VirementDocumentUpload from "@/components/orders/VirementDocumentUpload";
+import ChequeReadyCard from "@/components/orders/ChequeReadyCard";
+import OrderMessagesThread from "@/components/orders/OrderMessagesThread";
 import DeliverOrderDialog from "@/components/orders/DeliverOrderDialog";
 import { AlertDialogWrapper } from "@/components/dialogs";
 import { PaymentDialog } from "@/components/payments";
@@ -670,6 +675,43 @@ export default function OrderDetailPage() {
               order.userId === user?.id
             }
           />
+
+          {/* Bank-transfer proof (client) — uploads ordre de virement while unpaid */}
+          <VirementDocumentUpload
+            order={order}
+            canUpload={
+              user?.role === "admin" ||
+              order.clientId === user?.id ||
+              order.userId === user?.id
+            }
+          />
+
+          {/* Cheque ready signal (client) — while unpaid */}
+          <ChequeReadyCard
+            order={order}
+            canSignal={
+              user?.role === "admin" ||
+              order.clientId === user?.id ||
+              order.userId === user?.id
+            }
+          />
+
+          {/* Reception confirmation (client) — only once delivered */}
+          <ConfirmReceptionCard
+            order={order}
+            canConfirm={
+              order.clientId === user?.id || order.userId === user?.id
+            }
+          />
+
+          {/* Invoice document — admin/product owner uploads, client downloads */}
+          <InvoiceDocumentUpload
+            order={order}
+            canUpload={user?.role === "admin" || isProductOwnerOnOrder}
+          />
+
+          {/* Order conversation — shared between buyer, product owner(s) and admin */}
+          <OrderMessagesThread order={order} />
 
           {/* Order Summary */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

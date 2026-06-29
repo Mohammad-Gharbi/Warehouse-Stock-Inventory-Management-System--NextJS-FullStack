@@ -791,6 +791,81 @@ export default function InvoiceDetailPage({
             </GlassCard>
           )}
 
+          {/* Payment proof — offline payment submitted by the client on the order */}
+          {invoice.paymentProof &&
+            (invoice.paymentProof.virementDocumentUrl ||
+              invoice.paymentProof.chequeReadySignalledAt) && (
+              <GlassCard variant="blue">
+                <div className="flex items-center gap-3 mb-4">
+                  <div
+                    className={cn(
+                      "p-2.5 rounded-xl border",
+                      variantConfig.blue.iconBg,
+                      "dark:border-blue-400/30 dark:bg-blue-500/20",
+                    )}
+                  >
+                    <CreditCard className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Payment proof
+                    </h3>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      Review before marking this invoice as paid.
+                    </p>
+                  </div>
+                </div>
+
+                {invoice.paymentProof.virementDocumentUrl && (
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-card border border-blue-200/30 dark:border-blue-400/10">
+                      <Download className="h-4 w-4 text-blue-500 dark:text-blue-400 flex-shrink-0" />
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Ordre de virement:
+                      </span>
+                      <a
+                        href={invoice.paymentProof.virementDocumentUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300 truncate"
+                      >
+                        {invoice.paymentProof.virementDocumentFileName ||
+                          "Download document"}
+                      </a>
+                    </div>
+                    {invoice.paymentProof.virementDocumentUploadedAt && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400 px-1">
+                        Uploaded{" "}
+                        <ClientDateTime
+                          date={
+                            new Date(
+                              invoice.paymentProof.virementDocumentUploadedAt,
+                            )
+                          }
+                        />
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {invoice.paymentProof.chequeReadySignalledAt && (
+                  <div className="flex items-center gap-2 text-sm p-3 rounded-xl bg-card border border-amber-200/30 dark:border-amber-400/10">
+                    <CheckCircle className="h-4 w-4 text-amber-500 dark:text-amber-400 flex-shrink-0" />
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Cheque signalled ready:
+                    </span>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      <ClientDateTime
+                        date={
+                          new Date(invoice.paymentProof.chequeReadySignalledAt)
+                        }
+                      />
+                    </span>
+                  </div>
+                )}
+              </GlassCard>
+            )}
+
           {/* Billing Address & Totals */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Billing Address */}

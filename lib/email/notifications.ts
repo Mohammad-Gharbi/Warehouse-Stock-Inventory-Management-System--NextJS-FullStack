@@ -12,22 +12,28 @@ import {
   generateStockOutNotificationEmail,
   generateOrderConfirmationEmail,
   generateBonDeCommandeRequestEmail,
+  generateInvoiceReadyEmail,
+  generatePaymentProofEmail,
   generateInvoiceEmail,
   generateShippingNotificationEmail,
   generateOrderStatusUpdateEmail,
   generatePartnerStatusEmail,
   generateDigitalDeliveryEmail,
+  generateOrderMessageEmail,
 } from "./templates";
 import type {
   LowStockAlertData,
   StockOutNotificationData,
   OrderConfirmationData,
   BonDeCommandeRequestData,
+  InvoiceReadyData,
+  PaymentProofData,
   InvoiceEmailData,
   ShippingNotificationData,
   OrderStatusUpdateData,
   PartnerStatusEmailData,
   DigitalDeliveryData,
+  OrderMessageEmailData,
 } from "./types";
 import { isEmailNotificationEnabled } from "./preferences";
 import { queueEmailNotification } from "./queue";
@@ -524,6 +530,197 @@ export async function sendBonDeCommandeRequest(
     }
   } catch (error) {
     logger.error("Error sending Bon de commande request email", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      orderNumber: data.orderNumber,
+      recipientEmail,
+    });
+  }
+}
+
+/**
+ * Send invoice document ready email
+ * Sent to the client when the admin/product owner uploads the invoice document for a delivered
+ * order. Sent directly via Brevo (not queued). Fails silently — must not break the upload flow.
+ *
+ * @param data - Invoice ready data
+ * @param recipientEmail - Client email address
+ * @param recipientName - Client name (optional)
+ * @returns Promise<void> - Resolves when email is sent (or fails silently)
+ */
+export async function sendInvoiceReadyEmail(
+  data: InvoiceReadyData,
+  recipientEmail: string,
+  recipientName?: string
+): Promise<void> {
+  if (!isBrevoConfigured()) {
+    logger.warn(
+      "Brevo email service is not configured, skipping invoice ready email"
+    );
+    return;
+  }
+
+  if (!recipientEmail) {
+    logger.warn("No recipient email provided, skipping invoice ready email");
+    return;
+  }
+
+  try {
+    const emailContent = generateInvoiceReadyEmail(data);
+
+    const result = await sendEmailViaBrevo({
+      to: {
+        email: recipientEmail,
+        name: recipientName || data.clientName,
+      },
+      subject: emailContent.subject,
+      htmlContent: emailContent.htmlContent,
+      textContent: emailContent.textContent,
+      tags: ["invoice", "order"],
+    });
+
+    if (result.success) {
+      logger.info("Invoice ready email sent successfully", {
+        messageId: result.messageId,
+        orderNumber: data.orderNumber,
+        recipientEmail,
+      });
+    } else {
+      logger.error("Failed to send invoice ready email", {
+        error: result.error,
+        orderNumber: data.orderNumber,
+        recipientEmail,
+      });
+    }
+  } catch (error) {
+    logger.error("Error sending invoice ready email", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      orderNumber: data.orderNumber,
+      recipientEmail,
+    });
+  }
+}
+
+/**
+ * Send payment proof submitted email
+ * Sent to the admin/product owner when the client submits proof of an offline payment
+ * (uploads an ordre de virement, or signals their cheque is ready). Sent directly via Brevo
+ * (not queued). Fails silently — must not break the upload/signal flow.
+ *
+ * @param data - Payment proof data
+ * @param recipientEmail - Admin/product owner email address
+ * @param recipientName - Admin/product owner name (optional)
+ * @returns Promise<void> - Resolves when email is sent (or fails silently)
+ */
+export async function sendPaymentProofEmail(
+  data: PaymentProofData,
+  recipientEmail: string,
+  recipientName?: string
+): Promise<void> {
+  if (!isBrevoConfigured()) {
+    logger.warn(
+      "Brevo email service is not configured, skipping payment proof email"
+    );
+    return;
+  }
+
+  if (!recipientEmail) {
+    logger.warn("No recipient email provided, skipping payment proof email");
+    return;
+  }
+
+  try {
+    const emailContent = generatePaymentProofEmail(data);
+
+    const result = await sendEmailViaBrevo({
+      to: {
+        email: recipientEmail,
+        name: recipientName || data.recipientName,
+      },
+      subject: emailContent.subject,
+      htmlContent: emailContent.htmlContent,
+      textContent: emailContent.textContent,
+      tags: ["payment", "order"],
+    });
+
+    if (result.success) {
+      logger.info("Payment proof email sent successfully", {
+        messageId: result.messageId,
+        orderNumber: data.orderNumber,
+        recipientEmail,
+      });
+    } else {
+      logger.error("Failed to send payment proof email", {
+        error: result.error,
+        orderNumber: data.orderNumber,
+        recipientEmail,
+      });
+    }
+  } catch (error) {
+    logger.error("Error sending payment proof email", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      orderNumber: data.orderNumber,
+      recipientEmail,
+    });
+  }
+}
+
+/**
+ * Send order message email
+ * Sent to each other participant of an order (buyer, product owner(s), admin) when someone
+ * posts a message in the order's conversation thread. Sent directly via Brevo (not queued).
+ * Fails silently — must not break the message-post flow.
+ *
+ * @param data - Order message email data
+ * @param recipientEmail - Recipient email address
+ * @param recipientName - Recipient name (optional)
+ * @returns Promise<void> - Resolves when email is sent (or fails silently)
+ */
+export async function sendOrderMessageEmail(
+  data: OrderMessageEmailData,
+  recipientEmail: string,
+  recipientName?: string
+): Promise<void> {
+  if (!isBrevoConfigured()) {
+    logger.warn(
+      "Brevo email service is not configured, skipping order message email"
+    );
+    return;
+  }
+
+  if (!recipientEmail) {
+    logger.warn("No recipient email provided, skipping order message email");
+    return;
+  }
+
+  try {
+    const emailContent = generateOrderMessageEmail(data);
+
+    const result = await sendEmailViaBrevo({
+      to: {
+        email: recipientEmail,
+        name: recipientName || data.recipientName,
+      },
+      subject: emailContent.subject,
+      htmlContent: emailContent.htmlContent,
+      textContent: emailContent.textContent,
+      tags: ["order_message", "order"],
+    });
+
+    if (result.success) {
+      logger.info("Order message email sent successfully", {
+        messageId: result.messageId,
+        orderNumber: data.orderNumber,
+        recipientEmail,
+      });
+    } else {
+      logger.error("Failed to send order message email", {
+        error: result.error,
+        orderNumber: data.orderNumber,
+        recipientEmail,
+      });
+    }
+  } catch (error) {
+    logger.error("Error sending order message email", {
       error: error instanceof Error ? error.message : "Unknown error",
       orderNumber: data.orderNumber,
       recipientEmail,

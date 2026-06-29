@@ -166,6 +166,17 @@ export async function GET(
       orderedBy,
       client,
       invoiceProductOwners,
+      paymentProof: order
+        ? {
+            paymentMethod: order.paymentMethod ?? null,
+            virementDocumentUrl: order.virementDocumentUrl ?? null,
+            virementDocumentFileName: order.virementDocumentFileName ?? null,
+            virementDocumentUploadedAt:
+              order.virementDocumentUploadedAt?.toISOString() ?? null,
+            chequeReadySignalledAt:
+              order.chequeReadySignalledAt?.toISOString() ?? null,
+          }
+        : null,
     };
 
     return NextResponse.json(transformedInvoice);

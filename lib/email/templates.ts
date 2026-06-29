@@ -17,10 +17,13 @@ import type {
 export {
   generateOrderConfirmationEmail,
   generateBonDeCommandeRequestEmail,
+  generateInvoiceReadyEmail,
+  generatePaymentProofEmail,
   generateInvoiceEmail,
   generateShippingNotificationEmail,
   generateOrderStatusUpdateEmail,
   generateDigitalDeliveryEmail,
+  generateOrderMessageEmail,
 } from "./templates-order";
 
 /**

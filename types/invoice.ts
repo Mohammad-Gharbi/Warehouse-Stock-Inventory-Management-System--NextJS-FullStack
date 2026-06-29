@@ -61,6 +61,17 @@ export interface Invoice {
   client?: { name: string | null; email: string } | null;
   /** Product owner(s) for items in the order (for detail Parties section) */
   invoiceProductOwners?: { userId: string; name: string | null; email: string }[];
+  /**
+   * Offline payment proof submitted by the client on the linked order, surfaced so the admin can
+   * review it before validating the payment (marking the invoice paid). Null for online/no-proof.
+   */
+  paymentProof?: {
+    paymentMethod: string | null;
+    virementDocumentUrl: string | null;
+    virementDocumentFileName: string | null;
+    virementDocumentUploadedAt: string | null;
+    chequeReadySignalledAt: string | null;
+  } | null;
 }
 
 /**

@@ -61,6 +61,9 @@ export type {
   NotificationFilters,
 } from "./notification";
 
+// Order message (per-order conversation thread) types
+export type { OrderMessage } from "./order-message";
+
 // Invoice types
 export type {
   Invoice,

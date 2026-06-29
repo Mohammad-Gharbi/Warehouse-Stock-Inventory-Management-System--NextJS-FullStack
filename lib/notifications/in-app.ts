@@ -253,6 +253,133 @@ export async function createBonDeCommandeUploadedNotification(
 }
 
 /**
+ * Notify a product owner/admin that the client confirmed reception of a delivered order.
+ *
+ * @param productOwnerUserId - Product owner/admin to notify
+ * @param orderId - Order ID for link
+ * @param orderNumber - Order number for display
+ * @param buyerDisplay - Buyer name/email (e.g. "Jane Doe (jane@example.com)")
+ */
+export async function createOrderReceptionConfirmedNotification(
+  productOwnerUserId: string,
+  orderId: string,
+  orderNumber: string,
+  buyerDisplay: string,
+): Promise<void> {
+  await createInAppNotification({
+    userId: productOwnerUserId,
+    type: "order_reception_confirmed",
+    title: "Order reception confirmed",
+    message: `${buyerDisplay} confirmed reception of order ${orderNumber}.`,
+    link: `/admin/client-orders/${orderId}`,
+    metadata: { orderId },
+  });
+}
+
+/**
+ * Notify a product owner/admin that the client uploaded the ordre de virement (bank-transfer
+ * proof) for an order, so they can validate the payment.
+ *
+ * @param productOwnerUserId - Product owner/admin to notify
+ * @param orderId - Order ID for link
+ * @param orderNumber - Order number for display
+ * @param buyerDisplay - Buyer name/email (e.g. "Jane Doe (jane@example.com)")
+ */
+export async function createVirementProofUploadedNotification(
+  productOwnerUserId: string,
+  orderId: string,
+  orderNumber: string,
+  buyerDisplay: string,
+): Promise<void> {
+  await createInAppNotification({
+    userId: productOwnerUserId,
+    type: "virement_proof_uploaded",
+    title: "Ordre de virement received",
+    message: `${buyerDisplay} uploaded an ordre de virement for order ${orderNumber}. Please validate the payment.`,
+    link: `/admin/client-orders/${orderId}`,
+    metadata: { orderId },
+  });
+}
+
+/**
+ * Notify a product owner/admin that the client signalled their cheque is ready for an order,
+ * so they can validate the payment.
+ *
+ * @param productOwnerUserId - Product owner/admin to notify
+ * @param orderId - Order ID for link
+ * @param orderNumber - Order number for display
+ * @param buyerDisplay - Buyer name/email (e.g. "Jane Doe (jane@example.com)")
+ */
+export async function createChequeReadyNotification(
+  productOwnerUserId: string,
+  orderId: string,
+  orderNumber: string,
+  buyerDisplay: string,
+): Promise<void> {
+  await createInAppNotification({
+    userId: productOwnerUserId,
+    type: "cheque_ready_signalled",
+    title: "Cheque ready",
+    message: `${buyerDisplay} signalled their cheque is ready for order ${orderNumber}. Please validate the payment.`,
+    link: `/admin/client-orders/${orderId}`,
+    metadata: { orderId },
+  });
+}
+
+/**
+ * Notify a participant of an order that someone posted a new message in the order's
+ * conversation thread.
+ *
+ * @param recipientUserId - Participant to notify (buyer, product owner, or admin)
+ * @param orderId - Order ID for metadata
+ * @param orderNumber - Order number for display
+ * @param senderDisplay - Sender name/email (e.g. "Jane Doe (jane@example.com)")
+ * @param preview - Short preview of the message body
+ * @param link - Deep link to the order for this recipient (buyer → /orders/:id,
+ *   product owner/admin → /admin/client-orders/:id)
+ */
+export async function createOrderMessageNotification(
+  recipientUserId: string,
+  orderId: string,
+  orderNumber: string,
+  senderDisplay: string,
+  preview: string,
+  link: string,
+): Promise<void> {
+  await createInAppNotification({
+    userId: recipientUserId,
+    type: "order_message_received",
+    title: `New message - ${orderNumber}`,
+    message: `${senderDisplay}: ${preview}`,
+    link,
+    metadata: { orderId },
+  });
+}
+
+/**
+ * Notify the client that the invoice document for their order has been uploaded and is
+ * available to download.
+ *
+ * @param clientUserId - Client (buyer) to notify
+ * @param orderId - Order ID for link
+ * @param orderNumber - Order number for display
+ */
+export async function createInvoiceDocumentReadyNotification(
+  clientUserId: string,
+  orderId: string,
+  orderNumber: string,
+): Promise<void> {
+  await createInAppNotification({
+    userId: clientUserId,
+    type: "invoice_ready",
+    title: `Invoice available - ${orderNumber}`,
+    message: `The invoice for order ${orderNumber} is now available to download on your order page.`,
+    link: `/orders/${orderId}`,
+    metadata: { orderId },
+  });
+}
+
+/**
  * Notify a product owner/admin that an order is past its 48h Bon de commande deadline
  * with no document uploaded.
  *

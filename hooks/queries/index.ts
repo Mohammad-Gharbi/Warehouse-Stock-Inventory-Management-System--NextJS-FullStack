@@ -54,6 +54,13 @@ export {
   useDeleteNotification,
 } from "./use-notifications";
 
+// Order message (per-order conversation thread) hooks
+export {
+  useOrderMessages,
+  useSendOrderMessage,
+  type SendOrderMessageInput,
+} from "./use-order-messages";
+
 // Invoice hooks
 export {
   useInvoices,

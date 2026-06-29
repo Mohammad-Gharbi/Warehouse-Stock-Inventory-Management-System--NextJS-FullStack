@@ -21,6 +21,8 @@ import {
   Loader2,
   Star,
   MessageSquare,
+  Banknote,
+  ScrollText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -56,6 +58,12 @@ function getNotificationIcon(type: NotificationType) {
       return FileText;
     case "bon_de_commande_overdue":
       return AlertCircle;
+    case "order_reception_confirmed":
+      return Package;
+    case "virement_proof_uploaded":
+      return Banknote;
+    case "cheque_ready_signalled":
+      return ScrollText;
     case "product_review_submitted":
       return Star;
     case "shipping_notification":
@@ -65,6 +73,7 @@ function getNotificationIcon(type: NotificationType) {
       return FileText;
     case "support_ticket_created":
     case "support_ticket_replied":
+    case "order_message_received":
       return MessageSquare;
     case "import_complete":
     case "import_failed":
@@ -94,6 +103,12 @@ function getNotificationColor(type: NotificationType): string {
       return "text-green-600 dark:text-green-400";
     case "bon_de_commande_overdue":
       return "text-red-600 dark:text-red-400";
+    case "order_reception_confirmed":
+      return "text-emerald-600 dark:text-emerald-400";
+    case "virement_proof_uploaded":
+      return "text-blue-600 dark:text-blue-400";
+    case "cheque_ready_signalled":
+      return "text-amber-600 dark:text-amber-400";
     case "product_review_submitted":
       return "text-amber-600 dark:text-amber-400";
     case "shipping_notification":
@@ -104,6 +119,8 @@ function getNotificationColor(type: NotificationType): string {
     case "support_ticket_created":
       return "text-sky-600 dark:text-sky-400";
     case "support_ticket_replied":
+      return "text-blue-600 dark:text-blue-400";
+    case "order_message_received":
       return "text-blue-600 dark:text-blue-400";
     case "import_complete":
       return "text-green-600 dark:text-green-400";

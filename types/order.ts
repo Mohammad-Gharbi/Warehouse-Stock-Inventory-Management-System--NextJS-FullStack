@@ -111,6 +111,26 @@ export interface Order {
   bonDeCommandeDeadline?: string | Date | null;
   /** When the order was flagged for admin/product owner due to a missing Bon de commande */
   bonDeCommandeFlaggedAt?: string | Date | null;
+  /** When the client confirmed they received the delivered order */
+  receptionConfirmedAt?: string | Date | null;
+  /** Invoice document URL once the admin/product owner uploads it (post-delivery) */
+  invoiceDocumentUrl?: string | null;
+  /** ImageKit file ID of the uploaded invoice document (for replace/delete) */
+  invoiceDocumentFileId?: string | null;
+  /** Original file name of the uploaded invoice document */
+  invoiceDocumentFileName?: string | null;
+  /** When the invoice document was uploaded */
+  invoiceDocumentUploadedAt?: string | Date | null;
+  /** Ordre de virement (bank-transfer order) document URL once the client uploads it */
+  virementDocumentUrl?: string | null;
+  /** ImageKit file ID of the uploaded ordre de virement (for replace/delete) */
+  virementDocumentFileId?: string | null;
+  /** Original file name of the uploaded ordre de virement */
+  virementDocumentFileName?: string | null;
+  /** When the client uploaded the ordre de virement */
+  virementDocumentUploadedAt?: string | Date | null;
+  /** When the client signalled their cheque is ready */
+  chequeReadySignalledAt?: string | Date | null;
   createdAt: Date;
   updatedAt?: Date | null;
   createdBy: string;

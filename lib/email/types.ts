@@ -147,6 +147,38 @@ export interface BonDeCommandeRequestData {
 }
 
 /**
+ * Invoice document ready email data
+ * Sent to the client when the admin/product owner uploads the invoice document for a delivered order.
+ */
+export interface InvoiceReadyData {
+  orderNumber: string;
+  clientName: string;
+  /** Link to the order detail page where the invoice document can be downloaded */
+  orderUrl: string;
+  /** Original file name of the uploaded invoice document */
+  invoiceFileName: string;
+}
+
+/**
+ * Payment proof submitted email data
+ * Sent to the admin/product owner when the client submits proof of an offline payment:
+ * either uploads an "ordre de virement" (virement) or signals their cheque is ready (cheque).
+ */
+export interface PaymentProofData {
+  orderNumber: string;
+  /** Recipient (admin/product owner) display name */
+  recipientName?: string;
+  /** Buyer name/email display (e.g. "Jane Doe (jane@example.com)") */
+  buyerDisplay: string;
+  /** Offline payment method the proof relates to */
+  method: "virement" | "cheque";
+  /** Original file name of the uploaded ordre de virement (virement only) */
+  documentFileName?: string;
+  /** Link to the order/invoice review page */
+  orderUrl: string;
+}
+
+/**
  * Invoice email data
  */
 export interface InvoiceEmailData {
@@ -228,6 +260,25 @@ export interface OrderStatusUpdateData {
   statusMessage?: string;
   orderUrl?: string; // Link to view order details
   estimatedDelivery?: string;
+}
+
+/**
+ * Order message email data
+ * Sent to each other participant of an order (buyer, product owner(s), admin) when
+ * someone posts a message in the order's conversation thread.
+ */
+export interface OrderMessageEmailData {
+  orderNumber: string;
+  /** Recipient display name */
+  recipientName?: string;
+  /** Sender name/email display (e.g. "Jane Doe (jane@example.com)") */
+  senderName: string;
+  /** The full message body (plain text — HTML-escaped when rendered) */
+  messageBody: string;
+  /** Link to the order where the recipient can read the thread and reply */
+  orderUrl: string;
+  /** Original file name of an attachment, if the message carried one */
+  attachmentName?: string;
 }
 
 /**
