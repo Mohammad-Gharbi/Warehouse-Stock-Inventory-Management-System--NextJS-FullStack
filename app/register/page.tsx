@@ -10,7 +10,7 @@ import RegisterPage from "@/components/Pages/RegisterPage";
 export default async function RegisterRoute() {
   const user = await getSession();
   if (user) {
-    redirect("/");
+    redirect("/partner-signup");
   }
   return <RegisterPage />;
 }

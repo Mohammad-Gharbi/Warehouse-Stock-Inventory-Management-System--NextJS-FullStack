@@ -29,7 +29,8 @@ import {
 } from "@/hooks/queries";
 import { logger } from "@/lib/logger";
 import ProductName from "./form-fields/NameField";
-import SKU from "./form-fields/SKUField";
+// SKU component removed from UI – generation is now automatic
+// import SKU from "./form-fields/SKUField";
 import Quantity from "./form-fields/QuantityField";
 import Price from "./form-fields/PriceField";
 import ImageField from "./form-fields/ImageField";
@@ -75,16 +76,15 @@ export default function AddProductDialog({
     },
   });
 
-  const { reset, watch } = methods;
+  const { reset, watch, setValue } = methods;
   const productType = watch("productType");
+  const productName = watch("productName"); // used for auto‑generation
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-  // Inline validation error for category — outside RHF so Zod productSchema cannot cover it
   const [categoryError, setCategoryError] = useState<string>("");
   const dialogCloseRef = useRef<HTMLButtonElement | null>(null);
   const { toast } = useToast();
 
-  // Keep UI state in Zustand (openProductDialog, selectedProduct)
   const {
     setOpenProductDialog,
     openProductDialog,
@@ -92,19 +92,16 @@ export default function AddProductDialog({
     selectedProduct,
   } = useProductStore();
 
-  // Use TanStack Query for data fetching
   const { data: categories = [] } = useCategories();
 
-  // Filter to only show active categories in dropdown
-  // Include currently selected category even if inactive (for edit mode)
   const activeCategories = categories.filter(
-    (category) => category.status !== false || category.id === selectedCategory
+    (category) => category.status !== false || category.id === selectedCategory,
   );
 
-  // Use TanStack Query mutations
   const createProductMutation = useCreateProduct();
   const updateProductMutation = useUpdateProduct();
 
+  // Reset form when opening dialog or when selectedProduct changes
   useEffect(() => {
     if (selectedProduct) {
       reset({
@@ -123,7 +120,6 @@ export default function AddProductDialog({
       });
       setSelectedCategory(selectedProduct.categoryId || "");
     } else {
-      // Reset form to default values for adding a new product
       reset({
         productName: "",
         sku: "",
@@ -138,9 +134,41 @@ export default function AddProductDialog({
       });
       setSelectedCategory("");
     }
-    // Clear inline validation error on every dialog open/close or product change
     setCategoryError("");
   }, [selectedProduct, openProductDialog, reset]);
+
+  // Auto‑generate SKU when adding a new product (not editing)
+  useEffect(() => {
+    // Only run when dialog is open and we are NOT editing an existing product
+    if (!openProductDialog || selectedProduct) return;
+
+    const generateSKU = () => {
+      // Use first 3 letters of product name (or default) + timestamp + random digits
+      const namePart = (productName || "PRD")
+        .replace(/\s+/g, "")
+        .substring(0, 3)
+        .toUpperCase();
+      const timePart = Date.now().toString(36).slice(-4).toUpperCase();
+      const randomPart = Math.floor(1000 + Math.random() * 9000).toString();
+      const candidate = `${namePart}-${timePart}-${randomPart}`;
+
+      // Ensure uniqueness against existing products
+      const exists = allProducts.some((p) => p.sku === candidate);
+      setValue("sku", exists ? candidate + "X" : candidate, {
+        shouldValidate: true,
+      });
+    };
+
+    generateSKU();
+    // Regenerate whenever the name or category changes
+  }, [
+    productName,
+    selectedCategory,
+    openProductDialog,
+    selectedProduct,
+    allProducts,
+    setValue,
+  ]);
 
   const onSubmit = async (data: ProductFormData) => {
     const submitValidation = productFormSubmitSchema.safeParse({
@@ -157,7 +185,7 @@ export default function AddProductDialog({
       return;
     }
     setCategoryError("");
-    // Convert empty strings to 0 for quantity and price
+
     const quantity =
       typeof data.quantity === "string" && data.quantity === ""
         ? 0
@@ -167,16 +195,13 @@ export default function AddProductDialog({
         ? 0
         : Number(data.price);
 
-    // Calculate status - always returns a valid ProductStatus
     const status = calculateProductStatus(quantity);
 
-    // Format expiration date (convert to ISO string or null)
     const expirationDate =
       data.expirationDate && data.expirationDate !== ""
         ? new Date(data.expirationDate).toISOString()
         : null;
 
-    // Clean custom order-form fields: drop empty-label rows, normalize options
     const cleanedOrderFormFields: OrderFormFieldDef[] = (
       data.orderFormFields || []
     )
@@ -195,7 +220,6 @@ export default function AddProductDialog({
       }))
       .filter((f) => f.label.length > 0);
 
-    // A "select" field must have at least one option
     const invalidSelect = cleanedOrderFormFields.find(
       (f) => f.type === "select" && (!f.options || f.options.length === 0),
     );
@@ -212,10 +236,9 @@ export default function AddProductDialog({
 
     try {
       if (!selectedProduct) {
-        // Create new product using TanStack Query mutation
         await createProductMutation.mutateAsync({
           name: data.productName,
-          sku: data.sku,
+          sku: data.sku, // auto‑generated value is submitted
           price: price,
           quantity: quantity,
           status,
@@ -229,15 +252,13 @@ export default function AddProductDialog({
           productType: data.productType,
         });
 
-        // Close dialog on success (toast is handled by mutation hook)
         dialogCloseRef.current?.click();
         setOpenProductDialog(false);
       } else {
-        // Update existing product using TanStack Query mutation
         await updateProductMutation.mutateAsync({
           id: selectedProduct.id,
           name: data.productName,
-          sku: data.sku,
+          sku: data.sku, // existing SKU is kept as is
           price: price,
           quantity: quantity,
           status,
@@ -250,25 +271,20 @@ export default function AddProductDialog({
           productType: data.productType,
         });
 
-        // Close dialog on success (toast is handled by mutation hook)
         setOpenProductDialog(false);
       }
     } catch (error) {
-      // Mutation onError already toasts; catch log is a dev signal (4xx skipped in prod Sentry)
       logger.error("Product operation error:", error);
     }
   };
 
-  // Determine if form is submitting based on mutation states
   const isSubmitting =
     createProductMutation.isPending || updateProductMutation.isPending;
 
   const handleOpenChange = (open: boolean) => {
     if (open) {
-      // When opening the dialog for adding a new product, clear any selected product
       setSelectedProduct(null);
     } else {
-      // When closing the dialog, also clear the selected product to ensure clean state
       setSelectedProduct(null);
     }
     setOpenProductDialog(open);
@@ -296,12 +312,12 @@ export default function AddProductDialog({
           </DialogDescription>
         </DialogHeader>
         <FormProvider {...methods}>
-          {/* react-hook-form handleSubmit passes a ref; rule is for raw refs during render */}
           {/* eslint-disable-next-line react-hooks/refs */}
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <ProductName />
-              <SKU allProducts={allProducts} />
+              {/* SKU field is now hidden – auto‑generated behind the scenes */}
+              {/* <SKU allProducts={allProducts} /> */}
               <Quantity />
               <Price />
               <ExpirationDateField />
@@ -310,7 +326,6 @@ export default function AddProductDialog({
                 <label className="text-sm font-medium text-white/80">
                   Category
                 </label>
-                {/* Always string value — avoids controlled/uncontrolled flip from `|| undefined` */}
                 <DeferredSelectGate
                   enabled={openProductDialog}
                   placeholder={
@@ -327,7 +342,10 @@ export default function AddProductDialog({
                     <Select
                       key={selectRemountKey}
                       value={selectedCategory}
-                      onValueChange={(value) => { setSelectedCategory(value); setCategoryError(""); }}
+                      onValueChange={(value) => {
+                        setSelectedCategory(value);
+                        setCategoryError("");
+                      }}
                     >
                       <SelectTrigger className="h-11 w-full border-rose-400/30 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:border-rose-400 focus:ring-rose-500/50 shadow-sm">
                         <SelectValue placeholder="Select Category" />
@@ -383,8 +401,8 @@ export default function AddProductDialog({
                 {isSubmitting
                   ? "Loading..."
                   : selectedProduct
-                  ? "Update Product"
-                  : "Add Product"}
+                    ? "Update Product"
+                    : "Add Product"}
               </Button>
             </DialogFooter>
           </form>
