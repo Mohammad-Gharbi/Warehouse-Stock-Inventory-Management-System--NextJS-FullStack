@@ -56,7 +56,6 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
   { label: "Orders", path: "/orders" },
   { label: "Invoices", path: "/invoices" },
   { label: "Categories", path: "/categories" },
-  { label: "Business Insights", path: "/business-insights" },
   { label: "Admin Panel", path: "/admin" },
 ];
 

@@ -27,10 +27,7 @@ import { Separator } from "@/components/ui/separator";
 import { useQueryClient } from "@tanstack/react-query";
 import { useOrder, useDeleteOrder } from "@/hooks/queries";
 import { useBackWithRefresh } from "@/hooks/use-back-with-refresh";
-import {
-  queryKeys,
-  invalidateAfterOrderGraphChange,
-} from "@/lib/react-query";
+import { queryKeys, invalidateAfterOrderGraphChange } from "@/lib/react-query";
 import { useAuth } from "@/contexts";
 import Navbar from "@/components/layouts/Navbar";
 import {
@@ -93,71 +90,56 @@ const variantConfig: Record<
   sky: {
     border: "border-sky-400/20",
     gradient: "bg-card ",
-    shadow:
-      "shadow-sm ",
+    shadow: "shadow-sm ",
     hoverBorder: "hover:border-sky-300/40",
     iconBg: "border-sky-300/30 bg-sky-100/50",
   },
   emerald: {
     border: "border-emerald-400/20",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
+    gradient: "bg-card ",
+    shadow: "shadow-sm ",
     hoverBorder: "hover:border-emerald-300/40",
     iconBg: "border-emerald-300/30 bg-emerald-100/50",
   },
   amber: {
     border: "border-amber-400/20",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
+    gradient: "bg-card ",
+    shadow: "shadow-sm ",
     hoverBorder: "hover:border-amber-300/40",
     iconBg: "border-amber-300/30 bg-amber-100/50",
   },
   rose: {
     border: "border-rose-400/20",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
+    gradient: "bg-card ",
+    shadow: "shadow-sm ",
     hoverBorder: "hover:border-rose-300/40",
     iconBg: "border-rose-300/30 bg-rose-100/50",
   },
   violet: {
     border: "border-violet-400/20",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
+    gradient: "bg-card ",
+    shadow: "shadow-sm ",
     hoverBorder: "hover:border-violet-300/40",
     iconBg: "border-violet-300/30 bg-violet-100/50",
   },
   blue: {
     border: "border-blue-400/20",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
+    gradient: "bg-card ",
+    shadow: "shadow-sm ",
     hoverBorder: "hover:border-blue-300/40",
     iconBg: "border-blue-300/30 bg-blue-100/50",
   },
   orange: {
     border: "border-orange-400/20",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
+    gradient: "bg-card ",
+    shadow: "shadow-sm ",
     hoverBorder: "hover:border-orange-300/40",
     iconBg: "border-orange-300/30 bg-orange-100/50",
   },
   teal: {
     border: "border-teal-400/20",
-    gradient:
-      "bg-card ",
-    shadow:
-      "shadow-sm ",
+    gradient: "bg-card ",
+    shadow: "shadow-sm ",
     hoverBorder: "hover:border-teal-300/40",
     iconBg: "border-teal-300/30 bg-teal-100/50",
   },
@@ -632,7 +614,8 @@ export default function OrderDetailPage() {
                       <div className="mt-3 rounded-lg border border-violet-300/40 dark:border-violet-400/20 bg-violet-50/60 dark:bg-violet-500/10 p-3">
                         <p className="flex items-center gap-1.5 text-xs font-medium text-violet-700 dark:text-violet-300 mb-2">
                           <KeyRound className="h-3.5 w-3.5" />
-                          Activation key{item.activationKeys.length > 1 ? "s" : ""}
+                          Activation key
+                          {item.activationKeys.length > 1 ? "s" : ""}
                         </p>
                         <ul className="space-y-1.5">
                           {item.activationKeys.map((key, idx) => (
@@ -675,6 +658,40 @@ export default function OrderDetailPage() {
               order.userId === user?.id
             }
           />
+
+          {/* Validate & Deliver — available once the Bon de commande is uploaded */}
+          {canDeliver && (
+            <GlassCard variant="emerald">
+              <div className="flex items-center gap-3 mb-2">
+                <div
+                  className={cn(
+                    "p-2.5 rounded-xl border",
+                    variantConfig.emerald.iconBg,
+                    "dark:border-emerald-400/30 dark:bg-emerald-500/20",
+                  )}
+                >
+                  <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Validate &amp; Deliver
+                </h3>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                Deliver this order: digital products are fulfilled from their
+                license-key pool; physical products are delivered with a
+                tracking number.
+              </p>
+              <DeliverOrderDialog
+                order={order}
+                trigger={
+                  <Button className="gap-2 rounded-xl border border-emerald-400/30 bg-card text-white shadow-sm hover:border-emerald-300/50">
+                    <CheckCircle className="h-4 w-4" />
+                    Validate &amp; Deliver
+                  </Button>
+                }
+              />
+            </GlassCard>
+          )}
 
           {/* Bank-transfer proof (client) — uploads ordre de virement while unpaid */}
           <VirementDocumentUpload
@@ -1057,43 +1074,7 @@ export default function OrderDetailPage() {
                   : "Edit order details."}
               </TooltipContent>
             </Tooltip>
-            {order.paymentStatus !== "paid" && order.status !== "cancelled" && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="inline-block">
-                    <PaymentDialog
-                      type="order"
-                      id={order.id}
-                      referenceNumber={order.orderNumber}
-                      amount={order.total}
-                      items={order.items.map((item) => ({
-                        name: item.productName,
-                        quantity: item.quantity,
-                        price: item.subtotal,
-                      }))}
-                      tax={order.tax ?? undefined}
-                      shipping={order.shipping ?? undefined}
-                      discount={order.discount ?? undefined}
-                      disabled={isSupplierRole}
-                      trigger={
-                        <Button
-                          disabled={isSupplierRole}
-                          className="w-full sm:w-auto gap-2 rounded-xl border border-emerald-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-emerald-300/50 transition-all duration-300 disabled:opacity-50"
-                        >
-                          <CreditCard className="h-4 w-4 shrink-0" />
-                          Pay ${order.total.toFixed(2)}
-                        </Button>
-                      }
-                    />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="max-w-xs">
-                  {isSupplierRole
-                    ? "Only the order creator or client can complete payment."
-                    : "Complete payment for this order via Stripe."}
-                </TooltipContent>
-              </Tooltip>
-            )}
+
             {order.status !== "cancelled" &&
               order.status !== "shipped" &&
               order.status !== "delivered" &&
@@ -1112,17 +1093,6 @@ export default function OrderDetailPage() {
                   }
                 />
               )}
-            {canDeliver && (
-              <DeliverOrderDialog
-                order={order}
-                trigger={
-                  <Button className="w-full sm:w-auto gap-2 rounded-xl border border-emerald-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-emerald-300/50 transition-all duration-300">
-                    <CheckCircle className="h-4 w-4 shrink-0" />
-                    Validate &amp; Deliver
-                  </Button>
-                }
-              />
-            )}
             {order.status !== "cancelled" && (
               <Tooltip>
                 <TooltipTrigger asChild>

@@ -142,19 +142,12 @@ const paymentMethodOptions: Array<{ value: PaymentMethod; label: string }> = [
 ];
 
 /** Tax: 7% of subtotal (hardcoded). */
-const TAX_RATE = 0.07;
+const TAX_RATE = 0.0;
 /** Shipping: fixed $4.99 (hardcoded). */
 const SHIPPING_FIXED = 4.99;
 
-/**
- * Discount percent by subtotal tiers (hardcoded):
- * &lt; $100 → 10%, $100–$300 → 20%, $300–$500 → 30%, $500+ → 50%
- */
 function getDiscountPercent(subtotal: number): number {
-  if (subtotal < 100) return 10;
-  if (subtotal < 300) return 20;
-  if (subtotal < 500) return 30;
-  return 50;
+  return 0;
 }
 
 /**
@@ -774,8 +767,7 @@ export default function OrderDialog({
                       <Select
                         key={selectRemountKey}
                         value={
-                          editFormMethods.watch("status") ||
-                          editingOrder.status
+                          editFormMethods.watch("status") || editingOrder.status
                         }
                         onValueChange={(value) =>
                           editFormMethods.setValue(

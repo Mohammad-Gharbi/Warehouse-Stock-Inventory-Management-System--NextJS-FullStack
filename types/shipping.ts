@@ -5,7 +5,7 @@
 /**
  * Shipping carrier
  */
-export type ShippingCarrier = "usps" | "ups" | "fedex" | "dhl" | "other";
+export type ShippingCarrier = "yalidine" | "other";
 
 /**
  * Shipping address

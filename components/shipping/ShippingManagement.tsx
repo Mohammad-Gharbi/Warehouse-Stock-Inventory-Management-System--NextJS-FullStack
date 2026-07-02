@@ -48,10 +48,7 @@ interface ShippingManagementProps {
 }
 
 const CARRIERS: { value: ShippingCarrier; label: string }[] = [
-  { value: "usps", label: "USPS" },
-  { value: "ups", label: "UPS" },
-  { value: "fedex", label: "FedEx" },
-  { value: "dhl", label: "DHL" },
+  { value: "yalidine", label: "Yalidine" },
   { value: "other", label: "Other" },
 ];
 
@@ -61,14 +58,15 @@ export default function ShippingManagement({
   trigger,
 }: ShippingManagementProps) {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"auto" | "manual">("auto");
+  const [activeTab, setActiveTab] = useState<"auto" | "manual">("manual");
 
   // Auto generate form state
-  const [carrier, setCarrier] = useState<ShippingCarrier>("usps");
+  const [carrier, setCarrier] = useState<ShippingCarrier>("yalidine");
 
   // Manual tracking form state
   const [manualTrackingNumber, setManualTrackingNumber] = useState("");
-  const [manualCarrier, setManualCarrier] = useState<ShippingCarrier>("usps");
+  const [manualCarrier, setManualCarrier] =
+    useState<ShippingCarrier>("yalidine");
 
   const generateLabelMutation = useGenerateShippingLabel();
   const addTrackingMutation = useAddTrackingNumber();
