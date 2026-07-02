@@ -1512,7 +1512,7 @@ export default function OrderDialog({
                       <span>${subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm text-white/70">
-                      <span>Tax (7%):</span>
+                      <span>Tax:</span>
                       <span>${orderFees.taxAmount.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm text-white/70">

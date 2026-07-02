@@ -1075,24 +1075,6 @@ export default function OrderDetailPage() {
               </TooltipContent>
             </Tooltip>
 
-            {order.status !== "cancelled" &&
-              order.status !== "shipped" &&
-              order.status !== "delivered" &&
-              !order.trackingNumber && (
-                <ShippingManagement
-                  order={order}
-                  disabled={disableOrderActions}
-                  trigger={
-                    <Button
-                      disabled={disableOrderActions}
-                      className="w-full sm:w-auto gap-2 rounded-xl border border-violet-400/30 bg-card text-white shadow-sm backdrop-blur-sm hover:border-violet-300/50 transition-all duration-300 disabled:opacity-50"
-                    >
-                      <Truck className="h-4 w-4 shrink-0" />
-                      Ship Order
-                    </Button>
-                  }
-                />
-              )}
             {order.status !== "cancelled" && (
               <Tooltip>
                 <TooltipTrigger asChild>
